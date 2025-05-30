@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -29,9 +28,9 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Reuse the admin layout item, but we will hide the admin-specific parts
+        // Use the new client-specific layout
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_rental_request, parent, false);
+                .inflate(R.layout.item_client_rental_request, parent, false);
         return new ViewHolder(view);
     }
 
@@ -46,56 +45,56 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvCarModel, tvDates, tvUser, tvStatus, tvAdditionalRequests, tvDriverLicense;
-        private final LinearLayout layoutActions; // Admin actions layout
+        // References to the views in item_client_rental_request.xml
+        private final TextView tvClientCarModel, tvClientDates, tvClientStatus, tvClientAdditionalRequests;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvCarModel = itemView.findViewById(R.id.tvCarModel);
-            tvDates = itemView.findViewById(R.id.tvDates);
-            tvUser = itemView.findViewById(R.id.tvUser); // We might hide this for client view
-            tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvAdditionalRequests = itemView.findViewById(R.id.tvAdditionalRequests);
-            tvDriverLicense = itemView.findViewById(R.id.tvDriverLicense); // Hide this for client view
-            layoutActions = itemView.findViewById(R.id.layoutActions); // Hide this for client view
+            // Initialize views from the new layout
+            tvClientCarModel = itemView.findViewById(R.id.tvClientCarModel);
+            tvClientDates = itemView.findViewById(R.id.tvClientDates);
+            tvClientStatus = itemView.findViewById(R.id.tvClientStatus);
+            tvClientAdditionalRequests = itemView.findViewById(R.id.tvClientAdditionalRequests);
         }
 
         public void bind(RentalRequest request) {
-            tvCarModel.setText(request.getCarModel());
+            tvClientCarModel.setText(request.getCarModel() != null ? request.getCarModel() : "Unknown Car");
             String startDateStr = request.getStartDate() != null ? dateFormat.format(request.getStartDate()) : "N/A";
             String endDateStr = request.getEndDate() != null ? dateFormat.format(request.getEndDate()) : "N/A";
-            tvDates.setText(String.format("Dates: %s to %s", startDateStr, endDateStr));
-            tvStatus.setText(String.format("Status: %s", request.getStatus()));
-
-            // Hide admin/unnecessary fields for client view
-            tvUser.setVisibility(View.GONE);
-            tvDriverLicense.setVisibility(View.GONE);
-            layoutActions.setVisibility(View.GONE);
+            tvClientDates.setText(String.format("Dates: %s to %s", startDateStr, endDateStr));
+            tvClientStatus.setText(String.format("Status: %s", request.getStatus() != null ? request.getStatus() : "Unknown"));
 
             // Handle additional requests visibility
             if (request.getAdditionalRequests() != null && !request.getAdditionalRequests().isEmpty()) {
-                tvAdditionalRequests.setText("Special Requests: " + request.getAdditionalRequests());
-                tvAdditionalRequests.setVisibility(View.VISIBLE);
+                tvClientAdditionalRequests.setText("Special Requests: " + request.getAdditionalRequests());
+                tvClientAdditionalRequests.setVisibility(View.VISIBLE);
             } else {
-                tvAdditionalRequests.setVisibility(View.GONE);
+                tvClientAdditionalRequests.setVisibility(View.GONE);
             }
 
             // Set status color (example)
             int statusColorRes;
-            switch (request.getStatus().toLowerCase()) {
+            String status = request.getStatus() != null ? request.getStatus().toLowerCase() : "unknown";
+            switch (status) {
                 case "approved":
-                    statusColorRes = R.color.colorSuccess; // Define this color
+                    statusColorRes = R.color.colorSuccess; // Define this color in colors.xml
                     break;
                 case "rejected":
-                    statusColorRes = R.color.colorError; // Define this color
+                    statusColorRes = R.color.colorError; // Define this color in colors.xml
                     break;
                 case "pending":
                 default:
-                    statusColorRes = R.color.colorWarning; // Define this color
+                    statusColorRes = R.color.colorWarning; // Define this color in colors.xml
                     break;
             }
-            tvStatus.setTextColor(ContextCompat.getColor(context, statusColorRes));
-
+            // Ensure context is not null before getting color
+            if (context != null) {
+                 tvClientStatus.setTextColor(ContextCompat.getColor(context, statusColorRes));
+            } else {
+                 // Handle case where context is null, maybe set a default color or log an error
+                 // For example, setting text color to black:
+                 // tvClientStatus.setTextColor(android.graphics.Color.BLACK);
+            }
         }
     }
 }
