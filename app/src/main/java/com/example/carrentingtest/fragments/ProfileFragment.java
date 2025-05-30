@@ -62,7 +62,7 @@ public class ProfileFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            DocumentReference userRef = db.collection("users").document(userId);
+            DocumentReference userRef = db.collection("clients").document(userId);
 
             userRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {

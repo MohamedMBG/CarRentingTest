@@ -74,7 +74,7 @@ public class RequestsHistoryFragment extends Fragment {
         String userId = currentUser.getUid();
         Log.d(TAG, "Fetching rental history for user ID: " + userId);
 
-        db.collection("rentalRequests")
+        db.collection("rental_requests")
                 .whereEqualTo("userId", userId)
                 .orderBy("startDate", Query.Direction.DESCENDING) // Order by start date, newest first
                 .get()
