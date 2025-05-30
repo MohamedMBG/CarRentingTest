@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/colorBackground">
+
+    <!-- Hero Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/heroTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Find Your Perfect Car"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/textColorPrimary"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:id="@+id/heroSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose from our wide selection of vehicles"
+            android:textSize="16sp"
+            android:textColor="@color/textColorSecondary"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- Search -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/colorSurface"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="Search by model..."
+            android:background="@android:color/transparent"
+            app:iconifiedByDefault="false"
+            android:padding="4dp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Category Filter -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Categories"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginBottom="8dp"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:id="@+id/filterContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAll"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                app:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorOnPrimary"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSUV"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SUV"
+                android:layout_marginStart="8dp"
+                app:strokeColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCompact"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compact"
+                android:layout_marginStart="8dp"
+                app:strokeColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLuxury"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Luxury"
+                android:layout_marginStart="8dp"
+                app:strokeColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- ListView -->
+    <ListView
+        android:id="@+id/carsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="16dp"
+        android:clipToPadding="false"/>
+
+</LinearLayout>
+

@@ -8,6 +8,7 @@ public class RentalRequest {
     private String carModel;
     private String userId;
     private String userName;
+    private String userDriverLicense; // Added driver license field
     private Date startDate;
     private Date endDate;
     private String additionalRequests;
@@ -15,6 +16,8 @@ public class RentalRequest {
 
     public RentalRequest() {
     }
+
+    // Getters and Setters
 
     public String getRequestId() {
         return requestId;
@@ -56,6 +59,14 @@ public class RentalRequest {
         this.userName = userName;
     }
 
+    public String getUserDriverLicense() { // Getter for driver license
+        return userDriverLicense;
+    }
+
+    public void setUserDriverLicense(String userDriverLicense) { // Setter for driver license
+        this.userDriverLicense = userDriverLicense;
+    }
+
     public Date getStartDate() {
         return startDate;
     }
@@ -88,3 +99,4 @@ public class RentalRequest {
         this.status = status;
     }
 }
+
