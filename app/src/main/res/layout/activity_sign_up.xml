@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    android:background="#ffff"
+    android:background="#FFFFFF"
     tools:context=".SignUpActivity">
 
     <ImageView
@@ -20,6 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -27,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Full Name"
+            android:textColor="@color/colorText"
             android:inputType="textPersonName"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -34,6 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -41,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
+            android:textColor="@color/colorText"
             android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -49,6 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -56,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Phone number"
+            android:textColor="@color/colorText"
             android:inputType="phone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -64,14 +73,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:passwordToggleEnabled="true">
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:textColor="@color/colorText"
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,13 +94,17 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="Sign Up"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:padding="12dp"
+        app:cornerRadius="8dp"
         style="@style/Widget.MaterialComponents.Button"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Already have an account? Sign In"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:clickable="true"
         android:onClick="openSignIn"/>
@@ -97,6 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:indeterminateTint="@color/colorPrimary"/>
 
 </LinearLayout>

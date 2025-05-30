@@ -4,7 +4,45 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#F5F5F5</color>
     <color name="dark_gray">#757575</color>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+
+    <!-- New color palette -->
+    <color name="colorPrimary">#1F7A8C</color>
+    <color name="colorPrimaryDark">#022B3A</color>
+    <color name="colorAccent">#BFDBF7</color>
+    <color name="colorBackground">#E1E5F2</color>
+    <color name="colorText">#022B3A</color>
+
     <color name="green">#4CAF50</color>
+
+    <color name="primary_blue">#1F7A8C</color>
+    <color name="dark_blue">#022B3A</color>
+
+
+    <!-- Card and surface colors -->
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorCardBackground">#FFFFFF</color>
+    <color name="colorDivider">#E0E0E0</color>
+    <!-- Text colors -->
+    <color name="colorTextPrimary">#202124</color>
+    <color name="colorTextSecondary">#5F6368</color>
+    <color name="colorTextTertiary">#9AA0A6</color>
+
+    <!-- New Color Palette -->
+    <color name="palette_dark_blue">#022B3A</color>
+    <color name="palette_teal">#1F7A8C</color>
+    <color name="palette_light_blue">#BFDBF7</color>
+    <color name="palette_very_light_blue">#E1E5F2</color>
+    <color name="palette_white">#FFFFFF</color>
+
+
+    <!-- 5. Add these colors to your res/values/colors.xml -->
+    <color name="text_secondary">#6B7280</color>
+    <color name="background_light">#F5F7FA</color>
+
+
+    <!-- Status colors -->
+    <color name="colorSuccess">#34A853</color>
+    <color name="colorWarning">#FBBC05</color>
+    <color name="colorError">#EA4335</color>
+
 </resources>

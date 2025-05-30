@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    android:background="@color/white">
+    android:background="#FFFFFF">
 
     <!-- App Logo (Optional) -->
     <ImageView
@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Admin Login"
-        android:textSize="24sp"
-        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
@@ -32,12 +32,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         android:hint="Username">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorText"
             android:inputType="text"
             android:imeOptions="actionNext"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -48,13 +51,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
         android:hint="Password"
-        app:passwordToggleEnabled="true">
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorText"
             android:inputType="textPassword"
             android:imeOptions="actionDone"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -66,8 +73,10 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:textColor="@color/white"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        app:cornerRadius="8dp"
         style="@style/Widget.MaterialComponents.Button"/>
 
     <!-- Footer Note -->
@@ -75,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Restricted access"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/colorPrimary"
         android:textSize="12sp"/>
 
 </LinearLayout>

@@ -1,79 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/auto"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/background_light"
+    android:fillViewport="true"
+    tools:context=".RentalFormActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="0dp">
 
-        <TextView
+        <!-- Header Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Selected Car:"
-            android:textSize="16sp"/>
+            android:background="@drawable/header_gradient"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:paddingBottom="32dp">
 
-        <TextView
-            android:id="@+id/tvSelectedCar"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rental Request"
+                android:textColor="@color/palette_white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Complete your booking details"
+                android:textColor="@color/palette_white"
+                android:textSize="16sp"
+                android:alpha="0.9"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Content Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_marginTop="-16dp"
+            android:background="@drawable/rounded_top_background"
+            android:elevation="8dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Date:"/>
+            <!-- Selected Car Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffff"
+                android:layout_marginBottom="24dp">
 
-        <TextView
-            android:id="@+id/tvStartDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="8dp"
-            android:text="Select start date"
-            android:textColor="@color/black"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#ffff"
+                    android:padding="20dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="End Date:"
-            android:layout_marginTop="16dp"/>
+                    <ImageView
+                        android:id="@+id/ivCarImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/ic_car" />
 
-        <TextView
-            android:id="@+id/tvEndDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="8dp"
-            android:text="Select end date"
-            android:textColor="@color/black"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Additional Requests:"
-            android:layout_marginTop="16dp"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Selected Vehicle"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
 
-        <EditText
-            android:id="@+id/etAdditionalRequests"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Any special requirements?"
-            android:inputType="textMultiLine"
-            android:minLines="3"/>
+                    </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSubmitRequest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Submit Rental Request"/>
+                    <TextView
+                        android:id="@+id/tvSelectedCar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="22sp"
+                        android:textColor="@color/palette_dark_blue"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"
+                        tools:text="BMW X5 Premium"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Date Selection Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rental Period"
+                android:textColor="@color/palette_dark_blue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Start Date -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <TextView
+                    android:id="@+id/tvStartDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="Select start date"
+                    android:textColor="@color/palette_dark_blue"
+                    android:textSize="16sp"
+                    android:background="@android:color/transparent"
+                    android:drawableEnd="@drawable/ic_calendar"
+                    android:drawableTint="@color/palette_teal"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- End Date -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <TextView
+                    android:id="@+id/tvEndDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="Select end date"
+                    android:textColor="@color/palette_dark_blue"
+                    android:textSize="16sp"
+                    android:background="@android:color/transparent"
+                    android:drawableEnd="@drawable/ic_calendar"
+                    android:drawableTint="@color/palette_teal"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Additional Requests -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAdditionalRequests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:hint="additional request"
+                    android:minLines="3"
+                    android:maxLines="5"
+                    android:gravity="top"
+                    android:textColor="@color/palette_dark_blue"
+                    android:textSize="16sp"
+                    android:padding="16dp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Submit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmitRequest"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/palette_teal"
+                android:text="Submit Rental Request"
+                android:textColor="@color/palette_white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02"/>
+
+        </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>

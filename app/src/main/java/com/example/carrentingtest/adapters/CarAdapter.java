@@ -8,49 +8,76 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
+import com.bumptech.glide.Glide;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.Car;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class CarAdapter extends ArrayAdapter<Car> {
 
+    private final LayoutInflater inflater;
+
     public CarAdapter(Context context, List<Car> cars) {
         super(context, 0, cars);
+        inflater = LayoutInflater.from(context);
+    }
+
+    static class ViewHolder {
+        ImageView carImage;
+        TextView carModel;
+        TextView carType;
+        TextView carPrice;
+        TextView carAvailability;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Reuse view if exists
+        Car car = getItem(position);
+        ViewHolder holder;
+
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_car, parent, false);
+            convertView = inflater.inflate(R.layout.item_car, parent, false);
+            holder = new ViewHolder();
+
+            holder.carImage = convertView.findViewById(R.id.carImage);
+            holder.carModel = convertView.findViewById(R.id.carModel);
+            holder.carType = convertView.findViewById(R.id.carType);
+            holder.carPrice = convertView.findViewById(R.id.carPrice);
+            holder.carAvailability = convertView.findViewById(R.id.carAvailability);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        // Get current car
-        Car car = getItem(position);
+        if (car != null) {
+            // Set texts
+            holder.carModel.setText(car.getModel());
+            holder.carType.setText(car.getType());
 
-        // Setup views
-        TextView modelText = convertView.findViewById(R.id.carModel);
-        TextView typeText = convertView.findViewById(R.id.carType);
-        TextView priceText = convertView.findViewById(R.id.carPrice);
-        ImageView carImage = convertView.findViewById(R.id.carImage);
+            // Format price
+            holder.carPrice.setText(String.format("$%.2f / jour", car.getPricePerDay()));
 
-        // Set car data
-        modelText.setText(car.getModel());
-        typeText.setText(car.getType());
-        priceText.setText(String.format("$%.2f/day", car.getPricePerDay()));
-
-        // Load image
-        if (car.getImageUrl() != null && !car.getImageUrl().isEmpty()) {
-            Picasso.get()
+            // Load image with Glide
+            Glide.with(getContext())
                     .load(car.getImageUrl())
                     .placeholder(R.drawable.ic_app_logo)
                     .error(R.drawable.ic_app_logo)
-                    .into(carImage);
-        } else {
-            carImage.setImageResource(R.drawable.ic_app_logo);
+                    .centerCrop()
+                    .into(holder.carImage);
+
+            // Handle availability badge
+            if (car.isAvailable()) {
+                holder.carAvailability.setText("Disponible");
+                holder.carAvailability.setVisibility(View.VISIBLE);
+                holder.carAvailability.setBackgroundTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.primary_blue)); // #1F7A8C
+            } else {
+                holder.carAvailability.setVisibility(View.GONE);
+            }
         }
 
         return convertView;
