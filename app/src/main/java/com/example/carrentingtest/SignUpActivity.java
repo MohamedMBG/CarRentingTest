@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     //declarations des elements de UI
-    private TextInputEditText etEmail, etPassword, etName, etPhone;
+    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense; // Added etDriverLicense
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar;
@@ -45,10 +45,14 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
+        etDriverLicense = findViewById(R.id.etDriverLicense); // Initialize etDriverLicense
         progressBar = findViewById(R.id.progressBar);
 
         Button btnSignUp = findViewById(R.id.btnSignUp);
         btnSignUp.setOnClickListener(v -> registerUser());
+
+        // Added onClick listener for Sign In text
+        findViewById(R.id.tvSignIn).setOnClickListener(v -> openSignIn());
     }
 
     private void registerUser() {
@@ -57,6 +61,7 @@ public class SignUpActivity extends AppCompatActivity {
         String email = Objects.requireNonNull(etEmail.getText()).toString().trim();
         String password = Objects.requireNonNull(etPassword.getText()).toString().trim();
         String phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
+        String driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim(); // Get driver license
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -67,8 +72,16 @@ public class SignUpActivity extends AppCompatActivity {
             etEmail.setError("Enter valid email");
             return;
         }
+        if (TextUtils.isEmpty(phone)) {
+            etPhone.setError("Enter your phone number");
+            return;
+        }
+        if (TextUtils.isEmpty(driverLicense)) { // Validate driver license
+            etDriverLicense.setError("Enter your driver license number");
+            return;
+        }
         if (password.length() < 6) {
-            etPassword.setError("Password too short");
+            etPassword.setError("Password too short (min 6 characters)");
             return;
         }
 
@@ -80,20 +93,23 @@ public class SignUpActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            saveClientData(user.getUid(), name, email, phone);
+                            // Pass driverLicense to saveClientData
+                            saveClientData(user.getUid(), name, email, phone, driverLicense);
                         }
                     } else {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Sign up failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    private void saveClientData(String userId, String name, String email, String phone) {
+    // Added driverLicense parameter
+    private void saveClientData(String userId, String name, String email, String phone, String driverLicense) {
         Map<String, Object> client = new HashMap<>();
         client.put("name", name);
         client.put("email", email);
         client.put("phone", phone);
+        client.put("driverLicense", driverLicense); // Add driver license to map
         client.put("createdAt", FieldValue.serverTimestamp());
 
         db.collection("clients").document(userId)
@@ -101,11 +117,18 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
+                        Toast.makeText(this, "Sign up successful!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        finishAffinity(); // Close all previous activities
                     } else {
-                        Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to save user data: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
+
+    // Method to handle Sign In click
+    public void openSignIn(View view) {
+        startActivity(new Intent(this, SignInActivity.class));
+    }
 }
+

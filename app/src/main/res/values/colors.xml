@@ -1,48 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="light_gray">#F5F5F5</color>
-    <color name="dark_gray">#757575</color>
-
-    <!-- New color palette -->
-    <color name="colorPrimary">#1F7A8C</color>
-    <color name="colorPrimaryDark">#022B3A</color>
-    <color name="colorAccent">#BFDBF7</color>
-    <color name="colorBackground">#E1E5F2</color>
-    <color name="colorText">#022B3A</color>
-
-    <color name="green">#4CAF50</color>
-
-    <color name="primary_blue">#1F7A8C</color>
-    <color name="dark_blue">#022B3A</color>
-
-
-    <!-- Card and surface colors -->
-    <color name="colorSurface">#FFFFFF</color>
-    <color name="colorCardBackground">#FFFFFF</color>
-    <color name="colorDivider">#E0E0E0</color>
-    <!-- Text colors -->
-    <color name="colorTextPrimary">#202124</color>
-    <color name="colorTextSecondary">#5F6368</color>
-    <color name="colorTextTertiary">#9AA0A6</color>
-
-    <!-- New Color Palette -->
+    <!-- Provided Palette -->
     <color name="palette_dark_blue">#022B3A</color>
     <color name="palette_teal">#1F7A8C</color>
     <color name="palette_light_blue">#BFDBF7</color>
     <color name="palette_very_light_blue">#E1E5F2</color>
     <color name="palette_white">#FFFFFF</color>
 
+    <!-- Theme Colors -->
+    <color name="colorPrimary">@color/palette_teal</color> <!-- 1F7A8C -->
+    <color name="colorPrimaryVariant">@color/palette_dark_blue</color> <!-- 022B3A -->
+    <color name="colorOnPrimary">@color/palette_white</color> <!-- FFFFFF -->
 
-    <!-- 5. Add these colors to your res/values/colors.xml -->
-    <color name="text_secondary">#6B7280</color>
-    <color name="background_light">#F5F7FA</color>
+    <color name="colorSecondary">@color/palette_light_blue</color> <!-- BFDBF7 -->
+    <color name="colorSecondaryVariant">@color/palette_light_blue</color> <!-- BFDBF7 (can be same or darker/lighter) -->
+    <color name="colorOnSecondary">@color/palette_dark_blue</color> <!-- 022B3A -->
 
+    <color name="colorBackground">@color/palette_very_light_blue</color> <!-- E1E5F2 -->
+    <color name="colorOnBackground">@color/palette_dark_blue</color> <!-- 022B3A -->
 
-    <!-- Status colors -->
-    <color name="colorSuccess">#34A853</color>
-    <color name="colorWarning">#FBBC05</color>
-    <color name="colorError">#EA4335</color>
+    <color name="colorSurface">@color/palette_white</color> <!-- FFFFFF -->
+    <color name="colorOnSurface">@color/palette_dark_blue</color> <!-- 022B3A -->
+
+    <color name="colorError">#B00020</color>
+    <color name="colorOnError">@color/palette_white</color>
+
+    <!-- Specific UI Element Colors -->
+    <color name="textColorPrimary">@color/palette_dark_blue</color>
+    <color name="textColorSecondary">#55022B3A</color> <!-- Dark blue with alpha -->
+    <color name="iconTint">@color/palette_dark_blue</color>
+    <color name="bottomNavBackground">@color/palette_white</color>
+    <color name="bottomNavItemActive">@color/palette_teal</color>
+    <color name="bottomNavItemInactive">@color/palette_dark_blue</color>
+
+    <!-- Existing colors (keep for compatibility if needed, but prefer theme colors) -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="dark_gray">#757575</color>
+    <color name="green">#4CAF50</color>
 
 </resources>

@@ -48,6 +48,13 @@
             android:layout_marginBottom="4dp"
             android:textColor="@color/dark_gray"/>
 
+        <!-- Added Driver License TextView -->
+        <TextView
+            android:id="@+id/tvDriverLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/dark_gray"/>
 
         <TextView
             android:id="@+id/tvDates"
@@ -66,13 +73,12 @@
             android:ellipsize="end"/>
 
         <!-- Action Buttons -->
-
         <LinearLayout
             android:id="@+id/layoutActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="visible"> <!-- Changed from gone to visible -->
+            android:visibility="visible"> <!-- Ensure actions are visible -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApprove"

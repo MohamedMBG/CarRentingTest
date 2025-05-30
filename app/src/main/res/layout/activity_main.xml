@@ -1,128 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fillViewport="true"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#F5F7FA">
+    android:background="@color/colorBackground"
+    tools:context=".MainActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- FrameLayout to hold the fragments -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_navigation" />
 
-        <!-- Hero Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+    <!-- Bottom Navigation View -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bottomNavBackground"
+        app:itemIconTint="@color/bottom_nav_item_color_selector" 
+        app:itemTextColor="@color/bottom_nav_item_color_selector"
+        app:menu="@menu/bottom_nav_menu" />
 
-            <TextView
-                android:id="@+id/heroTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Find Your Perfect Car"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#022B3A"
-                android:fontFamily="sans-serif-medium"/>
+</RelativeLayout>
 
-            <TextView
-                android:id="@+id/heroSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Choose from our wide selection of vehicles"
-                android:textSize="16sp"
-                android:textColor="#6B7280"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
-
-        <!-- Search -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:queryHint="Search by model..."
-                android:background="@android:color/transparent"
-                android:padding="8dp"/>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Category Filter -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Categories"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#022B3A"
-            android:layout_marginBottom="8dp"/>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:id="@+id/filterContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="All"
-                    app:iconTint="#FFFFFF"
-                    app:backgroundTint="#1F7A8C"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSUV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SUV"
-                    android:layout_marginStart="8dp"
-                    app:iconTint="#FFFFFF"
-                    app:backgroundTint="#1F7A8C"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCompact"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Compact"
-                    android:layout_marginStart="8dp"
-                    app:iconTint="#FFFFFF"
-                    app:backgroundTint="#1F7A8C"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLuxury"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Luxury"
-                    android:layout_marginStart="8dp"
-                    app:iconTint="#FFFFFF"
-                    app:backgroundTint="#1F7A8C"/>
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- ListView -->
-        <ListView
-            android:id="@+id/carsListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="16dp"
-            android:clipToPadding="false"
-            android:paddingBottom="80dp"/>
-    </LinearLayout>
-</ScrollView>

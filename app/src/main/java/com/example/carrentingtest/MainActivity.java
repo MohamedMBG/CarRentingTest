@@ -2,153 +2,85 @@ package com.example.carrentingtest;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ListView;
+import android.view.MenuItem;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import com.example.carrentingtest.adapters.CarAdapter;
-import com.example.carrentingtest.models.Car;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-    private ListView carsListView;
-    private CarAdapter carAdapter;
-    private List<Car> carList;
-    private List<Car> filteredCarList; // For filtered results
-    private FirebaseFirestore db;
-    private SearchView searchView;
-    private String currentFilter = "all"; // Default filter
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.carrentingtest.fragments.HomeFragment;
+import com.example.carrentingtest.fragments.ProfileFragment;
+import com.example.carrentingtest.fragments.RequestsHistoryFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    private BottomNavigationView bottomNavigationView;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            db = FirebaseFirestore.getInstance();
-            carsListView = findViewById(R.id.carsListView);
-            searchView = findViewById(R.id.searchView);
+        mAuth = FirebaseAuth.getInstance();
 
-            if (carsListView == null) {
-                throw new RuntimeException("ListView not found - check XML ID");
-            }
-
-            carList = new ArrayList<>();
-            filteredCarList = new ArrayList<>();
-            carAdapter = new CarAdapter(this, filteredCarList);
-            carsListView.setAdapter(carAdapter);
-
-            setupSearchView();
-            setupCategoryFilters();
-            loadAvailableCars();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
+        // Check if user is logged in
+        if (mAuth.getCurrentUser() == null) {
+            // Not logged in, redirect to SignInActivity
+            startActivity(new Intent(this, SignInActivity.class));
+            finish(); // Prevent returning to MainActivity via back button
+            return; // Stop further execution in onCreate
         }
 
-        carsListView.setOnItemClickListener((parent, view, position, id) -> {
-            Car selectedCar = filteredCarList.get(position);
-            Log.d("CLICK_TEST", "Clicked on: " + selectedCar.getModel());
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-            if (selectedCar.isAvailable()) {
-                openRentalForm(selectedCar);
-            } else {
-                Toast.makeText(this, "This car is not available", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void setupSearchView() {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterCars(newText, currentFilter);
-                return true;
-            }
-        });
-    }
-
-    private void setupCategoryFilters() {
-        findViewById(R.id.btnAll).setOnClickListener(v -> {
-            currentFilter = "all";
-            filterCars(searchView.getQuery().toString(), currentFilter);
-        });
-
-        findViewById(R.id.btnSUV).setOnClickListener(v -> {
-            currentFilter = "SUV";
-            filterCars(searchView.getQuery().toString(), currentFilter);
-        });
-
-        findViewById(R.id.btnCompact).setOnClickListener(v -> {
-            currentFilter = "Compacte";
-            filterCars(searchView.getQuery().toString(), currentFilter);
-        });
-
-        findViewById(R.id.btnLuxury).setOnClickListener(v -> {
-            currentFilter = "Luxe";
-            filterCars(searchView.getQuery().toString(), currentFilter);
-        });
-    }
-
-    private void filterCars(String searchText, String categoryFilter) {
-        filteredCarList.clear();
-
-        for (Car car : carList) {
-            boolean matchesSearch = car.getModel().toLowerCase().contains(searchText.toLowerCase());
-            boolean matchesCategory = categoryFilter.equals("all") ||
-                    car.getType().equalsIgnoreCase(categoryFilter);
-
-            if (matchesSearch && matchesCategory) {
-                filteredCarList.add(car);
-            }
-        }
-
-        carAdapter.notifyDataSetChanged();
-
-        if (filteredCarList.isEmpty()) {
-            Toast.makeText(this, "No cars found matching your criteria", Toast.LENGTH_SHORT).show();
+        // Load the default fragment (HomeFragment)
+        if (savedInstanceState == null) {
+            loadFragment(new HomeFragment());
+            bottomNavigationView.setSelectedItemId(R.id.navigation_home); // Set default selection
         }
     }
 
-    private void loadAvailableCars() {
-        db.collection("cars")
-                .whereEqualTo("available", true)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        carList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            try {
-                                Car car = document.toObject(Car.class);
-                                car.setDocumentId(document.getId());
-                                carList.add(car);
-                            } catch (Exception e) {
-                                Log.e("Firestore", "Error parsing car", e);
-                            }
-                        }
-                        // After loading, apply any existing filters
-                        filterCars(searchView.getQuery().toString(), currentFilter);
-                    } else {
-                        Toast.makeText(MainActivity.this,
-                                "Error loading cars: " + (task.getException() != null ?
-                                        task.getException().getMessage() : "Unknown error"),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment = null;
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.navigation_home) {
+            fragment = new HomeFragment();
+        } else if (itemId == R.id.navigation_requests) {
+            fragment = new RequestsHistoryFragment();
+        } else if (itemId == R.id.navigation_profile) {
+            fragment = new ProfileFragment();
+        }
+
+        if (fragment != null) {
+            loadFragment(fragment);
+            return true;
+        }
+        return false;
     }
 
-    private void openRentalForm(Car car) {
-        Intent intent = new Intent(this, RentalFormActivity.class);
-        intent.putExtra("selectedCar", car);
-        startActivity(intent);
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        // transaction.addToBackStack(null); // Optional: Add to back stack if needed
+        transaction.commit();
+    }
+
+    // Method to handle logout (can be called from ProfileFragment)
+    public void logoutUser() {
+        mAuth.signOut();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, SignInActivity.class));
+        finishAffinity(); // Close all activities in the task
     }
 }
+
