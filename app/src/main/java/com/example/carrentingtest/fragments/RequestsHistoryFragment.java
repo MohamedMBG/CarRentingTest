@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class RequestsHistoryFragment extends Fragment {
         }
 
         String userId = currentUser.getUid();
-        Log.d(TAG, "Fetching rental history for user ID: " + userId);
+        Log.d(TAG, "Attempting to fetch rental history for user ID: " + userId);
 
         db.collection("rental_requests")
                 .whereEqualTo("userId", userId)
@@ -81,23 +82,43 @@ public class RequestsHistoryFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         requestList.clear();
-                        if (task.getResult() != null && !task.getResult().isEmpty()) {
+                        int documentCount = task.getResult() != null ? task.getResult().size() : 0;
+                        Log.d(TAG, "Firestore query successful. Found " + documentCount + " documents for user ID: " + userId);
+
+                        if (documentCount > 0) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                RentalRequest request = document.toObject(RentalRequest.class);
-                                request.setRequestId(document.getId()); // Set the document ID
-                                requestList.add(request);
+                                Log.d(TAG, "Processing document ID: " + document.getId() + " => " + document.getData());
+                                try {
+                                    RentalRequest request = document.toObject(RentalRequest.class);
+                                    request.setRequestId(document.getId()); // Set the document ID
+                                    // Log the converted object details
+                                    Log.d(TAG, "Converted RentalRequest: Model=" + request.getCarModel() +
+                                            ", StartDate=" + request.getStartDate() +
+                                            ", EndDate=" + request.getEndDate() +
+                                            ", Status=" + request.getStatus() +
+                                            ", UserID=" + request.getUserId());
+                                    requestList.add(request);
+                                } catch (Exception e) {
+                                    // Log any error during object conversion
+                                    Log.e(TAG, "Error converting document " + document.getId() + " to RentalRequest object.", e);
+                                }
                             }
-                            Log.d(TAG, "Successfully fetched " + requestList.size() + " rental requests.");
+                            Log.d(TAG, "Finished processing documents. Total requests added to list: " + requestList.size());
                             adapter.notifyDataSetChanged();
                             requestsRecyclerView.setVisibility(View.VISIBLE);
                             tvNoRequests.setVisibility(View.GONE);
                         } else {
-                            Log.d(TAG, "No rental requests found for this user.");
+                            Log.d(TAG, "No rental requests found for this user in Firestore.");
                             requestsRecyclerView.setVisibility(View.GONE);
                             tvNoRequests.setVisibility(View.VISIBLE);
                         }
                     } else {
                         Log.e(TAG, "Error getting rental requests: ", task.getException());
+                        // Log specific Firestore error codes if available
+                        if (task.getException() instanceof FirebaseFirestoreException) {
+                            FirebaseFirestoreException firestoreEx = (FirebaseFirestoreException) task.getException();
+                            Log.e(TAG, "Firestore Error Code: " + firestoreEx.getCode());
+                        }
                         Toast.makeText(getContext(), "Error fetching rental history: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         requestsRecyclerView.setVisibility(View.GONE);
                         tvNoRequests.setVisibility(View.VISIBLE);
