@@ -1,21 +1,26 @@
 package com.example.carrentingtest.fragments;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.RentalFormActivity;
 import com.example.carrentingtest.adapters.CarAdapter;
 import com.example.carrentingtest.models.Car;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
@@ -30,7 +35,9 @@ public class HomeFragment extends Fragment {
     private List<Car> filteredCarList; // For search/filter functionality
     private FirebaseFirestore db;
     private SearchView searchView;
-    // Add filter buttons if needed
+    private LinearLayout filterContainer;
+    private String currentFilterType = "All"; // Default filter
+    private String currentSearchQuery = ""; // Default search query
 
     @Nullable
     @Override
@@ -49,7 +56,7 @@ public class HomeFragment extends Fragment {
         // Initialize views
         carsListView = view.findViewById(R.id.carsListView);
         searchView = view.findViewById(R.id.searchView);
-        // Initialize filter buttons if needed
+        filterContainer = view.findViewById(R.id.filterContainer);
 
         // Initialize car lists
         carList = new ArrayList<>();
@@ -65,7 +72,7 @@ public class HomeFragment extends Fragment {
             Car selectedCar = filteredCarList.get(position); // Get car from filtered list
             if (selectedCar.isAvailable()) {
                 Intent intent = new Intent(getActivity(), RentalFormActivity.class);
-                intent.putExtra("selectedCar", selectedCar); // Pass Car object (ensure Car implements Serializable or Parcelable)
+                intent.putExtra("selectedCar", selectedCar); // Pass Car object
                 startActivity(intent);
             } else {
                 Toast.makeText(getContext(), "This car is currently unavailable.", Toast.LENGTH_SHORT).show();
@@ -75,8 +82,8 @@ public class HomeFragment extends Fragment {
         // Setup search functionality
         setupSearchView();
 
-        // Setup filter functionality if needed
-        // setupFilters(view);
+        // Setup filter functionality
+        setupFilters(view);
     }
 
     private void fetchCars() {
@@ -91,8 +98,8 @@ public class HomeFragment extends Fragment {
                             carList.add(car);
                         }
                         Log.d(TAG, "Successfully fetched " + carList.size() + " cars.");
-                        // Initially, filtered list is the same as the full list
-                        filterCars(""); // Apply empty filter to show all cars initially
+                        // Apply initial filters (default: All, no search)
+                        applyFilters();
                     } else {
                         Log.e(TAG, "Error getting documents: ", task.getException());
                         Toast.makeText(getContext(), "Error fetching cars: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -104,61 +111,100 @@ public class HomeFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterCars(query);
-                return false; // Let the SearchView handle the default action (e.g., closing keyboard)
+                currentSearchQuery = query;
+                applyFilters();
+                return false; // Let the SearchView handle the default action
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterCars(newText);
+                currentSearchQuery = newText;
+                applyFilters();
                 return true; // We handled the text change
             }
         });
     }
 
-    private void filterCars(String query) {
+    private void setupFilters(View view) {
+        // Get references to filter buttons
+        MaterialButton btnAll = view.findViewById(R.id.btnAll);
+        MaterialButton btnSUV = view.findViewById(R.id.btnSUV);
+        MaterialButton btnCompact = view.findViewById(R.id.btnCompact);
+        MaterialButton btnLuxury = view.findViewById(R.id.btnLuxury);
+
+        View.OnClickListener filterClickListener = v -> {
+            String type = "All"; // Default
+            int id = v.getId();
+            if (id == R.id.btnSUV) {
+                type = "SUV";
+            } else if (id == R.id.btnCompact) {
+                type = "Compact";
+            } else if (id == R.id.btnLuxury) {
+                type = "Luxury";
+            }
+            // else if (id == R.id.btnAll) { type = "All"; }
+
+            currentFilterType = type;
+            applyFilters();
+            updateButtonStyles();
+        };
+
+        btnAll.setOnClickListener(filterClickListener);
+        btnSUV.setOnClickListener(filterClickListener);
+        btnCompact.setOnClickListener(filterClickListener);
+        btnLuxury.setOnClickListener(filterClickListener);
+
+        // Set initial style
+        updateButtonStyles();
+    }
+
+    private void applyFilters() {
         filteredCarList.clear();
-        if (query == null || query.trim().isEmpty()) {
-            filteredCarList.addAll(carList); // Show all cars if query is empty
-        } else {
-            String lowerCaseQuery = query.toLowerCase().trim();
-            for (Car car : carList) {
-                // Filter by model (case-insensitive)
-                if (car.getModel() != null && car.getModel().toLowerCase().contains(lowerCaseQuery)) {
-                    filteredCarList.add(car);
-                }
-                // Add other filter criteria if needed (e.g., type)
-                // else if (car.getType() != null && car.getType().toLowerCase().contains(lowerCaseQuery)) {
-                //     filteredCarList.add(car);
-                // }
+        String lowerCaseQuery = currentSearchQuery.toLowerCase().trim();
+
+        for (Car car : carList) {
+            boolean typeMatch = currentFilterType.equalsIgnoreCase("All") ||
+                                (car.getType() != null && car.getType().equalsIgnoreCase(currentFilterType));
+
+            boolean searchMatch = lowerCaseQuery.isEmpty() ||
+                                  (car.getModel() != null && car.getModel().toLowerCase().contains(lowerCaseQuery));
+                                  // Add other search fields if needed
+                                  // || (car.getType() != null && car.getType().toLowerCase().contains(lowerCaseQuery))
+
+            if (typeMatch && searchMatch) {
+                filteredCarList.add(car);
             }
         }
         carAdapter.notifyDataSetChanged(); // Update the ListView
-        Log.d(TAG, "Filtered list size: " + filteredCarList.size());
+        Log.d(TAG, "Applied filters. Type: " + currentFilterType + ", Query: '" + currentSearchQuery + "'. Filtered list size: " + filteredCarList.size());
     }
 
-    // Add setupFilters method if implementing category filters
-    /*
-    private void setupFilters(View view) {
-        // Get references to filter buttons (btnAll, btnSUV, etc.)
-        // Set onClickListeners for each button
-        // Inside listeners, call a method like filterCarsByType("SUV")
-    }
+    private void updateButtonStyles() {
+        int selectedColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary);
+        ColorStateList selectedTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorOnPrimary));
+        int defaultColor = ContextCompat.getColor(requireContext(), R.color.colorSurface); // Or another default background
+        ColorStateList defaultTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        ColorStateList defaultStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
 
-    private void filterCarsByType(String type) {
-        filteredCarList.clear();
-        if (type == null || type.equalsIgnoreCase("All")) {
-            filteredCarList.addAll(carList);
-        } else {
-            String lowerCaseType = type.toLowerCase();
-            for (Car car : carList) {
-                if (car.getType() != null && car.getType().toLowerCase().equals(lowerCaseType)) {
-                    filteredCarList.add(car);
+        for (int i = 0; i < filterContainer.getChildCount(); i++) {
+            View child = filterContainer.getChildAt(i);
+            if (child instanceof MaterialButton) {
+                MaterialButton button = (MaterialButton) child;
+                String buttonType = button.getText().toString();
+
+                if (buttonType.equalsIgnoreCase(currentFilterType)) {
+                    // Selected style
+                    button.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
+                    button.setTextColor(selectedTextColor);
+                    button.setStrokeWidth(0); // Remove stroke for selected filled button
+                } else {
+                    // Default outlined style
+                    button.setBackgroundTintList(ColorStateList.valueOf(defaultColor)); // Use transparent or surface color
+                    button.setTextColor(defaultTextColor);
+                    button.setStrokeColor(defaultStrokeColor);
+                    button.setStrokeWidth(getResources().getDimensionPixelSize(R.dimen.button_stroke_width)); // Ensure you have this dimen or set a value
                 }
             }
         }
-        carAdapter.notifyDataSetChanged();
-        // Update button styles to show active filter
     }
-    */
 }
