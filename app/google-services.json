@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "29378058712",
+    "project_id": "carrentingtest",
+    "storage_bucket": "carrentingtest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29378058712:android:2e3010f33f4de7ef7a7aad",
+        "android_client_info": {
+          "package_name": "com.example.carrentingtest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArpoCVvCqfx_0nWGoz2XJpO3VbhqrzCRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
