@@ -1,11 +1,13 @@
 package com.example.carrentingtest;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -47,12 +49,13 @@ public class SignUpActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etDriverLicense = findViewById(R.id.etDriverLicense); // Initialize etDriverLicense
         progressBar = findViewById(R.id.progressBar);
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
 
         Button btnSignUp = findViewById(R.id.btnSignUp);
         btnSignUp.setOnClickListener(v -> registerUser());
 
         // Added onClick listener for Sign In text
-        findViewById(R.id.tvSignIn).setOnClickListener(v -> openSignIn());
+        tvSignIn.setOnClickListener(v -> openSignIn());
     }
 
     private void registerUser() {
@@ -127,7 +130,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // Method to handle Sign In click
-    public void openSignIn(View view) {
+    public void openSignIn() {
         startActivity(new Intent(this, SignInActivity.class));
     }
 }

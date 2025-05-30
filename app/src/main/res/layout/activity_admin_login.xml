@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="Admin Login"
         android:textSize="28sp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
@@ -40,7 +40,7 @@
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorText"
+            android:textColor="@color/green"
             android:inputType="text"
             android:imeOptions="actionNext"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -61,7 +61,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorText"
+            android:textColor="@color/green"
             android:inputType="textPassword"
             android:imeOptions="actionDone"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:textColor="@color/white"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/black"
         android:layout_marginBottom="16dp"
         android:padding="12dp"
         app:cornerRadius="8dp"

@@ -32,9 +32,11 @@
     <color name="bottomNavBackground">@color/palette_white</color>
     <color name="bottomNavItemActive">@color/palette_teal</color>
     <color name="bottomNavItemInactive">@color/palette_dark_blue</color>
+    <color name="primary_blue">@color/palette_dark_blue</color>
 
     <!-- Existing colors (keep for compatibility if needed, but prefer theme colors) -->
     <color name="black">#FF000000</color>
+    <color name="colorText">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#F5F5F5</color>
     <color name="dark_gray">#757575</color>
