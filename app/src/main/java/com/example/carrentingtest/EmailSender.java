@@ -17,8 +17,8 @@ public class EmailSender {
     // These should come from your app configuration (Firebase Remote Config or secure storage)
     private static String SMTP_HOST = "smtp.gmail.com";
     private static String SMTP_PORT = "587";
-    private static String EMAIL = "baghdadmohamed.me@gmail.com";
-    private static String PASSWORD = "enxy piut ewpd zhvm";
+    private static String EMAIL = "";
+    private static String PASSWORD = "";
 
     public interface EmailCallback {
         void onSuccess();
