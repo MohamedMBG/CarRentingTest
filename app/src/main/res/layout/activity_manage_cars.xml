@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#ffff"
     android:padding="16dp">
 
     <Button
@@ -10,10 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add New Car"
+        android:backgroundTint="@color/palette_teal"
         android:layout_marginBottom="16dp"/>
-
     <ListView
         android:id="@+id/carsListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="16dp" />
+
 </LinearLayout>

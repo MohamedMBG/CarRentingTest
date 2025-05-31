@@ -1,268 +1,273 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/light_gray"
-    android:padding="16dp">
+    android:background="#ffff"
+    tools:context=".admin.AdminDashboardActivity">
 
-    <!-- Header -->
-    <LinearLayout
-        android:layout_marginTop="20dp"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:background="#ffff"
+        app:liftOnScroll="true">
 
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_admin"
-            android:tint="@color/black"/>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Admin Dashboard"
+            app:titleTextColor="?attr/colorOnSurface" />
+        <!-- Replace with a proper Material Symbol icon -->
 
-        <TextView
-            android:layout_width="wrap_content"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Admin Dashboard"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp"
-            android:textColor="@color/black"/>
-    </LinearLayout>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <!-- Cards Container -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="24dp">
-
-        <!-- Manage Cars Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
+            <!-- Quick Actions Section -->
+            <TextView
+                style="?attr/textAppearanceTitleMedium"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:id="@+id/cardManageCars">
+                android:layout_height="wrap_content"
+                android:text="Quick Actions"
+                android:layout_marginBottom="8dp"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_car"
-                    android:tint="#09540B"
-                    android:layout_marginStart="24dp"
-                    tools:ignore="UseAppTint" />
+            <!-- Manage Cars Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardManageCars"
+                style="?attr/materialCardViewElevatedStyle"
+                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Manage Cars"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_car" /> <!-- Replace with Material Symbol -->
+                    <!-- app:tint="?attr/colorPrimary" -->
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Add, edit or remove vehicles"
-                        android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            style="?attr/textAppearanceTitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Manage Cars" />
+
+                        <TextView
+                            style="?attr/textAppearanceBodyMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Add, edit or remove vehicles"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp" /> <!-- Replace with Material Symbol -->
+                    <!-- app:tint="?attr/colorOnSurfaceVariant" -->
                 </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <!-- View Requests Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
+            <!-- View Requests Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardViewRequests"
+                style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
-                android:gravity="center"
-                android:background="?attr/selectableItemBackground"
+                android:backgroundTint="@color/white"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:clickable="true"
-                android:id="@+id/cardViewRequests">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_requests"
-                    android:tint="#09540B"
-                    android:layout_marginStart="24dp"
-                    tools:ignore="UseAppTint" />
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Rental Requests"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_requests" /> <!-- Replace with Material Symbol -->
+                    <!-- app:tint="?attr/colorPrimary" -->
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Approve or reject bookings"
-                        android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            style="?attr/textAppearanceTitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Rental Requests" />
+
+                        <TextView
+                            style="?attr/textAppearanceBodyMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Approve or reject bookings"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"/> <!-- Replace with Material Symbol -->
+                    <!-- app:tint="?attr/colorOnSurfaceVariant" -->
                 </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-    <!-- Stats Overview -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quick Stats"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
-
-        <!-- Pending Requests Stat -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
+            <!-- Quick Stats Section -->
+            <TextView
+                style="?attr/textAppearanceTitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quick Stats"
+                android:layout_marginBottom="8dp"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
 
-                <TextView
-                    android:id="@+id/tvPendingCount"
-                    android:layout_width="wrap_content"
+                <!-- Pending Requests Stat Card -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="12"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/green"/>
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginEnd="8dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center_horizontal">
+                        <TextView
+                            android:id="@+id/tvPendingCount"
+                            style="?attr/textAppearanceHeadlineMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="@color/bottomNavItemInactive"/>
+                        <TextView
+                            style="?attr/textAppearanceLabelMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pending"
+                            android:textColor="?attr/colorOnSecondaryContainer"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Available Cars Stat Card -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Pending"
-                    android:textSize="12sp"/>
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center_horizontal">
+                        <TextView
+                            android:id="@+id/tvAvailableCount"
+                            style="?attr/textAppearanceHeadlineMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="@color/bottomNavItemInactive"/>
+                        <TextView
+                            style="?attr/textAppearanceLabelMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Available"
+                            android:textColor="?attr/colorOnSecondaryContainer"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Total Cars Stat Card -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="8dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center_horizontal">
+                        <TextView
+                            android:id="@+id/tvTotalCars"
+                            style="?attr/textAppearanceHeadlineMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="@color/bottomNavItemInactive"/>
+                        <TextView
+                            style="?attr/textAppearanceLabelMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Cars"
+                            android:textColor="?attr/colorOnSecondaryContainer"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Available Cars Stat -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
+            <!-- Logout Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Logout"
+                app:iconTint="?attr/colorError"
+                android:textColor="?attr/colorError"
+                app:strokeColor="?attr/colorError" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvAvailableCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="8"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/green"/>
+    </androidx.core.widget.NestedScrollView>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Total Cars Stat -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/tvTotalCars"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="20"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/green"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total Cars"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-
-    <!-- Logout Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        app:strokeColor="#F44336"
-        android:textColor="#F44336"/>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

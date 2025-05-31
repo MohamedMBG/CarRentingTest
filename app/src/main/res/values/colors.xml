@@ -33,6 +33,8 @@
     <color name="bottomNavItemActive">@color/palette_teal</color>
     <color name="bottomNavItemInactive">@color/palette_dark_blue</color>
     <color name="primary_blue">@color/palette_dark_blue</color>
+    <color name="colorSuccess">#4CAF50</color>
+    <color name="colorWarning">#F44336</color>
 
     <!-- Existing colors (keep for compatibility if needed, but prefer theme colors) -->
     <color name="black">#FF000000</color>
