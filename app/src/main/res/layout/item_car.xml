@@ -35,7 +35,7 @@
                 android:id="@+id/carModel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tesla Model 3"
+                android:text="@string/car_model"
                 android:textColor="#022B3A"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -61,7 +61,7 @@
                     android:id="@+id/carType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SUV"
+                    android:text="@string/suv"
                     android:textColor="#1F7A8C"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -85,7 +85,7 @@
                     android:id="@+id/carPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$45 / jour"
+                    android:text="@string/price_per_day_format"
                     android:textColor="#022B3A"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -99,7 +99,7 @@
                 android:layout_marginTop="10dp"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Disponible"
+                android:text="@string/car_available"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp"
                 android:backgroundTint="#1F7A8C"

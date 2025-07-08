@@ -21,7 +21,7 @@
             android:id="@+id/tvClientCarModel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Car Model"
+            android:text="@string/car_model"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/textColorPrimary"/>
@@ -30,7 +30,7 @@
             android:id="@+id/tvClientDates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dates: MM/DD/YYYY to MM/DD/YYYY"
+            android:text="@string/date_range_sample"
             android:textSize="14sp"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"/>
@@ -39,7 +39,7 @@
             android:id="@+id/tvClientStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status: Pending"
+            android:text="@string/status_pending"
             android:textSize="14sp"
             android:textStyle="italic"
             android:layout_marginTop="8dp"/>
@@ -48,7 +48,7 @@
             android:id="@+id/tvClientAdditionalRequests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Special Requests: None"
+            android:text="@string/special_requests_none"
             android:textSize="14sp"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"

@@ -15,7 +15,6 @@
         android:layout_height="120dp"
         android:src="@drawable/ic_app_logo"
         android:layout_marginBottom="24dp"/>
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +27,7 @@
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Full Name"
+            android:hint="@string/full_name"
             android:inputType="textPersonName"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -44,7 +43,7 @@
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email"
             android:textColor="@color/colorText"
             android:inputType="textEmailAddress"/>
 
@@ -62,7 +61,7 @@
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone number"
+            android:hint="@string/phone_number"
             android:textColor="@color/colorText"
             android:inputType="phone"/>
 
@@ -80,7 +79,7 @@
             android:id="@+id/etDriverLicense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Driver License Number"
+            android:hint="@string/driver_license_number"
             android:textColor="@color/colorText"
             android:inputType="text"/>
 
@@ -97,7 +96,7 @@
             android:id="@+id/etCompanyId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Company ID" />
+            android:hint="@string/company_id" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -114,7 +113,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
             android:textColor="@color/colorText"
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -124,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Sign Up"
+        android:text="@string/sign_up"
         android:textColor="@color/white"
         android:backgroundTint="@color/colorPrimary"
         android:padding="12dp"
@@ -135,7 +134,7 @@
         android:id="@+id/tvSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Already have an account? Sign In"
+        android:text="@string/already_have_account"
         android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:clickable="true"
@@ -150,4 +149,3 @@
         android:indeterminateTint="@color/colorPrimary"/>
 
 </LinearLayout>
-

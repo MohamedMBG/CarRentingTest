@@ -10,7 +10,7 @@
         android:id="@+id/btnAddCar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add New Car"
+        android:text="@string/add_new_car"
         android:backgroundTint="@color/palette_teal"
         android:layout_marginBottom="16dp"/>
     <ListView

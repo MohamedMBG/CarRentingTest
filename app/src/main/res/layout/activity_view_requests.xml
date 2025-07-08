@@ -8,9 +8,6 @@
     android:paddingTop="20dp"
     android:background="@color/light_gray">
 
-
-
-
     <!-- Requests RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/requestsRecyclerView"
@@ -19,7 +16,6 @@
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="16dp"/>
-
     <!-- Empty State View -->
     <LinearLayout
         android:id="@+id/emptyStateView"
@@ -39,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No rental requests found"
+            android:text="@string/no_requests_found"
             android:textSize="18sp"
             android:textColor="@color/dark_gray"
             android:layout_marginTop="16dp"/>

@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Admin Login"
+        android:text="@string/admin_login_title"
         android:textSize="28sp"
         android:textColor="@color/black"
         android:textStyle="bold"
@@ -34,7 +34,7 @@
         android:layout_marginBottom="16dp"
         app:boxStrokeColor="@color/colorPrimary"
         app:hintTextColor="@color/colorPrimary"
-        android:hint="Username">
+        android:hint="@string/username">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
@@ -53,7 +53,7 @@
         android:layout_marginBottom="24dp"
         app:boxStrokeColor="@color/colorPrimary"
         app:hintTextColor="@color/colorPrimary"
-        android:hint="Password"
+        android:hint="@string/password"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimary">
 
@@ -71,7 +71,7 @@
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@color/white"
         android:backgroundTint="@color/black"
         android:layout_marginBottom="16dp"
@@ -83,7 +83,7 @@
         android:id="@+id/tvRegisterCompany"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register Company"
+        android:text="@string/register_company"
         android:textColor="@color/colorPrimary"
         android:layout_marginTop="8dp"
         android:textStyle="bold"/>
@@ -92,7 +92,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Restricted access"
+        android:text="@string/restricted_access"
         android:textColor="@color/colorPrimary"
         android:textSize="12sp"/>
 

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Profile"
+        android:text="@string/my_profile"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/textColorPrimary"
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name:"
+                android:text="@string/name_label"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondary"/>
 
@@ -42,7 +42,7 @@
                 android:id="@+id/tvProfileName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Loading..."
+                android:text="@string/loading"
                 android:textSize="18sp"
                 android:textColor="@color/textColorPrimary"
                 android:layout_marginBottom="8dp"/>
@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email:"
+                android:text="@string/email_label"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondary"/>
 
@@ -58,7 +58,7 @@
                 android:id="@+id/tvProfileEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Loading..."
+                android:text="@string/loading"
                 android:textSize="18sp"
                 android:textColor="@color/textColorPrimary"
                 android:layout_marginBottom="8dp"/>
@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Phone:"
+                android:text="@string/phone_label"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondary"/>
 
@@ -74,7 +74,7 @@
                 android:id="@+id/tvProfilePhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Loading..."
+                android:text="@string/loading"
                 android:textSize="18sp"
                 android:textColor="@color/textColorPrimary"
                 android:layout_marginBottom="8dp"/>
@@ -82,7 +82,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Driver License:"
+                android:text="@string/driver_license_label"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondary"/>
 
@@ -90,7 +90,7 @@
                 android:id="@+id/tvProfileLicense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Loading..."
+                android:text="@string/loading"
                 android:textSize="18sp"
                 android:textColor="@color/textColorPrimary"/>
 
@@ -107,10 +107,9 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
+        android:text="@string/logout"
         android:textColor="@color/colorError"
         app:icon="@android:drawable/ic_lock_power_off"
         app:iconTint="@color/colorError"/>
 
 </LinearLayout>
-

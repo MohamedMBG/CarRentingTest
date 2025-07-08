@@ -59,7 +59,7 @@ public class CarAdapter extends ArrayAdapter<Car> {
             holder.carType.setText(car.getType());
 
             // Format price
-            holder.carPrice.setText(String.format("$%.2f / jour", car.getPricePerDay()));
+            holder.carPrice.setText(String.format(getContext().getString(R.string.price_per_day_format), car.getPricePerDay()));
 
             // Load image with Glide
             Glide.with(getContext())
@@ -71,7 +71,7 @@ public class CarAdapter extends ArrayAdapter<Car> {
 
             // Handle availability badge
             if (car.isAvailable()) {
-                holder.carAvailability.setText("Disponible");
+                holder.carAvailability.setText(getContext().getString(R.string.car_available));
                 holder.carAvailability.setVisibility(View.VISIBLE);
                 holder.carAvailability.setBackgroundTintList(
                         ContextCompat.getColorStateList(getContext(), R.color.primary_blue)); // #1F7A8C

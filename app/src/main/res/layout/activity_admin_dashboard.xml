@@ -39,7 +39,7 @@
                 style="?attr/textAppearanceTitleMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Quick Actions"
+                android:text="@string/quick_actions"
                 android:layout_marginBottom="8dp"
                 android:textColor="?attr/colorOnSurfaceVariant"/>
 
@@ -78,13 +78,13 @@
                             style="?attr/textAppearanceTitleMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Manage Cars" />
+                            android:text="@string/manage_cars" />
 
                         <TextView
                             style="?attr/textAppearanceBodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Add, edit or remove vehicles"
+                            android:text="@string/manage_description"
                             android:textColor="?attr/colorOnSurfaceVariant"/>
                     </LinearLayout>
 
@@ -130,13 +130,13 @@
                             style="?attr/textAppearanceTitleMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Rental Requests" />
+                            android:text="@string/rental_requests" />
 
                         <TextView
                             style="?attr/textAppearanceBodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Approve or reject bookings"
+                            android:text="@string/approve_reject_bookings"
                             android:textColor="?attr/colorOnSurfaceVariant"/>
                     </LinearLayout>
                     <ImageView
@@ -151,7 +151,7 @@
                 style="?attr/textAppearanceTitleMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Quick Stats"
+                android:text="@string/quick_stats"
                 android:layout_marginBottom="8dp"
                 android:textColor="?attr/colorOnSurfaceVariant"/>
 
@@ -186,7 +186,7 @@
                             style="?attr/textAppearanceLabelMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pending"
+                            android:text="@string/pending"
                             android:textColor="?attr/colorOnSecondaryContainer"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -217,7 +217,7 @@
                             style="?attr/textAppearanceLabelMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Available"
+                            android:text="@string/available"
                             android:textColor="?attr/colorOnSecondaryContainer"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -247,7 +247,7 @@
                             style="?attr/textAppearanceLabelMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Cars"
+                            android:text="@string/total_cars"
                             android:textColor="?attr/colorOnSecondaryContainer"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -261,7 +261,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Logout"
+                android:text="@string/logout"
                 app:iconTint="?attr/colorError"
                 android:textColor="?attr/colorError"
                 app:strokeColor="?attr/colorError" />

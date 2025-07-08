@@ -18,7 +18,7 @@
             android:id="@+id/heroTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Find Your Perfect Car"
+            android:text="@string/find_perfect_car"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/textColorPrimary"
@@ -28,7 +28,7 @@
             android:id="@+id/heroSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Choose from our wide selection of vehicles"
+            android:text="@string/choose_from_selection"
             android:textSize="16sp"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"/>
@@ -57,7 +57,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Categories"
+        android:text="@string/categories"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/textColorPrimary"
@@ -80,7 +80,7 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All"
+                android:text="@string/all"
                 app:backgroundTint="@color/colorPrimary"
                 android:textColor="@color/colorOnPrimary"/>
 
@@ -89,7 +89,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SUV"
+                android:text="@string/suv"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/colorPrimary"
                 android:textColor="@color/colorPrimary"/>
@@ -99,7 +99,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Compact"
+                android:text="@string/compact"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/colorPrimary"
                 android:textColor="@color/colorPrimary"/>
@@ -109,7 +109,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Luxury"
+                android:text="@string/luxury"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/colorPrimary"
                 android:textColor="@color/colorPrimary"/>
@@ -127,4 +127,3 @@
         android:clipToPadding="false"/>
 
 </LinearLayout>
-
