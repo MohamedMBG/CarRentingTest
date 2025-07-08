@@ -21,92 +21,101 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 public class ProfileFragment extends Fragment {
 
-    // UI Components
+    private static final String TAG = "ProfileFragment";
     private TextView tvProfileName, tvProfileEmail, tvProfilePhone, tvProfileLicense;
+    private Button btnLogout;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
-    // Firebase instances (authentication and database)
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    // Create the fragment view
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout XML file
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_profile, container, false);
+    }
 
-        // Initialize all text views from layout
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Initialize Firebase Auth and Firestore
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // Initialize views
         tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
         tvProfilePhone = view.findViewById(R.id.tvProfilePhone);
         tvProfileLicense = view.findViewById(R.id.tvProfileLicense);
+        btnLogout = view.findViewById(R.id.btnLogout);
 
-        // Set click listener for logout button
-        view.findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
+        // Load user data
+        loadUserProfile();
 
-        // Load user profile data
-        loadProfile();
-
-        return view;
+        // Set logout button click listener
+        btnLogout.setOnClickListener(v -> logout());
     }
 
-    // Load user profile from Firestore
-    private void loadProfile() {
-        // Get currently logged in user
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // If no user, redirect to login screen
-        if (user == null) {
-            redirectToLogin();
-            return;
-        }
-
-        // Get user document from Firestore
-        db.collection("clients").document(user.getUid()).get()
-                .addOnCompleteListener(task -> {
-                    // If failed or document doesn't exist, show default values
-                    if (!task.isSuccessful() || !task.getResult().exists()) {
-                        setDefaultValues(user);
-                        return;
+    private void loadUserProfile() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DocumentReference userRef = db.collection("users").document(userId);
+            userRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null && document.exists()) {
+                        Log.d(TAG, "User data found: " + document.getData());
+                        // Populate TextViews
+                        tvProfileName.setText(document.getString("name"));
+                        tvProfileEmail.setText(document.getString("email"));
+                        tvProfilePhone.setText(document.getString("phone"));
+                        tvProfileLicense.setText(document.getString("driverLicense"));
+                    } else {
+                        Log.d(TAG, "No such user document");
+                        Toast.makeText(getContext(), "User profile data not found.", Toast.LENGTH_SHORT).show();
+                        // Set default text or handle error
+                        tvProfileName.setText("N/A");
+                        tvProfileEmail.setText(currentUser.getEmail()); // Use email from Auth if available
+                        tvProfilePhone.setText("N/A");
+                        tvProfileLicense.setText("N/A");
                     }
-
-                    // Get the document snapshot
-                    DocumentSnapshot doc = task.getResult();
-
-                    // Update UI with user data
-                    tvProfileName.setText(doc.getString("name"));
-                    tvProfileEmail.setText(doc.getString("email"));
-                    tvProfilePhone.setText(doc.getString("phone"));
-                    tvProfileLicense.setText(doc.getString("driverLicense"));
-                });
+                } else {
+                    Log.e(TAG, "Error getting user document: ", task.getException());
+                    Toast.makeText(getContext(), "Error loading profile: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    // Set default text or handle error
+                    tvProfileName.setText("Error");
+                    tvProfileEmail.setText("Error");
+                    tvProfilePhone.setText("Error");
+                    tvProfileLicense.setText("Error");
+                }
+            });
+        } else {
+            // Should not happen if MainActivity checks login status, but handle anyway
+            Log.w(TAG, "Current user is null in ProfileFragment");
+            Toast.makeText(getContext(), "Not logged in.", Toast.LENGTH_SHORT).show();
+            // Optionally redirect to login
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).logoutUser(); // Use existing logout logic
+            }
+        }
     }
 
-    // Set default values when profile data isn't available
-    private void setDefaultValues(FirebaseUser user) {
-        tvProfileName.setText("N/A");  // Default name
-        tvProfileEmail.setText(user.getEmail() != null ? user.getEmail() : "N/A"); // Use auth email if available
-        tvProfilePhone.setText("N/A");  // Default phone
-        tvProfileLicense.setText("N/A"); // Default license
-    }
-
-    // Handle logout action
     private void logout() {
-        mAuth.signOut();  // Sign out from Firebase
-
-        // Redirect to login screen and clear back stack
-        startActivity(new Intent(getActivity(), SignInActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-
-        requireActivity().finish();  // Close current activity
-    }
-
-    // Redirect to login screen
-    private void redirectToLogin() {
-        // Start login activity
-        startActivity(new Intent(getActivity(), SignInActivity.class));
-
-        // Close current activity
-        requireActivity().finish();
+        // Call the logout method in MainActivity
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).logoutUser();
+        } else {
+            // Fallback if not attached to MainActivity (should not happen)
+            mAuth.signOut();
+            Toast.makeText(getContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), SignInActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 }

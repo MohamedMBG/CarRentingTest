@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.carrentingtest.EmailSender;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.RentalRequest;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -26,6 +27,7 @@ public class ViewRequestsActivity extends AppCompatActivity {
     private RecyclerView requestsRecyclerView;
     private RentalRequestAdapter adapter;
     private List<RentalRequest> requestList = new ArrayList<>();
+    private String companyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +41,21 @@ public class ViewRequestsActivity extends AppCompatActivity {
         adapter = new RentalRequestAdapter(requestList, this::handleRequestDecision);
         requestsRecyclerView.setAdapter(adapter);
 
-        loadRequests();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(auth.getCurrentUser().getUid()).get()
+                    .addOnSuccessListener(doc -> {
+                        companyId = doc.getString("companyId");
+                        loadRequests();
+                    });
+        }
     }
 
     private void loadRequests() {
+        if (companyId == null) return;
         FirebaseFirestore.getInstance().collection("rental_requests")
+                .whereEqualTo("companyId", companyId)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) return;
 
@@ -84,7 +96,7 @@ public class ViewRequestsActivity extends AppCompatActivity {
 
     private void sendEmailNotification(RentalRequest request, String status) {
         FirebaseFirestore.getInstance()
-                .collection("clients")
+                .collection("users")
                 .document(request.getUserId())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {

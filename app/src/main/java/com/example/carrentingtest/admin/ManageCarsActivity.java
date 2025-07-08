@@ -24,6 +24,7 @@ public class ManageCarsActivity extends AppCompatActivity {
     // Firestore database instance
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+
     /**
      * Initial setup when activity is created
      * - Sets up ListView and adapter

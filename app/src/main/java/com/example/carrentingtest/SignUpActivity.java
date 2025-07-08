@@ -28,7 +28,7 @@ import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     //declarations des elements de UI
-    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense; // Added etDriverLicense
+    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar;
@@ -47,7 +47,8 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
-        etDriverLicense = findViewById(R.id.etDriverLicense); // Initialize etDriverLicense
+        etDriverLicense = findViewById(R.id.etDriverLicense);
+        etCompanyId = findViewById(R.id.etCompanyId);
         progressBar = findViewById(R.id.progressBar);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
 
@@ -64,7 +65,8 @@ public class SignUpActivity extends AppCompatActivity {
         String email = Objects.requireNonNull(etEmail.getText()).toString().trim();
         String password = Objects.requireNonNull(etPassword.getText()).toString().trim();
         String phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
-        String driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim(); // Get driver license
+        String driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
+        String companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -79,8 +81,12 @@ public class SignUpActivity extends AppCompatActivity {
             etPhone.setError("Enter your phone number");
             return;
         }
-        if (TextUtils.isEmpty(driverLicense)) { // Validate driver license
+        if (TextUtils.isEmpty(driverLicense)) {
             etDriverLicense.setError("Enter your driver license number");
+            return;
+        }
+        if (TextUtils.isEmpty(companyId)) {
+            etCompanyId.setError("Enter company ID");
             return;
         }
         if (password.length() < 6) {
@@ -97,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
                             // Pass driverLicense to saveClientData
-                            saveClientData(user.getUid(), name, email, phone, driverLicense);
+                            saveClientData(user.getUid(), name, email, phone, driverLicense, companyId);
                         }
                     } else {
                         progressBar.setVisibility(View.GONE);
@@ -106,16 +112,17 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    // Added driverLicense parameter
-    private void saveClientData(String userId, String name, String email, String phone, String driverLicense) {
+    private void saveClientData(String userId, String name, String email, String phone, String driverLicense, String companyId) {
         Map<String, Object> client = new HashMap<>();
         client.put("name", name);
         client.put("email", email);
         client.put("phone", phone);
         client.put("driverLicense", driverLicense); // Add driver license to map
+        client.put("companyId", companyId);
+        client.put("role", "client");
         client.put("createdAt", FieldValue.serverTimestamp());
 
-        db.collection("clients").document(userId)
+        db.collection("users").document(userId)
                 .set(client)
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
