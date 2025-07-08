@@ -3,9 +3,9 @@
     <string name="app_name">CarRentingTest</string>
     <string name="admin_login_title">Connexion Admin</string>
     <string name="login">Se connecter</string>
-    <string name="register_company">Enregistrer l'entreprise</string>
+    <string name="register_company">Enregistrer l\'entreprise</string>
     <string name="restricted_access">Accès restreint</string>
-    <string name="username">Nom d'utilisateur</string>
+    <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
     <string name="my_rental_history">Historique de location</string>
     <string name="no_past_requests">Aucune demande de location passée.</string>
@@ -25,7 +25,7 @@
     <string name="luxury">Luxe</string>
     <string name="available_for_rent">Disponible à la location</string>
     <string name="add_new_car">Ajouter une voiture</string>
-    <string name="company_name">Nom de l'entreprise</string>
+    <string name="company_name">Nom de l\'entreprise</string>
     <string name="admin_email">Email administrateur</string>
     <string name="register">Enregistrer</string>
     <string name="quick_actions">Actions rapides</string>
@@ -39,7 +39,7 @@
     <string name="total_cars">Nombre total de voitures</string>
     <string name="logout">Déconnexion</string>
     <string name="no_requests_found">Aucune demande de location trouvée</string>
-    <string name="sign_up">S'inscrire</string>
+    <string name="sign_up">S\'inscrire</string>
     <string name="already_have_account">Vous avez déjà un compte ? Connectez-vous</string>
     <string name="welcome_back">Bon retour</string>
     <string name="sign_in">Se connecter</string>
