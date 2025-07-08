@@ -79,6 +79,15 @@
         app:cornerRadius="8dp"
         style="@style/Widget.MaterialComponents.Button"/>
 
+    <TextView
+        android:id="@+id/tvRegisterCompany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register Company"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold"/>
+
     <!-- Footer Note -->
     <TextView
         android:layout_width="wrap_content"

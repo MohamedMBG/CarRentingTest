@@ -9,6 +9,7 @@ public class Car implements Serializable {
     private double pricePerDay;
     private String imageUrl;
     private boolean available;
+    private String companyId;
 
     // Empty constructor for Firestore
     public Car() {}
@@ -32,4 +33,8 @@ public class Car implements Serializable {
 
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
+
+
+    public String getCompanyId() { return companyId; }
+    public void setCompanyId(String companyId) { this.companyId = companyId; }
 }
