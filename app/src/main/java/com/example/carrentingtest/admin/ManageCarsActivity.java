@@ -11,6 +11,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.CarAdapter;
 import com.example.carrentingtest.models.Car;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import java.util.*;
 
@@ -23,7 +24,8 @@ public class ManageCarsActivity extends AppCompatActivity {
     private CarAdapter carAdapter;
     // Firestore database instance
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private String companyId;
 
     /**
      * Initial setup when activity is created
@@ -47,8 +49,20 @@ public class ManageCarsActivity extends AppCompatActivity {
         // Set click listener for ListView items (for edit/delete)
         carsListView.setOnItemClickListener((p, v, pos, id) -> showOptionsDialog(carList.get(pos)));
 
-        // Load initial car data from database
-        loadCars();
+        if (auth.getCurrentUser() != null) {
+            db.collection("users")
+                    .document(auth.getCurrentUser().getUid())
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        companyId = doc.getString("companyId");
+                        loadCars();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this,
+                            "Failed to load company", Toast.LENGTH_SHORT).show());
+        } else {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     /**
@@ -58,7 +72,10 @@ public class ManageCarsActivity extends AppCompatActivity {
      * - Updates adapter when data is loaded
      */
     private void loadCars() {
-        db.collection("cars").get().addOnCompleteListener(task -> {
+        if (companyId == null) return;
+        db.collection("cars")
+                .whereEqualTo("companyId", companyId)
+                .get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 carList.clear();  // Clear existing data
                 // Process each document in the query result
@@ -117,6 +134,8 @@ public class ManageCarsActivity extends AppCompatActivity {
                     // Set availability (only for edits, new cars are available by default)
                     if (isEdit) c.setAvailable(swAvailable.isChecked());
                     else c.setAvailable(true);
+                    c.setCompanyId(companyId);
+
 
                     // Call appropriate save method
                     if (isEdit) updateCar(c);
@@ -131,6 +150,7 @@ public class ManageCarsActivity extends AppCompatActivity {
      * parameter car The car object to add
      */
     private void addCar(Car car) {
+        car.setCompanyId(companyId);
         db.collection("cars").add(car).addOnSuccessListener(doc -> {
             // On success: update local data and show confirmation
             car.setDocumentId(doc.getId());  // Store the auto-generated document ID

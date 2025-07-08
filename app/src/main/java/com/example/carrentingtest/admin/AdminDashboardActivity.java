@@ -30,6 +30,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
     // Firebase services instances
     private FirebaseFirestore db = FirebaseFirestore.getInstance();  // Cloud Firestore database
     private FirebaseAuth auth = FirebaseAuth.getInstance();          // Authentication service
+    private String companyId;
+
 
     /**
      * Called when the activity is first created.
@@ -59,7 +61,21 @@ public class AdminDashboardActivity extends AppCompatActivity {
         // 3. Logout button - triggers logout process
         findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
 
-        fetchStats(); // Load and display initial statistics
+        if (auth.getCurrentUser() != null) {
+            db.collection("users")
+                    .document(auth.getCurrentUser().getUid())
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        companyId = doc.getString("companyId");
+                        fetchStats();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this,
+                            "Failed to load company", Toast.LENGTH_SHORT).show());
+        } else {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
     }
 
     /**
@@ -67,9 +83,12 @@ public class AdminDashboardActivity extends AppCompatActivity {
      * Gets three key metrics: pending requests, available cars, and total cars.
      */
     private void fetchStats() {
+        if (companyId == null) return;
+
         // 1. Get count of pending rental requests:
         db.collection("rental_requests")          // Access rental_requests collection
                 .whereEqualTo("status", "pending")      // Filter for pending status
+                .whereEqualTo("companyId", companyId)
                 .get()                                  // Execute query
                 .addOnSuccessListener(snap ->           // On success:
                         tvPending.setText(String.valueOf(snap.size())))  // Update pending count
@@ -79,6 +98,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         // 2. Get count of available cars:
         db.collection("cars")                     // Access cars collection
                 .whereEqualTo("available", true)        // Filter for available cars
+                .whereEqualTo("companyId", companyId)
                 .get()
                 .addOnSuccessListener(snap ->
                         tvAvailable.setText(String.valueOf(snap.size())))
@@ -87,6 +107,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         // 3. Get total count of all cars:
         db.collection("cars")                     // Access cars collection
+                .whereEqualTo("companyId", companyId)
                 .get()                                  // Get all documents
                 .addOnSuccessListener(snap ->
                         tvTotal.setText(String.valueOf(snap.size())))
