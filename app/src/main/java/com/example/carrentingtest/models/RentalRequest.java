@@ -13,6 +13,8 @@ public class RentalRequest {
     private Date endDate;
     private String additionalRequests;
     private String status; // "pending", "approved", "rejected"
+    private String companyId;
+
 
     public RentalRequest() {
     }
@@ -98,5 +100,11 @@ public class RentalRequest {
     public void setStatus(String status) {
         this.status = status;
     }
-}
+    public String getCompanyId() {
+        return companyId;
+    }
 
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+}

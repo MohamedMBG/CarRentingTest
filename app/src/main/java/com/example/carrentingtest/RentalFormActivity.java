@@ -35,6 +35,8 @@ public class RentalFormActivity extends AppCompatActivity {
     private EditText etAdditionalRequests;
     private TextView tvStartDate, tvEndDate;
     private ImageView ivCarImage;
+    private String companyId;
+
 
     // Date formatter for displaying dates
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
@@ -52,6 +54,11 @@ public class RentalFormActivity extends AppCompatActivity {
         // Initialize Firebase Firestore and Auth instances
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
+                    .addOnSuccessListener(doc -> companyId = doc.getString("companyId"));
+        }
 
         // Get the selected car passed from previous activity
         selectedCar = (Car) getIntent().getSerializableExtra("selectedCar");
@@ -186,7 +193,8 @@ public class RentalFormActivity extends AppCompatActivity {
 
     // Method to fetch user data from Firestore
     private void fetchUserDataAndSubmit(FirebaseUser user, Calendar startCal, Calendar endCal) {
-        db.collection("clients").document(user.getUid()).get()
+        //db.collection("clients").document(user.getUid()).get()
+        db.collection("users").document(user.getUid()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot document = task.getResult();
@@ -230,6 +238,7 @@ public class RentalFormActivity extends AppCompatActivity {
         request.setUserDriverLicense(userDriverLicense);
         request.setAdditionalRequests(etAdditionalRequests.getText().toString().trim());
         request.setStatus("pending");
+        request.setCompanyId(companyId);
         request.setStartDate(startCal.getTime());
         request.setEndDate(endCal.getTime());
 
