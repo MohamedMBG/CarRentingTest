@@ -61,6 +61,7 @@
     <string name="price_per_day_format">%.2f dhs / jour</string>
 <string name="full_name">Nom complet</string>
     <string name="email">E-mail</string>
+    <string name="next">Suivant</string>
     <string name="phone_number">Numéro de téléphone</string>
     <string name="driver_license_number">Numéro de permis de conduire</string>
     <string name="company_id">ID société</string>

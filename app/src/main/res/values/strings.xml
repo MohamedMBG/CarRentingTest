@@ -59,8 +59,9 @@
     <string name="driver_license_label">Driver License:</string>
     <string name="car_available">Available</string>
     <string name="price_per_day_format">%.2f dhs / day</string>
-<string name="full_name">Full Name</string>
+    <string name="full_name">Full Name</string>
     <string name="email">Email</string>
+    <string name="next">Next</string>
     <string name="phone_number">Phone number</string>
     <string name="driver_license_number">Driver License Number</string>
     <string name="company_id">Company ID</string>

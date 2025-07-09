@@ -13,9 +13,12 @@ firebaseFirestore = "25.1.4"
 picasso = "2.8"
 javamail = "1.6.7"
 glide = "4.14.2"
+mlkit_face_detection = "16.1.5"
+
 
 
 [libraries]
+mlkit_facedetection = { module = "com.google.mlkit:face-detection", version.ref = "mlkit_face_detection" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp">
+
+    <TextView
+        android:text="Capture Your Driving License"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnCaptureFront"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Capture Front Side"/>
+    <ImageView
+        android:id="@+id/ivLicenseFront"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:background="#EFEFEF"/>
+
+    <Button
+        android:id="@+id/btnCaptureBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Capture Back Side"/>
+    <ImageView
+        android:id="@+id/ivLicenseBack"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:background="#EFEFEF"/>
+
+    <Button
+        android:id="@+id/btnFinishRegistration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Finish Registration"
+        android:enabled="false"/>
+</LinearLayout>

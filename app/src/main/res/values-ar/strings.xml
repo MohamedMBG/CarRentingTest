@@ -61,6 +61,7 @@
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
 <string name="full_name">الاسم الكامل</string>
     <string name="email">البريد الإلكتروني</string>
+    <string name="next">التالي</string>
     <string name="phone_number">رقم الهاتف</string>
     <string name="driver_license_number">رقم رخصة القيادة</string>
     <string name="company_id">معرف الشركة</string>

@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -32,6 +34,22 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar;
+
+    private String name;
+    private String email;
+    private String password;
+    private String phone;
+    private String driverLicense;
+    private String companyId;
+
+    private final ActivityResultLauncher<Intent> registrationLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    createAccount();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +79,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void registerUser() {
         // Get user inputs
-        String name = Objects.requireNonNull(etName.getText()).toString().trim();
-        String email = Objects.requireNonNull(etEmail.getText()).toString().trim();
-        String password = Objects.requireNonNull(etPassword.getText()).toString().trim();
-        String phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
-        String driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
-        String companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
+        name = Objects.requireNonNull(etName.getText()).toString().trim();
+        email = Objects.requireNonNull(etEmail.getText()).toString().trim();
+        password = Objects.requireNonNull(etPassword.getText()).toString().trim();
+        phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
+        driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
+        companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -96,13 +114,22 @@ public class SignUpActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        // Create Firebase account
+        Intent intent = new Intent(this, SelfieCaptureActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("email", email);
+        intent.putExtra("password", password);
+        intent.putExtra("phone", phone);
+        intent.putExtra("driverLicense", driverLicense);
+        intent.putExtra("companyId", companyId);
+        registrationLauncher.launch(intent);
+    }
+
+    private void createAccount() {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Pass driverLicense to saveClientData
                             saveClientData(user.getUid(), name, email, phone, driverLicense, companyId);
                         }
                     } else {
