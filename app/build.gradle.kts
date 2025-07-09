@@ -63,4 +63,5 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
     // ML Kit Face Detection
     implementation(libs.mlkit.facedetection)
+    implementation(libs.tensorflow.lite)
 }

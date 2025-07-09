@@ -18,6 +18,7 @@ mlkit_face_detection = "16.1.5"
 
 
 [libraries]
+tensorflow-lite = "org.tensorflow:tensorflow-lite:2.14.0"
 mlkit_facedetection = { module = "com.google.mlkit:face-detection", version.ref = "mlkit_face_detection" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

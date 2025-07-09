@@ -4,21 +4,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="24dp">
+    android:padding="10dp">
 
     <TextView
         android:text="Capture Your Driving License"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/btnCaptureFront"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture Front Side"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnUploadFront"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:backgroundTint="@color/bottom_nav_item_color_selector"
+            android:layout_height="wrap_content"
+            android:text="Upload From Gallery" />
+
+        <Button
+            android:id="@+id/btnCaptureFront"
+            android:backgroundTint="@color/bottomNavItemActive"
+            android:layout_margin="3dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Capture Front Side"/>
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/ivLicenseFront"
         android:layout_width="250dp"
@@ -27,11 +51,34 @@
         android:scaleType="centerCrop"
         android:background="#EFEFEF"/>
 
-    <Button
-        android:id="@+id/btnCaptureBack"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture Back Side"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnUploadBack"
+            android:backgroundTint="@color/bottom_nav_item_color_selector"
+            android:layout_width="0dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Upload From Gallery" />
+
+        <Button
+            android:id="@+id/btnCaptureBack"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:backgroundTint="@color/bottomNavItemActive"
+            android:layout_height="wrap_content"
+            android:text="Capture Back Side"/>
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/ivLicenseBack"
         android:layout_width="250dp"

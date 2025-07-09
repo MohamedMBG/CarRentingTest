@@ -2,214 +2,131 @@ package com.example.carrentingtest.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.exifinterface.media.ExifInterface;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
-
+import org.tensorflow.lite.Interpreter;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.concurrent.CountDownLatch;
 
+/** Utility for face verification using TFLite face embeddings */
 public class FaceVerificationUtil {
+    private static Interpreter tflite = null;
+    private static final String MODEL_FILE = "facenet.tflite"; // Make sure this file is in your assets
 
-    private static final String TAG = "FaceVerification";
-    private static final float FACE_MATCH_THRESHOLD = 0.75f; // Increased threshold
-    private static final int MIN_FACE_SIZE = 100; // Minimum face size in pixels
-
-    public static boolean verifyFaces(Context context, Uri selfieUri, Uri licenseFaceUri) {
-        // Load and preprocess images
-        Bitmap selfieBitmap = loadAndPreprocessImage(context, selfieUri);
-        Bitmap licenseBitmap = loadAndPreprocessImage(context, licenseFaceUri);
-
-        if (selfieBitmap == null || licenseBitmap == null) {
-            Log.e(TAG, "Image loading failed");
-            return false;
+    // Loads the model if not already loaded
+    private static Interpreter getTFLiteInterpreter(Context context) throws IOException {
+        if (tflite == null) {
+            MappedByteBuffer buffer = loadModelFile(context, MODEL_FILE);
+            tflite = new Interpreter(buffer);
         }
+        return tflite;
+    }
+    // Loads model file from assets
+    private static MappedByteBuffer loadModelFile(Context context, String modelFile) throws IOException {
+        FileInputStream inputStream = context.getAssets().openFd(modelFile).createInputStream();
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = context.getAssets().openFd(modelFile).getStartOffset();
+        long declaredLength = context.getAssets().openFd(modelFile).getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+    // Detect face in bitmap and return the cropped face bitmap (blocking)
+    private static Bitmap detectAndCropFace(Bitmap bitmap, Context context) throws Exception {
+        final Bitmap[] resultBitmap = {null};
+        CountDownLatch latch = new CountDownLatch(1);
 
-        // Configure face detector
         FaceDetectorOptions options = new FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-                .setMinFaceSize(0.15f) // Relative to image size
                 .build();
-
         FaceDetector detector = FaceDetection.getClient(options);
 
-        try {
-            // Detect faces
-            Face selfieFace = detectMainFace(detector, selfieBitmap);
-            Face licenseFace = detectMainFace(detector, licenseBitmap);
-
-            if (selfieFace == null || licenseFace == null) {
-                Log.e(TAG, "Face detection failed - Selfie: " + (selfieFace != null) +
-                        ", License: " + (licenseFace != null));
-                return false;
-            }
-
-            // Improved face comparison
-            float similarity = compareFacesAdvanced(selfieFace, licenseFace);
-            Log.d(TAG, String.format("Face similarity score: %.2f", similarity));
-
-            return similarity >= FACE_MATCH_THRESHOLD;
-        } finally {
-            detector.close();
-        }
-    }
-
-    private static Bitmap loadAndPreprocessImage(Context context, Uri uri) {
-        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
-            // First decode with just bounds to check orientation
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(inputStream, null, options);
-
-            // Reset stream
-            inputStream.close();
-            InputStream newStream = context.getContentResolver().openInputStream(uri);
-
-            // Handle orientation
-            int orientation = getExifOrientation(context, uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(newStream);
-
-            if (orientation != 0) {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(orientation);
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                        bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            }
-
-            // Scale down if too large to prevent OOM
-            int maxDimension = Math.max(bitmap.getWidth(), bitmap.getHeight());
-            if (maxDimension > 1024) {
-                float scale = 1024f / maxDimension;
-                bitmap = Bitmap.createScaledBitmap(bitmap,
-                        (int)(bitmap.getWidth() * scale),
-                        (int)(bitmap.getHeight() * scale), true);
-            }
-
-            return bitmap;
-        } catch (IOException e) {
-            Log.e(TAG, "Error loading image", e);
-            return null;
-        }
-    }
-
-    private static int getExifOrientation(Context context, Uri uri) {
-        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
-            ExifInterface exif = new ExifInterface(inputStream);
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    return 90;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    return 180;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    return 270;
-                default:
-                    return 0;
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error reading EXIF data", e);
-            return 0;
-        }
-    }
-
-    private static Face detectMainFace(FaceDetector detector, Bitmap bitmap) {
         InputImage image = InputImage.fromBitmap(bitmap, 0);
-        final CountDownLatch latch = new CountDownLatch(1);
-        final Face[] result = {null};
-
         detector.process(image)
                 .addOnSuccessListener(faces -> {
-                    if (!faces.isEmpty()) {
-                        // Find the largest face (most likely the main subject)
-                        Face largestFace = null;
-                        float maxArea = 0;
-
-                        for (Face face : faces) {
-                            float area = face.getBoundingBox().width() * face.getBoundingBox().height();
-                            if (area > maxArea) {
-                                maxArea = area;
-                                largestFace = face;
-                            }
-                        }
-
-                        if (largestFace != null && maxArea > MIN_FACE_SIZE) {
-                            result[0] = largestFace;
-                        }
+                    if (faces.size() > 0) {
+                        Face face = faces.get(0);
+                        int x = Math.max(face.getBoundingBox().left, 0);
+                        int y = Math.max(face.getBoundingBox().top, 0);
+                        int w = Math.min(face.getBoundingBox().width(), bitmap.getWidth() - x);
+                        int h = Math.min(face.getBoundingBox().height(), bitmap.getHeight() - y);
+                        resultBitmap[0] = Bitmap.createBitmap(bitmap, x, y, w, h);
                     }
                     latch.countDown();
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Face detection error", e);
-                    latch.countDown();
-                });
+                .addOnFailureListener(e -> latch.countDown());
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            Log.e(TAG, "Detection interrupted", e);
-        }
-
-        return result[0];
+        latch.await(); // Block until done
+        if (resultBitmap[0] == null) throw new Exception("No face detected!");
+        return resultBitmap[0];
     }
-
-    private static float compareFacesAdvanced(Face face1, Face face2) {
-        // Weighted comparison of multiple facial features
-        float similarity = 0f;
-        int featureCount = 0;
-
-        // 1. Compare face bounding box proportions (30% weight)
-        float widthRatio = (float) face1.getBoundingBox().width() / face2.getBoundingBox().width();
-        float heightRatio = (float) face1.getBoundingBox().height() / face2.getBoundingBox().height();
-        similarity += 0.3f * (1f - Math.abs(1f - widthRatio));
-        similarity += 0.3f * (1f - Math.abs(1f - heightRatio));
-        featureCount += 2;
-
-        // 2. Compare facial landmarks (40% weight)
-        if (face1.getLeftEyeOpenProbability() != null && face2.getLeftEyeOpenProbability() != null) {
-            similarity += 0.2f * (1f - Math.abs(
-                    face1.getLeftEyeOpenProbability() - face2.getLeftEyeOpenProbability()));
-            featureCount++;
+    // Generate embedding for a face image
+    private static float[] getFaceEmbedding(Bitmap faceBitmap, Context context) throws IOException {
+        Bitmap resized = Bitmap.createScaledBitmap(faceBitmap, 112, 112, true); // Most facenet models use 112x112
+        float[][][][] input = new float[1][112][112][3];
+        // Preprocess image (normalize pixel values)
+        for (int y = 0; y < 112; y++) {
+            for (int x = 0; x < 112; x++) {
+                int pixel = resized.getPixel(x, y);
+                input[0][y][x][0] = ((pixel >> 16) & 0xFF) / 255.0f;
+                input[0][y][x][1] = ((pixel >> 8) & 0xFF) / 255.0f;
+                input[0][y][x][2] = (pixel & 0xFF) / 255.0f;
+            }
         }
 
-        if (face1.getRightEyeOpenProbability() != null && face2.getRightEyeOpenProbability() != null) {
-            similarity += 0.2f * (1f - Math.abs(
-                    face1.getRightEyeOpenProbability() - face2.getRightEyeOpenProbability()));
-            featureCount++;
+        float[][] embedding = new float[1][128]; // 128 for facenet, 512 for some others
+        getTFLiteInterpreter(context).run(input, embedding);
+        return embedding[0];
+    }
+    // Compute cosine similarity between two vectors
+    private static float cosineSimilarity(float[] vec1, float[] vec2) {
+        float dot = 0f, normA = 0f, normB = 0f;
+        for (int i = 0; i < vec1.length; i++) {
+            dot += vec1[i] * vec2[i];
+            normA += vec1[i] * vec1[i];
+            normB += vec2[i] * vec2[i];
         }
+        return (float)(dot / (Math.sqrt(normA) * Math.sqrt(normB)));
+    }
+    // Main public method: returns true if faces match, false otherwise
+    public static boolean isFaceMatch(Bitmap selfie, Bitmap license, Context context) {
+        try {
+            Bitmap faceSelfie = detectAndCropFace(selfie, context);
+            Bitmap faceLicense = detectAndCropFace(license, context);
 
-        // 3. Compare smiling probability (20% weight)
-        if (face1.getSmilingProbability() != null && face2.getSmilingProbability() != null) {
-            similarity += 0.2f * (1f - Math.abs(
-                    face1.getSmilingProbability() - face2.getSmilingProbability()));
-            featureCount++;
+            float[] embeddingSelfie = getFaceEmbedding(faceSelfie, context);
+            float[] embeddingLicense = getFaceEmbedding(faceLicense, context);
+
+            float similarity = cosineSimilarity(embeddingSelfie, embeddingLicense);
+            Log.d("FaceVerification", "Similarity score: " + similarity); // Debug log
+
+            float threshold = 0.4f; // Lowered from 0.6 to 0.4 (less strict)
+            return similarity > threshold;
+        } catch (Exception e) {
+            Log.e("FaceVerification", "Error in face matching", e);
+            return false; // Fail gracefully
         }
+    }
+    // (Optional) Add a version that returns the score
+    public static float getFaceSimilarityScore(Bitmap selfie, Bitmap license, Context context) {
+        try {
+            Bitmap faceSelfie = detectAndCropFace(selfie, context);
+            Bitmap faceLicense = detectAndCropFace(license, context);
 
-        // 4. Compare head rotation (10% weight)
-        similarity += 0.1f * (1f - Math.abs(
-                face1.getHeadEulerAngleY() - face2.getHeadEulerAngleY()) / 180f);
-        featureCount++;
+            float[] embeddingSelfie = getFaceEmbedding(faceSelfie, context);
+            float[] embeddingLicense = getFaceEmbedding(faceLicense, context);
 
-        // Normalize the similarity score
-        return featureCount > 0 ? similarity / featureCount : 0f;
+            return cosineSimilarity(embeddingSelfie, embeddingLicense);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0f;
+        }
     }
 }
