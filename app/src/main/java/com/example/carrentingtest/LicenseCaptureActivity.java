@@ -1,12 +1,15 @@
 package com.example.carrentingtest;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -44,6 +47,7 @@ public class LicenseCaptureActivity extends AppCompatActivity {
                                 backUri = uri;
                                 ivBack.setImageBitmap(image);
                             }
+                            updateFinishButtonState(findViewById(R.id.btnFinishRegistration));
                         } catch (Exception e) {
                             Toast.makeText(this, "Failed to capture image", Toast.LENGTH_SHORT).show();
                         }
@@ -64,9 +68,30 @@ public class LicenseCaptureActivity extends AppCompatActivity {
         Button btnCaptureBack = findViewById(R.id.btnCaptureBack);
         Button btnFinish = findViewById(R.id.btnFinishRegistration);
 
+        // Initially disable the finish button
+        btnFinish.setEnabled(false);
+
         btnCaptureFront.setOnClickListener(v -> launchCamera());
         btnCaptureBack.setOnClickListener(v -> launchCamera());
         btnFinish.setOnClickListener(v -> verifyAndFinish());
+
+        // Update button state whenever images change
+        View.OnClickListener captureListener = v -> {
+            launchCamera();
+            updateFinishButtonState(btnFinish);
+        };
+
+        btnCaptureFront.setOnClickListener(captureListener);
+        btnCaptureBack.setOnClickListener(captureListener);
+    }
+
+    private void updateFinishButtonState(Button btnFinish) {
+        // Enable button only when both selfie and front license are captured
+        boolean isComplete = (selfieUri != null && frontUri != null);
+        btnFinish.setEnabled(isComplete);
+
+        // Visual feedback
+        btnFinish.setAlpha(isComplete ? 1.0f : 0.5f);
     }
 
     private void launchCamera() {
@@ -79,30 +104,48 @@ public class LicenseCaptureActivity extends AppCompatActivity {
     }
 
     private void verifyAndFinish() {
+        // Debug logging
+        Log.d("LicenseCapture", "verifyAndFinish called");
+        Log.d("LicenseCapture", "Selfie URI: " + (selfieUri != null ? selfieUri.toString() : "null"));
+        Log.d("LicenseCapture", "Front URI: " + (frontUri != null ? frontUri.toString() : "null"));
+        Log.d("LicenseCapture", "Back URI: " + (backUri != null ? backUri.toString() : "null"));
+
         if (selfieUri == null || frontUri == null) {
-            Toast.makeText(this, "Please capture all images", Toast.LENGTH_SHORT).show();
+            String missing = "";
+            if (selfieUri == null) missing += "selfie, ";
+            if (frontUri == null) missing += "front license photo";
+            Toast.makeText(this, "Please capture: " + missing, Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Pass the activity context to the verification method
-        boolean facesMatch = FaceVerificationUtil.verifyFaces(this, selfieUri, frontUri);
-        String licenseNumber = getIntent().getStringExtra("driverLicense");
-        boolean licenseValid = MoroccanLicenseValidator.isValid(licenseNumber);
+        // Show loading indicator
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Verifying documents...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        if (facesMatch && licenseValid) {
-            // Forward back to SignUpActivity to create the account
-            Intent result = new Intent();
-            result.putExtra(SelfieCaptureActivity.EXTRA_SELFIE_URI, selfieUri.toString());
-            result.putExtra("license_front", frontUri.toString());
-            result.putExtra("license_back", backUri != null ? backUri.toString() : null);
-            setResult(RESULT_OK, result);
-            finish();
-        } else {
-            String message = "Verification failed - ";
-            if (!facesMatch) message += "Faces don't match. ";
-            if (!licenseValid) message += "Invalid license number.";
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        }
+        new Thread(() -> {
+            boolean facesMatch = FaceVerificationUtil.verifyFaces(this, selfieUri, frontUri);
+            String licenseNumber = getIntent().getStringExtra("driverLicense");
+            boolean licenseValid = MoroccanLicenseValidator.isValid(licenseNumber);
+
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                if (facesMatch && licenseValid) {
+                    Intent result = new Intent();
+                    result.putExtra(SelfieCaptureActivity.EXTRA_SELFIE_URI, selfieUri.toString());
+                    result.putExtra("license_front", frontUri.toString());
+                    result.putExtra("license_back", backUri != null ? backUri.toString() : null);
+                    setResult(RESULT_OK, result);
+                    finish();
+                } else {
+                    String message = "Verification failed - ";
+                    if (!facesMatch) message += "Faces don't match. ";
+                    if (!licenseValid) message += "Invalid license number.";
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }).start();
     }
 
     @Override
