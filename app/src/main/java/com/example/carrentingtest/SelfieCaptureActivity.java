@@ -17,29 +17,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.carrentingtest.utils.FaceNetUtil;
+
 import java.io.IOException;
 
-/**
- * Activity to capture a live selfie as part of the registration flow.
- */
 public class SelfieCaptureActivity extends AppCompatActivity {
+    private static final int REQ_SELFIE = 101;
+    private static final float MATCH_THRESHOLD = 0.7f;
 
-    public static final String EXTRA_SELFIE_URI = "selfie_uri";
     private ImageView ivPreview;
-    private Uri selfieUri;
+    private Bitmap selfieBitmap;
+    private FaceNetUtil faceNetUtil;
 
     private final ActivityResultLauncher<Intent> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Bundle extras = result.getData().getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    if (imageBitmap != null) {
-                        try {
-                            selfieUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "selfie", null));
-                            ivPreview.setImageBitmap(imageBitmap);
-                        } catch (Exception e) {
-                            Toast.makeText(this, "Failed to capture image", Toast.LENGTH_SHORT).show();
-                        }
+                    selfieBitmap = (Bitmap) extras.get("data");
+                    if (selfieBitmap != null) {
+                        ivPreview.setImageBitmap(selfieBitmap);
                     }
                 }
             });
@@ -47,7 +43,6 @@ public class SelfieCaptureActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> licenseLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    // pass result back to SignUpActivity
                     setResult(RESULT_OK, result.getData());
                     finish();
                 }
@@ -58,16 +53,20 @@ public class SelfieCaptureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selfie_capture);
 
+        faceNetUtil = FaceNetUtil.create(this);
         ivPreview = findViewById(R.id.ivSelfiePreview);
         Button btnCapture = findViewById(R.id.btnCaptureSelfie);
         Button btnNext = findViewById(R.id.btnSelfieNext);
 
         btnCapture.setOnClickListener(v -> launchCamera());
+        // In the btnNext.setOnClickListener, update the intent creation:
+        // In the btnNext.setOnClickListener:
         btnNext.setOnClickListener(v -> {
-            if (selfieUri != null) {
+            if (selfieBitmap != null) {
                 Intent intent = new Intent(this, LicenseCaptureActivity.class);
-                intent.putExtra(EXTRA_SELFIE_URI, selfieUri.toString());
-                intent.putExtras(getIntent());
+                intent.putExtra("selfie_bitmap", selfieBitmap);
+                // Pass the driver license number from the original signup intent
+                intent.putExtra("driverLicense", getIntent().getStringExtra("driverLicense"));
                 licenseLauncher.launch(intent);
             } else {
                 Toast.makeText(this, "Please capture a selfie", Toast.LENGTH_SHORT).show();
@@ -89,6 +88,14 @@ public class SelfieCaptureActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             launchCamera();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (selfieBitmap != null && !selfieBitmap.isRecycled()) {
+            selfieBitmap.recycle();
         }
     }
 }

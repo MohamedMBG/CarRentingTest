@@ -1,92 +1,59 @@
 package com.example.carrentingtest;
 
-import static com.example.carrentingtest.SelfieCaptureActivity.EXTRA_SELFIE_URI;
-
-import android.Manifest;
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.example.carrentingtest.utils.FaceVerificationUtil;
+import com.example.carrentingtest.utils.FaceNetUtil;
 import com.example.carrentingtest.utils.MoroccanLicenseValidator;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 public class LicenseCaptureActivity extends AppCompatActivity {
+    private static final float MATCH_THRESHOLD = 0.7f;
 
-    private static final int REQUEST_CAMERA = 101;
-    private static final int REQUEST_STORAGE = 102;
+    // Constants to track which side we're uploading
+    private static final int UPLOAD_FRONT = 1;
+    private static final int UPLOAD_BACK = 2;
+    private int currentUploadSide = UPLOAD_FRONT;
 
-    private ImageView ivFront, ivBack;
-    private Uri frontUri, backUri, selfieUri;
+    private ImageView ivFrontLicense, ivBackLicense;
+    private TextView tvResult;
+    private Button btnUploadFront, btnUploadBack, btnVerify;
+    private Bitmap selfieBitmap, frontLicenseBitmap, backLicenseBitmap;
+    private FaceNetUtil faceNetUtil;
+    private String driverLicenseNumber;
 
-    // Camera launcher
-    private final ActivityResultLauncher<Intent> cameraLauncher =
+    private final ActivityResultLauncher<Intent> pickImageLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Bitmap image = (Bitmap) result.getData().getExtras().get("data");
-                    if (image != null) {
-                        try {
-                            Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(
-                                    getContentResolver(),
-                                    image,
-                                    "license",
-                                    null
-                            ));
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    try {
+                        Uri uri = result.getData().getData();
+                        Bitmap licenseBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 
-                            if (frontUri == null) {
-                                frontUri = uri;
-                                ivFront.setImageBitmap(image);
-                            } else {
-                                backUri = uri;
-                                ivBack.setImageBitmap(image);
-                            }
-                            updateFinishButtonState();
-                        } catch (Exception e) {
-                            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+                        if (currentUploadSide == UPLOAD_FRONT) {
+                            frontLicenseBitmap = licenseBitmap;
+                            ivFrontLicense.setImageBitmap(frontLicenseBitmap);
+                            Toast.makeText(this, "Front side uploaded", Toast.LENGTH_SHORT).show();
+                        } else {
+                            backLicenseBitmap = licenseBitmap;
+                            ivBackLicense.setImageBitmap(backLicenseBitmap);
+                            Toast.makeText(this, "Back side uploaded", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                }
-            });
-
-    // Gallery launcher
-    private final ActivityResultLauncher<Intent> galleryLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri selectedUri = result.getData().getData();
-                    if (selectedUri != null) {
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                                    getContentResolver(),
-                                    selectedUri
-                            );
-
-                            if (frontUri == null) {
-                                frontUri = selectedUri;
-                                ivFront.setImageBitmap(bitmap);
-                            } else {
-                                backUri = selectedUri;
-                                ivBack.setImageBitmap(bitmap);
-                            }
-                            updateFinishButtonState();
-                        } catch (IOException e) {
-                            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
-                        }
+                    } catch (IOException e) {
+                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -96,150 +63,105 @@ public class LicenseCaptureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_license_capture);
 
-        selfieUri = Uri.parse(getIntent().getStringExtra(EXTRA_SELFIE_URI));
+        // Initialize FaceNet utility
+        faceNetUtil = FaceNetUtil.create(this);
 
-        ivFront = findViewById(R.id.ivLicenseFront);
-        ivBack = findViewById(R.id.ivLicenseBack);
+        // Get data from previous activity
+        selfieBitmap = getIntent().getParcelableExtra("selfie_bitmap");
+        driverLicenseNumber = getIntent().getStringExtra("driverLicense");
 
-        Button btnCaptureFront = findViewById(R.id.btnCaptureFront);
-        Button btnCaptureBack = findViewById(R.id.btnCaptureBack);
-        Button btnUploadFront = findViewById(R.id.btnUploadFront);
-        Button btnUploadBack = findViewById(R.id.btnUploadBack);
-        Button btnFinish = findViewById(R.id.btnFinishRegistration);
+        // Initialize views
+        ivFrontLicense = findViewById(R.id.ivFrontLicense);
+        ivBackLicense = findViewById(R.id.ivBackLicense);
+        tvResult = findViewById(R.id.tvVerificationResult);
+        btnUploadFront = findViewById(R.id.btnUploadFront);
+        btnUploadBack = findViewById(R.id.btnUploadBack);
+        btnVerify = findViewById(R.id.btnVerify);
 
-        // Camera capture listeners
-        btnCaptureFront.setOnClickListener(v -> launchCamera());
-        btnCaptureBack.setOnClickListener(v -> launchCamera());
+        // Set click listeners
+        btnUploadFront.setOnClickListener(v -> {
+            currentUploadSide = UPLOAD_FRONT;
+            launchImagePicker();
+        });
 
-        // Gallery upload listeners
-        btnUploadFront.setOnClickListener(v -> openGallery());
-        btnUploadBack.setOnClickListener(v -> openGallery());
+        btnUploadBack.setOnClickListener(v -> {
+            currentUploadSide = UPLOAD_BACK;
+            launchImagePicker();
+        });
 
-        btnFinish.setOnClickListener(v -> verifyAndFinish());
-        updateFinishButtonState();
+        btnVerify.setOnClickListener(v -> verifyLicenseAndFaces());
     }
 
-    private void updateFinishButtonState() {
-        Button btnFinish = findViewById(R.id.btnFinishRegistration);
-        boolean isComplete = (selfieUri != null && frontUri != null);
-        btnFinish.setEnabled(isComplete);
-        btnFinish.setAlpha(isComplete ? 1.0f : 0.5f);
+    private void launchImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        pickImageLauncher.launch(intent);
     }
 
-    private void launchCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CAMERA
-            );
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            cameraLauncher.launch(intent);
-        }
-    }
-
-    private void openGallery() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE
-            );
-        } else {
-            Intent intent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            galleryLauncher.launch(intent);
-        }
-    }
-
-    private void verifyAndFinish() {
-        if (selfieUri == null || frontUri == null) {
-            Toast.makeText(this, "Please provide selfie and front license", Toast.LENGTH_LONG).show();
+    private void verifyLicenseAndFaces() {
+        // First validate license format
+        if (!MoroccanLicenseValidator.isValid(driverLicenseNumber)) {
+            tvResult.setText("Invalid Moroccan license format");
             return;
         }
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Verifying documents...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        // Check if both sides are uploaded
+        if (frontLicenseBitmap == null) {
+            tvResult.setText("Please upload front side of license");
+            return;
+        }
 
-        new Thread(() -> {
+        if (backLicenseBitmap == null) {
+            tvResult.setText("Please upload back side of license");
+            return;
+        }
+
+        tvResult.setText("Verifying license and face...");
+        btnVerify.setEnabled(false);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                Bitmap selfieBitmap = getBitmapFromUri(this, selfieUri);
-                Bitmap licenseBitmap = getBitmapFromUri(this, frontUri);
-
-                if (selfieBitmap == null || licenseBitmap == null) {
-                    runOnUiThread(() -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Failed to load images", Toast.LENGTH_LONG).show();
-                    });
-                    return;
-                }
-
-                boolean facesMatch = FaceVerificationUtil.isFaceMatch(
-                        selfieBitmap,
-                        licenseBitmap,
-                        LicenseCaptureActivity.this
-                );
-
-                String licenseNumber = getIntent().getStringExtra("driverLicense");
-                boolean licenseValid = MoroccanLicenseValidator.isValid(licenseNumber);
+                // Verify face against front license (which typically has photo)
+                float[] embSelfie = faceNetUtil.getEmbedding(selfieBitmap);
+                float[] embLicense = faceNetUtil.getEmbedding(frontLicenseBitmap);
+                float similarity = FaceNetUtil.cosineSimilarity(embSelfie, embLicense);
+                boolean match = similarity > MATCH_THRESHOLD;
 
                 runOnUiThread(() -> {
-                    progressDialog.dismiss();
-                    if (facesMatch && licenseValid) {
-                        Intent result = new Intent();
-                        result.putExtra(EXTRA_SELFIE_URI, selfieUri.toString());
-                        result.putExtra("license_front", frontUri.toString());
-                        if (backUri != null) {
-                            result.putExtra("license_back", backUri.toString());
-                        }
-                        setResult(RESULT_OK, result);
+                    btnVerify.setEnabled(true);
+                    if (match) {
+                        tvResult.setText(String.format("Verification successful! Similarity: %.2f", similarity));
+                        // Return success result
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("verification_result", true);
+                        setResult(RESULT_OK, resultIntent);
                         finish();
                     } else {
-                        String error = "Verification failed - ";
-                        if (!facesMatch) error += "Faces don't match. ";
-                        if (!licenseValid) error += "Invalid license number.";
-                        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                        tvResult.setText(String.format("Verification failed. Similarity: %.2f", similarity));
                     }
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("LicenseCapture", "Verification error", e);
+                    btnVerify.setEnabled(true);
+                    tvResult.setText("Verification error");
+                    Toast.makeText(this, "Face verification failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
-        }).start();
-    }
-
-    public static Bitmap getBitmapFromUri(android.content.Context context, Uri uri) {
-        try {
-            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-        } catch (Exception e) {
-            Log.e("LicenseCapture", "Failed to load bitmap from URI", e);
-            return null;
-        }
+        });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Permission required", Toast.LENGTH_SHORT).show();
-            return;
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up bitmaps to avoid memory leaks
+        if (frontLicenseBitmap != null && !frontLicenseBitmap.isRecycled()) {
+            frontLicenseBitmap.recycle();
         }
-
-        if (requestCode == REQUEST_CAMERA) {
-            launchCamera();
-        } else if (requestCode == REQUEST_STORAGE) {
-            openGallery();
+        if (backLicenseBitmap != null && !backLicenseBitmap.isRecycled()) {
+            backLicenseBitmap.recycle();
+        }
+        if (selfieBitmap != null && !selfieBitmap.isRecycled()) {
+            selfieBitmap.recycle();
         }
     }
 }
