@@ -257,8 +257,6 @@
                 android:layout_weight="1"
                 android:text="@string/logout"
                 android:textColor="@color/colorError"
-                app:icon="@drawable/ic_logout"
-                app:iconTint="@color/colorError"
                 android:layout_marginStart="8dp"/>
 
         </LinearLayout>
