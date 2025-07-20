@@ -65,4 +65,9 @@
     <string name="phone_number">Numéro de téléphone</string>
     <string name="driver_license_number">Numéro de permis de conduire</string>
     <string name="company_id">ID société</string>
+
+
+    <string name="profile_picture_desc">Photo de profile</string>
+    <string name="edit_profile_picture">Modifier photo de profile</string>
+    <string name="edit_profile">Modifier profile</string>
 </resources>
