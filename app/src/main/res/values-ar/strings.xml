@@ -59,10 +59,16 @@
     <string name="driver_license_label">رخصة القيادة:</string>
     <string name="car_available">متاح</string>
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
-<string name="full_name">الاسم الكامل</string>
+    <string name="full_name">الاسم الكامل</string>
     <string name="email">البريد الإلكتروني</string>
     <string name="next">التالي</string>
     <string name="phone_number">رقم الهاتف</string>
     <string name="driver_license_number">رقم رخصة القيادة</string>
     <string name="company_id">معرف الشركة</string>
+    <string name="reports">تقارير</string>
+    <string name="edit_profile">تصحيح الملف</string>
+
+    <string name="business_overview">نظرة عامة على الأعمال</string>
+    <string name="most_rented_cars">أكثر السيارات تأجيرًا</string>
+    <string name="total_rentals">إجمالي عمليات التأجير: %1$d</string>
 </resources>

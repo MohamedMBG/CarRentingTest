@@ -66,7 +66,10 @@
     <string name="driver_license_number">Driver License Number</string>
     <string name="company_id">Company ID</string>
 
-    <string name="profile_picture_desc">Profile Picture</string>
-    <string name="edit_profile_picture">Edit Profile Picture</string>
-    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_profile">Edit profile</string>
+
+    <string name="reports">Reports</string>
+    <string name="business_overview">Business Overview</string>
+    <string name="most_rented_cars">Most Rented Cars</string>
+    <string name="total_rentals">Total Rentals: %1$d</string>
 </resources>

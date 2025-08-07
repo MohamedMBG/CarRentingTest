@@ -59,15 +59,16 @@
     <string name="driver_license_label">Permis de conduire :</string>
     <string name="car_available">Disponible</string>
     <string name="price_per_day_format">%.2f dhs / jour</string>
-<string name="full_name">Nom complet</string>
+    <string name="full_name">Nom complet</string>
     <string name="email">E-mail</string>
     <string name="next">Suivant</string>
     <string name="phone_number">Numéro de téléphone</string>
     <string name="driver_license_number">Numéro de permis de conduire</string>
     <string name="company_id">ID société</string>
-
-
-    <string name="profile_picture_desc">Photo de profile</string>
-    <string name="edit_profile_picture">Modifier photo de profile</string>
+    <string name="reports">Rapports</string>
+    <string name="business_overview">Aperçu de lactivité</string>
+    <string name="most_rented_cars">Voitures les plus louées</string>
+    <string name="total_rentals">Nombre total de locations : %1$d</string>
     <string name="edit_profile">Modifier profile</string>
+
 </resources>

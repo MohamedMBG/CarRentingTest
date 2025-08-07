@@ -12,14 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:id="@+id/heroTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/find_perfect_car"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/textColorPrimary"
             android:fontFamily="sans-serif-medium"/>
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/choose_from_selection"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"/>
     </LinearLayout>
@@ -38,7 +38,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         app:cardBackgroundColor="@color/colorSurface"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp">

@@ -14,10 +14,12 @@ picasso = "2.8"
 javamail = "1.6.7"
 glide = "4.14.2"
 mlkit_face_detection = "16.1.5"
+mpandroidchart = "3.1.0"
 
 
 
 [libraries]
+mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 tensorflow-lite = "org.tensorflow:tensorflow-lite:2.14.0"
 mlkit_facedetection = { module = "com.google.mlkit:face-detection", version.ref = "mlkit_face_detection" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
