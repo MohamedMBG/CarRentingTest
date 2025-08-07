@@ -7,4 +7,5 @@
     <color name="bottomNavBackground">#000000</color>
     <color name="bottomNavItemActive">#1F7A8C</color>
     <color name="bottomNavItemInactive">#FFFFFF</color>
+    <color name="bottomNavRipple">#33FFFFFF</color>
 </resources>
