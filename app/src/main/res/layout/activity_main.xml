@@ -20,8 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/bottomNavBackground"
-        app:itemIconTint="@color/bottom_nav_item_color_selector" 
+        android:layout_margin="16dp"
+        android:background="@drawable/bottom_nav_background"
+        android:elevation="8dp"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/bottom_nav_item_color_selector"
+        app:itemRippleColor="@color/bottomNavRipple"
         app:itemTextColor="@color/bottom_nav_item_color_selector"
         app:menu="@menu/bottom_nav_menu" />
 
