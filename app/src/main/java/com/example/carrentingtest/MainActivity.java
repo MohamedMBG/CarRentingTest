@@ -2,10 +2,8 @@ package com.example.carrentingtest;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,12 +14,13 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.example.carrentingtest.fragments.HomeFragment;
 import com.example.carrentingtest.fragments.ProfileFragment;
 import com.example.carrentingtest.fragments.RequestsHistoryFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import me.ibrahimsn.lib.OnItemSelectedListener;
+import me.ibrahimsn.lib.SmoothBottomBar;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
+    private SmoothBottomBar bottomNavigationView;
     private FirebaseAuth mAuth;
 
     @Override
@@ -40,33 +39,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelect(int index) {
+                Fragment fragment = null;
+                if (index == 0) {
+                    fragment = new HomeFragment();
+                } else if (index == 1) {
+                    fragment = new RequestsHistoryFragment();
+                } else if (index == 2) {
+                    fragment = new ProfileFragment();
+                }
+                if (fragment != null) {
+                    loadFragment(fragment);
+                }
+            }
+        });
 
         // Load the default fragment (HomeFragment)
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
-            bottomNavigationView.setSelectedItemId(R.id.navigation_home); // Set default selection
+            bottomNavigationView.setSelectedItem(0); // Set default selection
         }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment fragment = null;
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.navigation_home) {
-            fragment = new HomeFragment();
-        } else if (itemId == R.id.navigation_requests) {
-            fragment = new RequestsHistoryFragment();
-        } else if (itemId == R.id.navigation_profile) {
-            fragment = new ProfileFragment();
-        }
-
-        if (fragment != null) {
-            loadFragment(fragment);
-            return true;
-        }
-        return false;
     }
 
     private void loadFragment(Fragment fragment) {

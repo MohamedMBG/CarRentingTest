@@ -67,4 +67,5 @@ dependencies {
     // ML Kit Face Detection
     implementation(libs.mlkit.facedetection)
     implementation(libs.tensorflow.lite)
+    implementation(libs.smoothbottombar)
 }

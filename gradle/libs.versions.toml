@@ -15,6 +15,7 @@ javamail = "1.6.7"
 glide = "4.14.2"
 mlkit_face_detection = "16.1.5"
 mpandroidchart = "3.1.0"
+smoothbottombar = "1.7.9"
 
 
 
@@ -36,6 +37,7 @@ android-mail = { group = "com.sun.mail", name = "android-mail", version.ref = "j
 android-activation = { group = "com.sun.mail", name = "android-activation", version.ref = "javamail" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+smoothbottombar = { group = "com.github.ibrahimsn98", name = "SmoothBottomBar", version.ref = "smoothbottombar" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
