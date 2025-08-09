@@ -10,15 +10,21 @@ constraintlayout = "2.2.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.1"
 firebaseFirestore = "25.1.4"
+firebaseAnalytics = "22.1.2"
+firebaseStorage = "21.0.1"
+firebaseConfig = "22.0.0"
 picasso = "2.8"
 javamail = "1.6.7"
 glide = "4.14.2"
 mlkit_face_detection = "16.1.5"
 mpandroidchart = "3.1.0"
-
+concurrentFutures = "1.1.0"
+firebaseBom = "33.2.0"
 
 
 [libraries]
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 tensorflow-lite = "org.tensorflow:tensorflow-lite:2.14.0"
 mlkit_facedetection = { module = "com.google.mlkit:face-detection", version.ref = "mlkit_face_detection" }
@@ -31,11 +37,15 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 android-mail = { group = "com.sun.mail", name = "android-mail", version.ref = "javamail" }
 android-activation = { group = "com.sun.mail", name = "android-activation", version.ref = "javamail" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }

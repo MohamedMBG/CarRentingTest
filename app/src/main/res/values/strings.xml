@@ -67,6 +67,7 @@
     <string name="company_id">Company ID</string>
 
     <string name="edit_profile">Edit profile</string>
+    <string name="remember_me">Remember me</string>
 
     <!-- Verification strings -->
     <string name="verify_license">Verify license</string>
@@ -95,9 +96,16 @@
     <string name="onboarding_headline_1">Book your ride in seconds</string>
     <string name="onboarding_headline_2">Verified drivers only</string>
     <string name="onboarding_headline_3">Drive with peace of mind</string>
-
     <string name="reports">Reports</string>
     <string name="business_overview">Business Overview</string>
     <string name="most_rented_cars">Most Rented Cars</string>
     <string name="total_rentals">Total Rentals: %1$d</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="capture_failed">Couldn’t capture image. Try again.</string>
+    <string name="license_uploaded">License photo uploaded</string>
+    <string name="upload_failed">Upload failed. Check your connection and retry.</string>
+    <string name="selfie_uploaded">Selfie uploaded successfully</string>
+
+    <string name="verify_success">Verification successful</string>
+    <string name="verify_fail">Verification failed</string>
 </resources>

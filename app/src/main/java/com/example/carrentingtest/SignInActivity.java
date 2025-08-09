@@ -1,6 +1,7 @@
 package com.example.carrentingtest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -17,9 +18,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
+    private android.widget.CheckBox cbRememberMe;
     private View progressBar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private SharedPreferences authPrefs;
 
 
     @Override
@@ -30,11 +33,21 @@ public class SignInActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        authPrefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
 
         // Initialize views
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+        cbRememberMe = findViewById(R.id.cbRememberMe);
         progressBar = findViewById(R.id.progressBar);
+
+        // Restore remembered email
+        boolean remembered = authPrefs.getBoolean("remember_me", false);
+        cbRememberMe.setChecked(remembered);
+        if (remembered) {
+            String savedEmail = authPrefs.getString("email", "");
+            if (savedEmail != null) etEmail.setText(savedEmail);
+        }
 
         // Set click listener for sign in button
         findViewById(R.id.btnSignIn).setOnClickListener(v -> signInUser());
@@ -61,6 +74,11 @@ public class SignInActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
+                        // Save remember me preference
+                        authPrefs.edit()
+                                .putBoolean("remember_me", cbRememberMe.isChecked())
+                                .putString("email", cbRememberMe.isChecked() ? email : "")
+                                .apply();
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
                             db.collection("users").document(user.getUid()).get()

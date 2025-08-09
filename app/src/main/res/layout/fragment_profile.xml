@@ -16,48 +16,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/my_profile"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/textColorPrimary"
-            android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:gravity="start"
+            android:layout_marginBottom="16dp"/>
 
         <!-- Profile Picture Section -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="60dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <RelativeLayout
-                android:layout_width="120dp"
-                android:layout_height="120dp">
-
-                <ImageView
-                    android:id="@+id/ivProfilePicture"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_person_placeholder"/>
-
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <ImageView
+            android:id="@+id/ivProfilePicture"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_person_placeholder"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_profile_avatar"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"/>
 
         <!-- Main Profile Information Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="1dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <!-- Name Section -->
                 <LinearLayout
@@ -94,7 +84,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/loading"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"
                             android:layout_marginTop="4dp"/>

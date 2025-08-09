@@ -96,10 +96,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchCars() {
-        if (companyId == null) return;
-        db.collection("cars")
-                .whereEqualTo("companyId", companyId)
-                .get()
+        com.google.firebase.firestore.Query query = db.collection("cars");
+        if (companyId != null && !companyId.isEmpty()) {
+            query = query.whereEqualTo("companyId", companyId);
+        }
+        query.get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         carList.clear(); // Clear previous data

@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     //declarations des elements de UI
-    private TextInputEditText etEmail, etPassword, etName, etPhone;
+    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar;
@@ -58,8 +58,8 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
-        // These fields are no longer part of signup UI. Kept variables for backward
-        // compatibility if layout still contains them in older installations.
+        etDriverLicense = findViewById(R.id.etDriverLicense);
+        etCompanyId = findViewById(R.id.etCompanyId);
         progressBar = findViewById(R.id.progressBar);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
 
@@ -76,9 +76,8 @@ public class SignUpActivity extends AppCompatActivity {
         email = Objects.requireNonNull(etEmail.getText()).toString().trim();
         password = Objects.requireNonNull(etPassword.getText()).toString().trim();
         phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
-        // Optional/legacy fields if present in layout
-        driverLicense = null;
-        companyId = null;
+        driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
+        companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -93,7 +92,10 @@ public class SignUpActivity extends AppCompatActivity {
             etPhone.setError("Enter your phone number");
             return;
         }
-        // Driver license and company ID are no longer required at signup
+        if (TextUtils.isEmpty(driverLicense)) {
+            etDriverLicense.setError("Enter your driver license number");
+            return;
+        }
         if (password.length() < 6) {
             etPassword.setError("Password too short (min 6 characters)");
             return;
@@ -124,10 +126,7 @@ public class SignUpActivity extends AppCompatActivity {
         client.put("name", name);
         client.put("email", email);
         client.put("phone", phone);
-        // Optional legacy fields
-        if (driverLicense != null && !driverLicense.isEmpty()) {
-            client.put("driverLicense", driverLicense);
-        }
+        client.put("driverLicense", driverLicense);
         if (companyId != null && !companyId.isEmpty()) {
             client.put("companyId", companyId);
         }

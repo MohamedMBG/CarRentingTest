@@ -67,7 +67,38 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Driver license and company fields removed from sign-up by design -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:hintTextColor="@color/colorPrimary"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDriverLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/driver_license_number"
+            android:textColor="@color/colorText"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Company ID input (optional) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etCompanyId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/company_id" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
