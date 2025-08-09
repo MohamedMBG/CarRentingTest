@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.MainActivity;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -25,8 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
-    private TextView tvProfileName, tvProfileEmail, tvProfilePhone, tvProfileLicense;
-    private Button btnLogout;
+    private TextView tvProfileName, tvProfileEmail, tvProfilePhone, tvProfileLicense, txtVerifiedBadge;
+    private Button btnLogout, btnVerifyLicense;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -52,12 +53,32 @@ public class ProfileFragment extends Fragment {
         tvProfilePhone = view.findViewById(R.id.tvProfilePhone);
         tvProfileLicense = view.findViewById(R.id.tvProfileLicense);
         btnLogout = view.findViewById(R.id.btnLogout);
+        btnVerifyLicense = view.findViewById(R.id.btnVerifyLicense);
+        txtVerifiedBadge = view.findViewById(R.id.txtVerifiedBadge);
 
         // Load user data
         loadUserProfile();
 
+        // Analytics: verify_button_shown when applicable will be fired in loadUserProfile based on status
+
+        if (btnVerifyLicense != null) {
+            btnVerifyLicense.setOnClickListener(v -> {
+                com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verify_button_clicked", new Bundle());
+                // Launch verification flow activity
+                Intent intent = new Intent(requireContext(), com.example.carrentingtest.ui.verification.VerificationFlowActivity.class);
+                startActivity(intent);
+            });
+        }
+
         // Set logout button click listener
         btnLogout.setOnClickListener(v -> logout());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh to apply potential verification changes
+        loadUserProfile();
     }
 
     private void loadUserProfile() {
@@ -75,6 +96,19 @@ public class ProfileFragment extends Fragment {
                         tvProfileEmail.setText(document.getString("email"));
                         tvProfilePhone.setText(document.getString("phone"));
                         tvProfileLicense.setText(document.getString("driverLicense"));
+
+                        String status = document.getString("verification_status");
+                        if (status == null) status = "UNVERIFIED";
+                        boolean isVerified = "VERIFIED".equals(status);
+                        if (btnVerifyLicense != null) {
+                            btnVerifyLicense.setVisibility(isVerified ? View.GONE : View.VISIBLE);
+                            if (!isVerified) {
+                                FirebaseAnalytics.getInstance(requireContext()).logEvent("verify_button_shown", new Bundle());
+                            }
+                        }
+                        if (txtVerifiedBadge != null) {
+                            txtVerifiedBadge.setVisibility(isVerified ? View.VISIBLE : View.GONE);
+                        }
                     } else {
                         Log.d(TAG, "No such user document");
                         Toast.makeText(getContext(), "User profile data not found.", Toast.LENGTH_SHORT).show();

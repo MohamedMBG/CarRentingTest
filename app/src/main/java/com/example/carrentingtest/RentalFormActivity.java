@@ -4,6 +4,7 @@ package com.example.carrentingtest;
 // Import all required Android and Firebase libraries
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +17,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.example.carrentingtest.verification.VerificationGuard;
+import com.example.carrentingtest.utils.NavUtils;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -207,10 +210,15 @@ public class RentalFormActivity extends AppCompatActivity {
                             userName = user.getEmail();
                         }
 
-                        // Check if driver license exists
-                        if (userDriverLicense == null || userDriverLicense.isEmpty()) {
+                        // License number not required if verification is used; optional
+
+                        // Gate booking by verification status
+                        String verificationStatus = document.getString("verification_status");
+                        boolean canBook = VerificationGuard.canBook(verificationStatus);
+                        if (!canBook) {
                             findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                            Toast.makeText(this, "Driver license not found in your profile.", Toast.LENGTH_LONG).show();
+                            com.google.firebase.analytics.FirebaseAnalytics.getInstance(this).logEvent("booking_blocked_unverified", new android.os.Bundle());
+                            showVerificationRequiredDialog();
                             return;
                         }
 
@@ -224,6 +232,17 @@ public class RentalFormActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed to retrieve user data.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void showVerificationRequiredDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.modal_title_quick_safety))
+                .setMessage(getString(R.string.modal_body_verify_once))
+                .setPositiveButton(getString(R.string.modal_button_verify_now), (d, which) -> {
+                    NavUtils.openProfileForVerification(this);
+                })
+                .setNegativeButton(getString(R.string.modal_button_cancel), (d, which) -> d.dismiss())
+                .show();
     }
 
     // Method to submit the rental request to Firestore

@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     //declarations des elements de UI
-    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId;
+    private TextInputEditText etEmail, etPassword, etName, etPhone;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar;
@@ -42,14 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
     private String driverLicense;
     private String companyId;
 
-    private final ActivityResultLauncher<Intent> registrationLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    createAccount();
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+    // Selfie/ID verification removed from signup. Registration proceeds directly.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +58,8 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
-        etDriverLicense = findViewById(R.id.etDriverLicense);
-        etCompanyId = findViewById(R.id.etCompanyId);
+        // These fields are no longer part of signup UI. Kept variables for backward
+        // compatibility if layout still contains them in older installations.
         progressBar = findViewById(R.id.progressBar);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
 
@@ -83,8 +76,9 @@ public class SignUpActivity extends AppCompatActivity {
         email = Objects.requireNonNull(etEmail.getText()).toString().trim();
         password = Objects.requireNonNull(etPassword.getText()).toString().trim();
         phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
-        driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
-        companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
+        // Optional/legacy fields if present in layout
+        driverLicense = null;
+        companyId = null;
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -99,14 +93,7 @@ public class SignUpActivity extends AppCompatActivity {
             etPhone.setError("Enter your phone number");
             return;
         }
-        if (TextUtils.isEmpty(driverLicense)) {
-            etDriverLicense.setError("Enter your driver license number");
-            return;
-        }
-        if (TextUtils.isEmpty(companyId)) {
-            etCompanyId.setError("Enter company ID");
-            return;
-        }
+        // Driver license and company ID are no longer required at signup
         if (password.length() < 6) {
             etPassword.setError("Password too short (min 6 characters)");
             return;
@@ -114,14 +101,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        Intent intent = new Intent(this, SelfieCaptureActivity.class);
-        intent.putExtra("name", name);
-        intent.putExtra("email", email);
-        intent.putExtra("password", password);
-        intent.putExtra("phone", phone);
-        intent.putExtra("driverLicense", driverLicense);
-        intent.putExtra("companyId", companyId);
-        registrationLauncher.launch(intent);
+        createAccount();
     }
 
     private void createAccount() {
@@ -144,10 +124,18 @@ public class SignUpActivity extends AppCompatActivity {
         client.put("name", name);
         client.put("email", email);
         client.put("phone", phone);
-        client.put("driverLicense", driverLicense); // Add driver license to map
-        client.put("companyId", companyId);
+        // Optional legacy fields
+        if (driverLicense != null && !driverLicense.isEmpty()) {
+            client.put("driverLicense", driverLicense);
+        }
+        if (companyId != null && !companyId.isEmpty()) {
+            client.put("companyId", companyId);
+        }
         client.put("role", "client");
         client.put("createdAt", FieldValue.serverTimestamp());
+        // Verification defaults
+        client.put("verification_status", "UNVERIFIED");
+        client.put("verification_updated_at", null);
 
         db.collection("users").document(userId)
                 .set(client)

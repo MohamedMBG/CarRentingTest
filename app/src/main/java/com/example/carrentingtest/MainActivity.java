@@ -42,10 +42,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        // Load the default fragment (HomeFragment)
+        // Load the default fragment (HomeFragment) or route to Profile for verification
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
-            bottomNavigationView.setSelectedItemId(R.id.navigation_home); // Set default selection
+            boolean openProfileForVerification = getIntent().getBooleanExtra("open_profile_for_verification", false);
+            if (openProfileForVerification) {
+                loadFragment(new ProfileFragment());
+                bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+            } else {
+                loadFragment(new HomeFragment());
+                bottomNavigationView.setSelectedItemId(R.id.navigation_home); // Set default selection
+            }
         }
     }
 

@@ -66,12 +66,12 @@ public class SignInActivity extends AppCompatActivity {
                             db.collection("users").document(user.getUid()).get()
                                     .addOnSuccessListener(doc -> {
                                         String role = doc.getString("role");
-                                        Intent intent;
-                                        if ("admin".equals(role)) {
-                                            intent = new Intent(SignInActivity.this, AdminDashboardActivity.class);
-                                        } else {
-                                            intent = new Intent(SignInActivity.this, MainActivity.class);
-                                        }
+                                         Intent intent;
+                                         if ("admin".equals(role)) {
+                                             intent = new Intent(SignInActivity.this, AdminDashboardActivity.class);
+                                         } else {
+                                             intent = new Intent(SignInActivity.this, MainActivity.class);
+                                         }
                                         startActivity(intent);
                                         finish();
                                     })

@@ -68,6 +68,34 @@
 
     <string name="edit_profile">Edit profile</string>
 
+    <!-- Verification strings -->
+    <string name="verify_license">Verify license</string>
+    <string name="license_verified_badge">License verified ✅</string>
+    <string name="modal_title_quick_safety">Quick safety check</string>
+    <string name="modal_body_verify_once">Verify your driver’s license once to protect the community and prevent fraud.</string>
+    <string name="modal_button_verify_now">Verify now</string>
+    <string name="modal_button_cancel">Cancel</string>
+    <string name="selfie_step_header">Step 1 of 2 — Take a quick selfie</string>
+    <string name="license_step_header">Step 2 of 2 — Scan your driver’s license</string>
+    <string name="verification_success">✅ Verification successful — you’re ready to drive!</string>
+    <string name="verification_pending">We’re reviewing your info. You’ll get a notification shortly.</string>
+    <string name="verification_failed">We couldn’t verify your details. Please try again or contact support.</string>
+
+    <!-- Legacy/onboarding and capture strings to satisfy existing layouts -->
+    <string name="skip">Skip</string>
+    <string name="continue_label">Continue</string>
+    <string name="capture_front">Capture front</string>
+    <string name="capture_back">Capture back</string>
+    <string name="capture">Capture</string>
+    <string name="verify_title">Verify your identity</string>
+    <string name="verify_reasons">We verify to protect the community and prevent fraud.</string>
+    <string name="verify_start">Start verification</string>
+    <string name="back">Back</string>
+    <string name="verify_in_progress">Submitting your verification…</string>
+    <string name="onboarding_headline_1">Book your ride in seconds</string>
+    <string name="onboarding_headline_2">Verified drivers only</string>
+    <string name="onboarding_headline_3">Drive with peace of mind</string>
+
     <string name="reports">Reports</string>
     <string name="business_overview">Business Overview</string>
     <string name="most_rented_cars">Most Rented Cars</string>

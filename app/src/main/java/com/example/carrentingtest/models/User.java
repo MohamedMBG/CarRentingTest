@@ -8,6 +8,8 @@ public class User {
     private String driverLicense;
     private String role;
     private String companyId;
+    private String verificationStatus;
+    private com.google.firebase.Timestamp verificationUpdatedAt;
 
     public User() {}
 
@@ -31,4 +33,10 @@ public class User {
 
     public String getCompanyId() { return companyId; }
     public void setCompanyId(String companyId) { this.companyId = companyId; }
+
+    public String getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(String verificationStatus) { this.verificationStatus = verificationStatus; }
+
+    public com.google.firebase.Timestamp getVerificationUpdatedAt() { return verificationUpdatedAt; }
+    public void setVerificationUpdatedAt(com.google.firebase.Timestamp verificationUpdatedAt) { this.verificationUpdatedAt = verificationUpdatedAt; }
 }
