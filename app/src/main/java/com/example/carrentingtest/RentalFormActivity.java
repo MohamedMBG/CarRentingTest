@@ -58,16 +58,19 @@ public class RentalFormActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        if (mAuth.getCurrentUser() != null) {
-            db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
-                    .addOnSuccessListener(doc -> companyId = doc.getString("companyId"));
-        }
-
         // Get the selected car passed from previous activity
         selectedCar = (Car) getIntent().getSerializableExtra("selectedCar");
         // If no car was passed, show error and close activity
         if (selectedCar == null) {
             Toast.makeText(this, "Error: Car details not found.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        // Use the car's associated company for routing requests
+        companyId = selectedCar.getCompanyId();
+        if (companyId == null) {
+            Toast.makeText(this, "Error: Car company information not found.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
