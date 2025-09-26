@@ -194,21 +194,30 @@ public class HomeFragment extends Fragment {
     private void updateButtonStyles() {
         int selectedColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary);
         ColorStateList selectedTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorOnPrimary));
-        int defaultColor = ContextCompat.getColor(requireContext(), R.color.colorSurface); // Or another default background
+        int defaultColor = ContextCompat.getColor(requireContext(), R.color.homeFilterDefaultBackground);
         ColorStateList defaultTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
-        ColorStateList defaultStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        ColorStateList defaultStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterStroke));
+        ColorStateList rippleColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterRipple));
+        int strokeWidth = getResources().getDimensionPixelSize(R.dimen.home_filter_chip_stroke_width);
 
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
             View child = filterContainer.getChildAt(i);
             if (child instanceof MaterialButton) {
                 MaterialButton button = (MaterialButton) child;
                 String buttonType = button.getText().toString();
+                boolean isSelected = buttonType.equalsIgnoreCase(currentFilterType);
 
-                if (buttonType.equalsIgnoreCase(currentFilterType)) {
-                    // Selected style
+                button.setRippleColor(rippleColor);
+
+                if (isSelected) {
                     button.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
                     button.setTextColor(selectedTextColor);
-                    button.setStrokeWidth(0); // Remove stroke for selected filled button
+                    button.setStrokeWidth(0);
+                } else {
+                    button.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+                    button.setTextColor(defaultTextColor);
+                    button.setStrokeColor(defaultStrokeColor);
+                    button.setStrokeWidth(strokeWidth);
                 }
             }
         }

@@ -4,73 +4,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/homeBackground"
+    android:paddingHorizontal="@dimen/home_horizontal_padding"
+    android:paddingTop="@dimen/home_section_spacing"
+    android:paddingBottom="16dp">
 
     <!-- Hero Section -->
-    <LinearLayout
-        android:layout_margin="5dp"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="false"
+        app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/heroTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/find_perfect_car"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:fontFamily="sans-serif-medium"/>
+            android:background="@drawable/bg_home_hero"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-        <TextView
-            android:id="@+id/heroSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_from_selection"
-            android:textSize="14sp"
-            android:textColor="@color/textColorSecondary"
-            android:layout_marginTop="4dp"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/heroTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_tagline"
+                android:textAllCaps="true"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="12sp"
+                android:letterSpacing="0.08"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/heroTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/find_perfect_car"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/heroSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/home_subtitle"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="14sp"
+                android:alpha="0.85" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Search -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_margin="5dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@color/colorSurface"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp">
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_search_bar"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:queryHint="Search by model..."
             android:background="@android:color/transparent"
-            app:iconifiedByDefault="false"
-            android:padding="4dp"/>
-    </com.google.android.material.card.MaterialCardView>
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/search_cars_hint"
+            android:paddingHorizontal="4dp"
+            app:queryBackground="@android:color/transparent" />
+    </LinearLayout>
 
     <!-- Category Filter -->
     <TextView
-        android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/categories"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:text="@string/home_categories_title"
         android:textColor="@color/textColorPrimary"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <HorizontalScrollView
-        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="20dp"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/filterContainer"
@@ -80,32 +107,48 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAll"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:text="@string/all"
-                app:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/colorOnPrimary"/>
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:backgroundTint="@color/homeFilterDefaultBackground"
+                app:cornerRadius="50dp"
+                app:strokeColor="@color/homeFilterStroke"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSUV"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:text="@string/suv"
-                android:layout_marginStart="8dp"
-                app:strokeColor="@color/colorPrimary"
-                android:textColor="@color/colorPrimary"/>
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:backgroundTint="@color/homeFilterDefaultBackground"
+                app:cornerRadius="50dp"
+                app:strokeColor="@color/homeFilterStroke"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCompact"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:text="@string/compact"
-                android:layout_marginStart="8dp"
-                app:strokeColor="@color/colorPrimary"
-                android:textColor="@color/colorPrimary"/>
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:backgroundTint="@color/homeFilterDefaultBackground"
+                app:cornerRadius="50dp"
+                app:strokeColor="@color/homeFilterStroke"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLuxury"
@@ -113,22 +156,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/luxury"
-                android:layout_marginStart="8dp"
-                app:strokeColor="@color/colorPrimary"
-                android:textColor="@color/colorPrimary"/>
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:backgroundTint="@color/homeFilterDefaultBackground"
+                app:cornerRadius="50dp"
+                app:strokeColor="@color/homeFilterStroke"
+                app:strokeWidth="1dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
     <!-- ListView -->
     <ListView
-        android:padding="8dp"
-        android:layout_marginBottom="10dp"
         android:id="@+id/carsListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="16dp"
-        android:clipToPadding="false"/>
+        android:paddingBottom="8dp" />
 
 </LinearLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_horizontal_padding">20dp</dimen>
+    <dimen name="home_section_spacing">24dp</dimen>
+    <dimen name="home_filter_chip_stroke_width">1dp</dimen>
+</resources>

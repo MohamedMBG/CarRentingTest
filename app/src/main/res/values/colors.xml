@@ -25,6 +25,18 @@
     <color name="colorError">#B00020</color>
     <color name="colorOnError">@color/palette_white</color>
 
+    <color name="homeBackground">#F5F7FB</color>
+    <color name="homeHeroStart">#1F7A8C</color>
+    <color name="homeHeroEnd">#0E4F64</color>
+    <color name="homeCardStroke">#E3EAF4</color>
+    <color name="homeChipBackground">#F2F6FA</color>
+    <color name="homeChipStroke">#D6E2F0</color>
+    <color name="homeSearchBackground">#FFFFFFFF</color>
+    <color name="homeSearchStroke">#DFE6F0</color>
+    <color name="homeFilterDefaultBackground">#FFFFFFFF</color>
+    <color name="homeFilterStroke">#D6E2F0</color>
+    <color name="homeFilterRipple">#1F7A8C</color>
+
     <!-- Specific UI Element Colors -->
     <color name="textColorPrimary">@color/palette_dark_blue</color>
     <color name="textColorSecondary">#55022B3A</color> <!-- Dark blue with alpha -->
