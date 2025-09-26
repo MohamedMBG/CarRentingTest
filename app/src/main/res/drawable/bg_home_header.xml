@@ -4,33 +4,40 @@
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="@color/homeHeroStart"
+                android:centerColor="#111D34"
                 android:endColor="@color/homeHeroEnd"
-                android:angle="120" />
+                android:angle="135" />
             <corners
                 android:topLeftRadius="0dp"
                 android:topRightRadius="0dp"
-                android:bottomLeftRadius="36dp"
-                android:bottomRightRadius="36dp" />
+                android:bottomLeftRadius="40dp"
+                android:bottomRightRadius="40dp" />
         </shape>
     </item>
     <item
         android:gravity="end|top"
-        android:height="220dp"
-        android:width="220dp"
-        android:top="-48dp"
-        android:right="-48dp">
+        android:height="260dp"
+        android:width="260dp"
+        android:top="-60dp"
+        android:right="-32dp">
         <shape android:shape="oval">
-            <solid android:color="#2FFFFFFF" />
+            <gradient
+                android:startColor="#33D4AF37"
+                android:endColor="#11FFFFFF"
+                android:angle="45" />
         </shape>
     </item>
     <item
-        android:gravity="end|bottom"
+        android:gravity="start|bottom"
         android:height="180dp"
         android:width="180dp"
-        android:bottom="-24dp"
-        android:right="-24dp">
+        android:bottom="-40dp"
+        android:left="-28dp">
         <shape android:shape="oval">
-            <solid android:color="#1AFFFFFF" />
+            <gradient
+                android:startColor="#19FFFFFF"
+                android:endColor="#1AD4AF37"
+                android:angle="90" />
         </shape>
     </item>
 </layer-list>

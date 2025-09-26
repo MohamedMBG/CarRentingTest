@@ -3,31 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/homeBackground">
+    android:background="@drawable/bg_home_background">
 
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="0dp"
-        android:layout_height="280dp"
+        android:layout_height="320dp"
         android:background="@drawable/bg_home_header"
         android:clipToPadding="false"
         android:paddingStart="@dimen/home_horizontal_padding"
-        android:paddingTop="36dp"
+        android:paddingTop="48dp"
         android:paddingEnd="@dimen/home_horizontal_padding"
-        android:paddingBottom="32dp"
+        android:paddingBottom="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/headerAccent"
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
             android:layout_gravity="end|center_vertical"
-            android:alpha="0.18"
+            android:alpha="0.22"
             android:scaleType="centerInside"
             android:src="@drawable/car_placeholder"
-            android:tint="@color/colorOnPrimary" />
+            android:tint="#66FFFFFF" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,12 +50,12 @@
                         android:id="@+id/heroTagline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.14"
                         android:text="@string/home_tagline"
                         android:textAllCaps="true"
                         android:textColor="@color/colorOnPrimary"
-                        android:textSize="12sp"
-                        android:letterSpacing="0.12"
-                        android:fontFamily="sans-serif-medium" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/heroTitle"
@@ -65,22 +65,25 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="@string/find_perfect_car"
                         android:textColor="@color/colorOnPrimary"
-                        android:textSize="28sp"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="12dp"
-                    app:cardBackgroundColor="#33FFFFFF"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="16dp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:cardBackgroundColor="#26FFFFFF"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="12dp"
+                        android:padding="14dp"
                         android:src="@drawable/ic_person"
                         android:tint="@color/colorOnPrimary"
                         android:contentDescription="@string/my_profile" />
@@ -91,40 +94,76 @@
                 android:id="@+id/heroSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
+                android:alpha="0.92"
                 android:text="@string/home_subtitle"
                 android:textColor="@color/colorOnPrimary"
-                android:textSize="15sp"
-                android:alpha="0.9" />
+                android:textSize="15sp" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/heroHighlightCard"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bg_badge_soft"
-                android:paddingStart="16dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="20dp"
-                android:paddingBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="24dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/homeHighlightStroke"
+                app:strokeWidth="1dp">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_car"
-                    android:tint="@color/colorPrimary"
-                    android:contentDescription="@null" />
-
-                <TextView
-                    android:id="@+id/heroBadge"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_badge_text"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="13sp"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
+                    android:background="@drawable/bg_home_highlight_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.95"
+                        android:src="@drawable/ic_card_membership"
+                        android:tint="@color/homeHighlightTitle"
+                        android:contentDescription="@null" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/heroBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/home_badge_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/homeHighlightTitle"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/heroBadgeSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/home_badge_subtitle"
+                            android:textColor="@color/homeHighlightSubtitle"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:alpha="0.75"
+                        android:rotation="-20"
+                        android:src="@drawable/ic_car"
+                        android:tint="@color/homeHighlightTitle"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </FrameLayout>
 
@@ -134,10 +173,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/home_horizontal_padding"
         android:layout_marginEnd="@dimen/home_horizontal_padding"
-        android:translationY="-40dp"
+        android:translationY="-60dp"
         app:cardBackgroundColor="@color/homeSearchBackground"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="12dp"
+        app:strokeColor="@color/homeSearchStroke"
+        app:strokeWidth="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerContainer">
@@ -145,12 +186,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp">
+            android:paddingStart="20dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="12dp">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
@@ -159,18 +201,23 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:iconifiedByDefault="false"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
                 android:queryHint="@string/search_cars_hint"
                 app:queryBackground="@android:color/transparent" />
 
+            <View
+                android:layout_width="1dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="#1AE4D3B1" />
+
             <ImageButton
                 android:id="@+id/filterButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_badge_soft"
                 android:contentDescription="@string/home_filter_content_description"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_filter"
                 android:tint="@color/colorPrimary" />
         </LinearLayout>
@@ -181,10 +228,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="-8dp"
+        android:layout_marginTop="-12dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.04"
         android:text="@string/home_categories_title"
         android:textColor="@color/textColorPrimary"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchContainer" />
@@ -194,7 +243,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="@dimen/home_horizontal_padding"
         android:overScrollMode="never"
         android:scrollbars="none"
@@ -206,6 +255,7 @@
             android:id="@+id/filterContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -214,16 +264,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:text="@string/all"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                app:backgroundTint="@color/homeFilterDefaultBackground"
                 app:cornerRadius="50dp"
                 app:icon="@drawable/ic_car"
                 app:iconGravity="textStart"
                 app:iconPadding="12dp"
                 app:iconTint="@color/colorPrimary"
+                app:rippleColor="@color/homeFilterRipple"
                 app:strokeColor="@color/homeFilterStroke"
                 app:strokeWidth="1dp" />
 
@@ -233,16 +287,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:text="@string/suv"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                app:backgroundTint="@color/homeFilterDefaultBackground"
                 app:cornerRadius="50dp"
                 app:icon="@drawable/ic_car"
                 app:iconGravity="textStart"
                 app:iconPadding="12dp"
                 app:iconTint="@color/colorPrimary"
+                app:rippleColor="@color/homeFilterRipple"
                 app:strokeColor="@color/homeFilterStroke"
                 app:strokeWidth="1dp" />
 
@@ -252,16 +310,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:text="@string/compact"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                app:backgroundTint="@color/homeFilterDefaultBackground"
                 app:cornerRadius="50dp"
                 app:icon="@drawable/ic_car"
                 app:iconGravity="textStart"
                 app:iconPadding="12dp"
                 app:iconTint="@color/colorPrimary"
+                app:rippleColor="@color/homeFilterRipple"
                 app:strokeColor="@color/homeFilterStroke"
                 app:strokeWidth="1dp" />
 
@@ -270,16 +332,20 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:text="@string/luxury"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                app:backgroundTint="@color/homeFilterDefaultBackground"
                 app:cornerRadius="50dp"
                 app:icon="@drawable/ic_car"
                 app:iconGravity="textStart"
                 app:iconPadding="12dp"
                 app:iconTint="@color/colorPrimary"
+                app:rippleColor="@color/homeFilterRipple"
                 app:strokeColor="@color/homeFilterStroke"
                 app:strokeWidth="1dp" />
         </LinearLayout>
@@ -291,6 +357,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/home_horizontal_padding"
         android:layout_marginTop="28dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.02"
         android:text="@string/home_most_rented_title"
         android:textColor="@color/textColorPrimary"
         android:textSize="18sp"
@@ -303,9 +371,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="@dimen/home_horizontal_padding"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="20dp"

@@ -73,8 +73,9 @@ public class CarAdapter extends ArrayAdapter<Car> {
             if (car.isAvailable()) {
                 holder.carAvailability.setText(getContext().getString(R.string.car_available));
                 holder.carAvailability.setVisibility(View.VISIBLE);
-                holder.carAvailability.setBackgroundTintList(
-                        ContextCompat.getColorStateList(getContext(), R.color.primary_blue)); // #1F7A8C
+                holder.carAvailability.setBackgroundResource(R.drawable.bg_badge_luxury);
+                holder.carAvailability.setTextColor(
+                        ContextCompat.getColor(getContext(), R.color.homeHighlightTitle));
             } else {
                 holder.carAvailability.setVisibility(View.GONE);
             }
