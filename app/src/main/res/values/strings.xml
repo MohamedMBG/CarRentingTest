@@ -18,6 +18,10 @@
     <string name="submit_rental_request">Submit Rental Request</string>
     <string name="find_perfect_car">Find Your Perfect Car</string>
     <string name="choose_from_selection">Choose from our wide selection of vehicles</string>
+    <string name="home_tagline">Premium rides, simplified</string>
+    <string name="home_subtitle">Discover clean, well-maintained cars tailored to every journey.</string>
+    <string name="home_categories_title">Browse by category</string>
+    <string name="search_cars_hint">Search cars, models or trims</string>
     <string name="categories">Categories</string>
     <string name="all">All</string>
     <string name="suv">SUV</string>
@@ -59,6 +63,7 @@
     <string name="driver_license_label">Driver License:</string>
     <string name="car_available">Available</string>
     <string name="price_per_day_format">%.2f dhs / day</string>
+    <string name="car_image_content_description">Car preview</string>
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
     <string name="next">Next</string>
