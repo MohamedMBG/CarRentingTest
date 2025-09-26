@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Provided Palette -->
-    <color name="palette_dark_blue">#022B3A</color>
-    <color name="palette_teal">#1F7A8C</color>
-    <color name="palette_light_blue">#BFDBF7</color>
-    <color name="palette_very_light_blue">#E1E5F2</color>
+    <!-- Refreshed palette -->
+    <color name="palette_dark_blue">#131C32</color>
+    <color name="palette_deep_blue">#1F2A44</color>
+    <color name="palette_teal">#D4AF37</color>
+    <color name="palette_light_blue">#F3E2B9</color>
+    <color name="palette_very_light_blue">#F9F5ED</color>
     <color name="palette_white">#FFFFFF</color>
 
     <!-- Theme Colors -->
-    <color name="colorPrimary">@color/palette_teal</color> <!-- 1F7A8C -->
-    <color name="colorPrimaryVariant">@color/palette_dark_blue</color> <!-- 022B3A -->
-    <color name="colorOnPrimary">@color/palette_white</color> <!-- FFFFFF -->
+    <color name="colorPrimary">@color/palette_dark_blue</color>
+    <color name="colorPrimaryVariant">@color/palette_deep_blue</color>
+    <color name="colorOnPrimary">@color/palette_white</color>
 
-    <color name="colorSecondary">@color/palette_light_blue</color> <!-- BFDBF7 -->
-    <color name="colorSecondaryVariant">@color/palette_light_blue</color> <!-- BFDBF7 (can be same or darker/lighter) -->
-    <color name="colorOnSecondary">@color/palette_dark_blue</color> <!-- 022B3A -->
+    <color name="colorSecondary">@color/palette_teal</color>
+    <color name="colorSecondaryVariant">#C89C2E</color>
+    <color name="colorOnSecondary">@color/palette_dark_blue</color>
 
-    <color name="colorBackground">@color/palette_very_light_blue</color> <!-- E1E5F2 -->
-    <color name="colorOnBackground">@color/palette_dark_blue</color> <!-- 022B3A -->
+    <color name="colorBackground">@color/palette_very_light_blue</color>
+    <color name="colorOnBackground">#21263A</color>
 
-    <color name="colorSurface">@color/palette_white</color> <!-- FFFFFF -->
-    <color name="colorOnSurface">@color/palette_dark_blue</color> <!-- 022B3A -->
+    <color name="colorSurface">@color/palette_white</color>
+    <color name="colorOnSurface">@color/palette_dark_blue</color>
 
     <color name="colorError">#B00020</color>
     <color name="colorOnError">@color/palette_white</color>
 
-    <color name="homeBackground">#F5F7FB</color>
-    <color name="homeHeroStart">#1F7A8C</color>
-    <color name="homeHeroEnd">#0E4F64</color>
-    <color name="homeCardStroke">#E3EAF4</color>
-    <color name="homeChipBackground">#F2F6FA</color>
-    <color name="homeChipStroke">#D6E2F0</color>
-    <color name="homeSearchBackground">#FFFFFFFF</color>
-    <color name="homeSearchStroke">#DFE6F0</color>
-    <color name="homeFilterDefaultBackground">#FFFFFFFF</color>
-    <color name="homeFilterStroke">#D6E2F0</color>
-    <color name="homeFilterRipple">#1F7A8C</color>
+    <color name="homeBackground">#FBF6EB</color>
+    <color name="homeHeroStart">#161F36</color>
+    <color name="homeHeroEnd">#0B1124</color>
+    <color name="homeCardStroke">#E7DABD</color>
+    <color name="homeChipBackground">#FCF8F1</color>
+    <color name="homeChipStroke">#E9D8B8</color>
+    <color name="homeSearchBackground">#FFFFFF</color>
+    <color name="homeSearchStroke">#E4D3B1</color>
+    <color name="homeFilterDefaultBackground">#FFFBF4</color>
+    <color name="homeFilterStroke">#E4D3B1</color>
+    <color name="homeFilterRipple">#66D4AF37</color>
+    <color name="homeHighlightStroke">#CCFFFFFF</color>
+    <color name="homeHighlightTitle">#35260D</color>
+    <color name="homeHighlightSubtitle">#7F4A1E</color>
 
     <!-- Specific UI Element Colors -->
-    <color name="textColorPrimary">@color/palette_dark_blue</color>
-    <color name="textColorSecondary">#55022B3A</color> <!-- Dark blue with alpha -->
+    <color name="textColorPrimary">#1F2333</color>
+    <color name="textColorSecondary">#7A8197</color>
     <color name="iconTint">@color/palette_dark_blue</color>
     <color name="bottomNavBackground">@color/palette_white</color>
     <color name="bottomNavItemActive">@color/palette_teal</color>
@@ -55,5 +59,4 @@
     <color name="light_gray">#F5F5F5</color>
     <color name="dark_gray">#757575</color>
     <color name="green">#4CAF50</color>
-
 </resources>

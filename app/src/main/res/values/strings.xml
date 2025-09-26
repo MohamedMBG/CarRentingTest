@@ -20,7 +20,8 @@
     <string name="choose_from_selection">Choose from our wide selection of vehicles</string>
     <string name="home_tagline">Premium rides, simplified</string>
     <string name="home_subtitle">Discover clean, well-maintained cars tailored to every journey.</string>
-    <string name="home_badge_text">Over 50+ verified cars ready for you</string>
+    <string name="home_badge_text">Member-exclusive curation</string>
+    <string name="home_badge_subtitle">Handpicked models from our concierge team</string>
     <string name="home_categories_title">Browse by category</string>
     <string name="home_most_rented_title">Most rented</string>
     <string name="home_filter_content_description">Open car filters</string>
