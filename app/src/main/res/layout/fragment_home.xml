@@ -23,20 +23,25 @@
             android:paddingBottom="32dp">
 
             <!-- Hero Header -->
-            <FrameLayout
-                android:id="@+id/heroContainer"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/homeHeroSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_home_header"
-                android:paddingStart="24dp"
-                android:paddingTop="60dp"
-                android:paddingEnd="24dp"
-                android:paddingBottom="44dp">
+                android:paddingBottom="40dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/heroContainer"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:background="@drawable/bg_home_header"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/home_horizontal_padding"
+                    android:paddingTop="60dp"
+                    android:paddingEnd="@dimen/home_horizontal_padding"
+                    android:paddingBottom="@dimen/home_hero_bottom_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -48,10 +53,10 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="@drawable/bg_profile_avatar"
+                            android:contentDescription="@string/app_name"
                             android:padding="12dp"
                             android:src="@drawable/ic_person"
-                            android:tint="@color/colorPrimary"
-                            android:contentDescription="@string/app_name" />
+                            android:tint="@color/colorPrimary" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -125,15 +130,16 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_home_highlight_card"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:padding="16dp">
 
                             <ImageView
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
                                 android:layout_marginEnd="16dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_card_membership"
-                                android:tint="@color/homeHighlightTitle"
-                                android:contentDescription="@null" />
+                                android:tint="@color/homeHighlightTitle" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -161,30 +167,32 @@
                             <ImageView
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
-                                android:layout_marginStart="12dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_arrow_forward"
-                                android:tint="@color/homeHighlightTitle"
-                                android:contentDescription="@null" />
+                                android:tint="@color/homeHighlightTitle" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
-            </FrameLayout>
 
-            <!-- Search Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/searchCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="-36dp"
-                android:layout_marginEnd="24dp"
-                android:elevation="8dp"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/homeSearchBackground"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/homeSearchStroke"
-                app:strokeWidth="1dp">
+                <!-- Search Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/searchCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/home_horizontal_padding"
+                    android:layout_marginEnd="@dimen/home_horizontal_padding"
+                    android:elevation="12dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:translationY="@dimen/home_search_card_translation"
+                    app:cardBackgroundColor="@color/homeSearchBackground"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/heroContainer"
+                    app:strokeColor="@color/homeSearchStroke"
+                    app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -326,14 +334,16 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <!-- Quick Filters -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:orientation="vertical"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp">
+                android:paddingStart="@dimen/home_horizontal_padding"
+                android:paddingEnd="@dimen/home_horizontal_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -408,8 +418,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:orientation="vertical"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp">
+                android:paddingStart="@dimen/home_horizontal_padding"
+                android:paddingEnd="@dimen/home_horizontal_padding">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -434,22 +444,35 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <androidx.gridlayout.widget.GridLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:layout_marginTop="20dp"
-                    android:rowCount="2"
-                    android:useDefaultMargins="false">
+                    android:layout_marginTop="20dp">
 
-                    <com.google.android.material.card.MaterialCardView
+                    <androidx.constraintlayout.helper.widget.Flow
+                        android:id="@+id/categoryFlow"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        app:layout_columnWeight="1"
+                        app:constraint_referenced_ids="categoryAllCars,categorySuv,categoryWeekend,categoryBusiness"
+                        app:flow_horizontalGap="16dp"
+                        app:flow_verticalGap="16dp"
+                        app:flow_maxElementsWrap="2"
+                        app:flow_wrapMode="aligned"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/categoryAllCars"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:foreground="?attr/selectableItemBackground"
+                        android:minWidth="0dp"
                         app:cardBackgroundColor="@color/homeFilterDefaultBackground"
                         app:cardCornerRadius="18dp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintWidth_default="spread"
                         app:strokeColor="@color/homeFilterStroke"
                         app:strokeWidth="1dp">
 
@@ -463,9 +486,9 @@
                             <ImageView
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_car"
-                                android:tint="@color/colorSecondary"
-                                android:contentDescription="@null" />
+                                android:tint="@color/colorSecondary" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -492,13 +515,15 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/categorySuv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        app:layout_columnWeight="1"
                         android:foreground="?attr/selectableItemBackground"
+                        android:minWidth="0dp"
                         app:cardBackgroundColor="@color/homeFilterDefaultBackground"
                         app:cardCornerRadius="18dp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintWidth_default="spread"
                         app:strokeColor="@color/homeFilterStroke"
                         app:strokeWidth="1dp">
 
@@ -512,9 +537,9 @@
                             <ImageView
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_type"
-                                android:tint="@color/colorSecondary"
-                                android:contentDescription="@null" />
+                                android:tint="@color/colorSecondary" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -541,13 +566,15 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/categoryWeekend"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        app:layout_columnWeight="1"
                         android:foreground="?attr/selectableItemBackground"
+                        android:minWidth="0dp"
                         app:cardBackgroundColor="@color/homeFilterDefaultBackground"
                         app:cardCornerRadius="18dp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintWidth_default="spread"
                         app:strokeColor="@color/homeFilterStroke"
                         app:strokeWidth="1dp">
 
@@ -561,9 +588,9 @@
                             <ImageView
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_calendar"
-                                android:tint="@color/colorSecondary"
-                                android:contentDescription="@null" />
+                                android:tint="@color/colorSecondary" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -590,13 +617,15 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/categoryBusiness"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        app:layout_columnWeight="1"
                         android:foreground="?attr/selectableItemBackground"
+                        android:minWidth="0dp"
                         app:cardBackgroundColor="@color/homeFilterDefaultBackground"
                         app:cardCornerRadius="18dp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintWidth_default="spread"
                         app:strokeColor="@color/homeFilterStroke"
                         app:strokeWidth="1dp">
 
@@ -610,9 +639,9 @@
                             <ImageView
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_price"
-                                android:tint="@color/colorSecondary"
-                                android:contentDescription="@null" />
+                                android:tint="@color/colorSecondary" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -637,7 +666,7 @@
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
-                </androidx.gridlayout.widget.GridLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
             <!-- Featured Rides -->
@@ -646,8 +675,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:orientation="vertical"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp">
+                android:paddingStart="@dimen/home_horizontal_padding"
+                android:paddingEnd="@dimen/home_horizontal_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -681,28 +710,37 @@
                         android:background="@drawable/bg_car_card"
                         android:padding="20dp">
 
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/featuredImageGuide"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.38" />
+
                         <ImageView
                             android:id="@+id/featuredCarImage"
                             android:layout_width="0dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="16dp"
+                            android:layout_height="0dp"
+                            android:minHeight="@dimen/home_featured_image_min_height"
                             android:contentDescription="@string/car_image_content_description"
                             android:scaleType="centerCrop"
                             android:src="@drawable/car_placeholder"
-                            app:layout_constraintEnd_toStartOf="@+id/featuredDetails"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintWidth_percent="0.4" />
+                            app:layout_constraintDimensionRatio="4:3"
+                            app:layout_constraintEnd_toStartOf="@id/featuredImageGuide"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <LinearLayout
                             android:id="@+id/featuredDetails"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="4dp"
                             android:orientation="vertical"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/featuredCarImage"
+                            app:layout_constraintStart_toStartOf="@id/featuredImageGuide"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <TextView
@@ -818,28 +856,37 @@
                         android:background="@drawable/bg_car_card"
                         android:padding="20dp">
 
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/featuredImageGuide2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.38" />
+
                         <ImageView
                             android:id="@+id/featuredCarImage2"
                             android:layout_width="0dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="16dp"
+                            android:layout_height="0dp"
+                            android:minHeight="@dimen/home_featured_image_min_height"
                             android:contentDescription="@string/car_image_content_description"
                             android:scaleType="centerCrop"
                             android:src="@drawable/car_placeholder"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/featuredDetails2"
+                            app:layout_constraintDimensionRatio="4:3"
+                            app:layout_constraintEnd_toStartOf="@id/featuredImageGuide2"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.4" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <LinearLayout
                             android:id="@+id/featuredDetails2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="4dp"
                             android:orientation="vertical"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/featuredCarImage2"
+                            app:layout_constraintStart_toStartOf="@id/featuredImageGuide2"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <TextView
