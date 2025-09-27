@@ -49,6 +49,7 @@
     <string name="category_weekend_ready_meta">Flexible return</string>
     <string name="category_business_class">Business class</string>
     <string name="category_business_class_meta">Premium sedans</string>
+    <string name="home_available_cars">Available vehicles</string>
     <string name="home_featured_rides">Featured rides</string>
     <string name="home_featured_rides_subtitle">Curated picks loved by our community</string>
     <string name="search_field_hint">Search by model, brand or experience</string>

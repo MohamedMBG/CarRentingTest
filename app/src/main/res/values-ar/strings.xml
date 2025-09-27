@@ -58,6 +58,7 @@
     <string name="phone_label">الهاتف:</string>
     <string name="driver_license_label">رخصة القيادة:</string>
     <string name="car_available">متاح</string>
+    <string name="home_available_cars">المركبات المتاحة</string>
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
     <string name="full_name">الاسم الكامل</string>
     <string name="email">البريد الإلكتروني</string>
