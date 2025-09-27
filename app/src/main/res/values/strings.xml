@@ -26,6 +26,36 @@
     <string name="home_most_rented_title">Most rented</string>
     <string name="home_filter_content_description">Open car filters</string>
     <string name="search_cars_hint">Search cars, models or trims</string>
+
+    <!-- Refreshed home experience strings -->
+    <string name="home_welcome_back">Welcome back</string>
+    <string name="home_subheadline">Plan your next drive</string>
+    <string name="home_hero_title">Find the right car for every journey</string>
+    <string name="home_hero_caption">Exclusive fleet, premium support and seamless verification</string>
+    <string name="home_highlight_title">Member concierge</string>
+    <string name="home_highlight_subtitle">Personalized car recommendations and priority pick-up</string>
+    <string name="home_quick_filters">Quick filters</string>
+    <string name="filter_suv_getaways">SUV getaways</string>
+    <string name="filter_under_price_daily">Under $90/day</string>
+    <string name="filter_long_trips">Long trips</string>
+    <string name="filter_electric">Electric</string>
+    <string name="home_popular_categories">Popular categories</string>
+    <string name="action_view_all">View all</string>
+    <string name="category_all_cars">All cars</string>
+    <string name="category_all_cars_meta">+250 in stock</string>
+    <string name="category_suv_adventures">SUV adventures</string>
+    <string name="category_suv_adventures_meta">85 options</string>
+    <string name="category_weekend_ready">Weekend ready</string>
+    <string name="category_weekend_ready_meta">Flexible return</string>
+    <string name="category_business_class">Business class</string>
+    <string name="category_business_class_meta">Premium sedans</string>
+    <string name="home_featured_rides">Featured rides</string>
+    <string name="home_featured_rides_subtitle">Curated picks loved by our community</string>
+    <string name="search_field_hint">Search by model, brand or experience</string>
+    <string name="search_trip_pickup">Pick-up</string>
+    <string name="search_trip_dates">Dates</string>
+    <string name="search_trip_vehicle">Vehicle</string>
+    <string name="reserve">Reserve</string>
     <string name="categories">Categories</string>
     <string name="all">All</string>
     <string name="suv">SUV</string>
