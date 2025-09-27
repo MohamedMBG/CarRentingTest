@@ -3,130 +3,248 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_home_background">
+    android:background="#F8F9FA">
 
-    <FrameLayout
-        android:id="@+id/headerContainer"
+    <!-- Header Section -->
+    <LinearLayout
+        android:id="@+id/headerSection"
         android:layout_width="0dp"
-        android:layout_height="320dp"
-        android:background="@drawable/bg_home_header"
-        android:clipToPadding="false"
-        android:paddingStart="@dimen/home_horizontal_padding"
+        android:layout_height="wrap_content"
+        android:background="#4F46E5"
+        android:orientation="vertical"
+        android:padding="24dp"
         android:paddingTop="48dp"
-        android:paddingEnd="@dimen/home_horizontal_padding"
-        android:paddingBottom="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/headerAccent"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
-            android:layout_gravity="end|center_vertical"
-            android:alpha="0.22"
-            android:scaleType="centerInside"
-            android:src="@drawable/car_placeholder"
-            android:tint="#66FFFFFF" />
+        <!-- Top Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PREMIUM RIDES, SIMPLIFIED"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:alpha="0.8"
+                    android:letterSpacing="0.1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Find Your Perfect Car"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#FFFFFF"
+                android:backgroundTint="#1AFFFFFF" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discover clean, well-maintained cars tailored to every journey."
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:alpha="0.9"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Membership Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:backgroundTint="#1A FFFFFF"
+            android:padding="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="#FFD700"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Member-exclusive curation"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hand-picked models from our concierge"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:alpha="0.8"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#FFFFFF"
+                android:backgroundTint="#33FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Search Section -->
+    <LinearLayout
+        android:id="@+id/searchSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="-40dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerSection">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search Cars"
+            android:textColor="#1F2937"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
+            android:background="#F3F4F6"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+
+            <EditText
+                android:id="@+id/searchEditText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Search by model, brand, or type..."
+                android:textSize="14sp"
+                android:inputType="text" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="#D1D5DB" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="#4F46E5"
+                android:foreground="?attr/selectableItemBackgroundBorderless" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Categories Section -->
+    <LinearLayout
+        android:id="@+id/categoriesSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchSection">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Browse by Category"
+                android:textColor="#1F2937"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View All"
+                android:textColor="#4F46E5"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:foreground="?attr/selectableItemBackgroundBorderless" />
+        </LinearLayout>
+
+        <!-- Category Grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- First Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
+                <!-- All Cars -->
                 <LinearLayout
+                    android:id="@+id/categoryAll"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/heroTagline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.14"
-                        android:text="@string/home_tagline"
-                        android:textAllCaps="true"
-                        android:textColor="@color/colorOnPrimary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/heroTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@string/find_perfect_car"
-                        android:textColor="@color/colorOnPrimary"
-                        android:textSize="30sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:layout_marginStart="16dp"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                    app:cardBackgroundColor="#26FFFFFF"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#33FFFFFF"
-                    app:strokeWidth="1dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="14dp"
-                        android:src="@drawable/ic_person"
-                        android:tint="@color/colorOnPrimary"
-                        android:contentDescription="@string/my_profile" />
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/heroSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:alpha="0.92"
-                android:text="@string/home_subtitle"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="15sp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/heroHighlightCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/homeHighlightStroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_home_highlight_card"
+                    android:layout_marginEnd="8dp"
+                    android:background="#EFF6FF"
+                    android:elevation="2dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="16dp"
-                        android:alpha="0.95"
-                        android:src="@drawable/ic_card_membership"
-                        android:tint="@color/homeHighlightTitle"
-                        android:contentDescription="@null" />
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="#3B82F6"
+                        android:layout_marginEnd="12dp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -135,252 +253,363 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/heroBadge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-medium"
-                            android:text="@string/home_badge_text"
-                            android:textAllCaps="false"
-                            android:textColor="@color/homeHighlightTitle"
-                            android:textSize="15sp" />
+                            android:text="All"
+                            android:textColor="#1E3A8A"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/heroBadgeSubtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/home_badge_subtitle"
-                            android:textColor="@color/homeHighlightSubtitle"
-                            android:textSize="12sp" />
+                            android:text="250+ cars"
+                            android:textColor="#1E3A8A"
+                            android:textSize="12sp"
+                            android:alpha="0.7" />
                     </LinearLayout>
+                </LinearLayout>
 
-                    <ImageView
+                <!-- SUV -->
+                <LinearLayout
+                    android:id="@+id/categorySUV"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="#FEF3C7"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <View
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:alpha="0.75"
-                        android:rotation="-20"
-                        android:src="@drawable/ic_car"
-                        android:tint="@color/homeHighlightTitle"
-                        android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </FrameLayout>
+                        android:background="#F59E0B"
+                        android:layout_marginEnd="12dp" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/searchContainer"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SUV"
+                            android:textColor="#92400E"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="85 cars"
+                            android:textColor="#92400E"
+                            android:textSize="12sp"
+                            android:alpha="0.7" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Second Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Compact -->
+                <LinearLayout
+                    android:id="@+id/categoryCompact"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="#ECFDF5"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="#10B981"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Compact"
+                            android:textColor="#065F46"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="120 cars"
+                            android:textColor="#065F46"
+                            android:textSize="12sp"
+                            android:alpha="0.7" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Luxury -->
+                <LinearLayout
+                    android:id="@+id/categoryLuxury"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="#FDF2F8"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="#EC4899"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Luxury"
+                            android:textColor="#831843"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="45 cars"
+                            android:textColor="#831843"
+                            android:textSize="12sp"
+                            android:alpha="0.7" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Most Rented Section -->
+    <LinearLayout
+        android:id="@+id/mostRentedSection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginEnd="@dimen/home_horizontal_padding"
-        android:translationY="-60dp"
-        app:cardBackgroundColor="@color/homeSearchBackground"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
-        app:strokeColor="@color/homeSearchStroke"
-        app:strokeWidth="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer">
+        app:layout_constraintTop_toBottomOf="@id/categoriesSection">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="20dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="12dp">
+            android:layout_marginBottom="16dp">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:iconifiedByDefault="false"
-                android:queryHint="@string/search_cars_hint"
-                app:queryBackground="@android:color/transparent" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Most Rented"
+                    android:textColor="#1F2937"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Popular choices this week"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See All"
+                android:textColor="#4F46E5"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:foreground="?attr/selectableItemBackgroundBorderless" />
+        </LinearLayout>
+
+        <!-- Sample Car Items -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:foreground="?attr/selectableItemBackground">
 
             <View
-                android:layout_width="1dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:background="#1AE4D3B1" />
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:background="#E5E7EB"
+                android:layout_marginEnd="16dp" />
 
-            <ImageButton
-                android:id="@+id/filterButton"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@drawable/bg_badge_soft"
-                android:contentDescription="@string/home_filter_content_description"
-                android:padding="10dp"
-                android:src="@drawable/ic_filter"
-                android:tint="@color/colorPrimary" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tesla Model 3"
+                    android:textColor="#1F2937"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Electric • Automatic"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$89/day"
+                    android:textColor="#4F46E5"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="end">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.8 ★"
+                    android:textColor="#F59E0B"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Available"
+                    android:textColor="#10B981"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/categoryTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="-12dp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.04"
-        android:text="@string/home_categories_title"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchContainer" />
-
-    <HorizontalScrollView
-        android:id="@+id/categoryScroll"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="@dimen/home_horizontal_padding"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryTitle">
 
         <LinearLayout
-            android:id="@+id/filterContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp"
+            android:foreground="?attr/selectableItemBackground">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAll"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <View
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:background="#E5E7EB"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BMW X5"
+                    android:textColor="#1F2937"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SUV • Automatic"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$125/day"
+                    android:textColor="#4F46E5"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="@string/all"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:cornerRadius="50dp"
-                app:icon="@drawable/ic_car"
-                app:iconGravity="textStart"
-                app:iconPadding="12dp"
-                app:iconTint="@color/colorPrimary"
-                app:rippleColor="@color/homeFilterRipple"
-                app:strokeColor="@color/homeFilterStroke"
-                app:strokeWidth="1dp" />
+                android:orientation="vertical"
+                android:gravity="end">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSUV"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="@string/suv"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:cornerRadius="50dp"
-                app:icon="@drawable/ic_car"
-                app:iconGravity="textStart"
-                app:iconPadding="12dp"
-                app:iconTint="@color/colorPrimary"
-                app:rippleColor="@color/homeFilterRipple"
-                app:strokeColor="@color/homeFilterStroke"
-                app:strokeWidth="1dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.9 ★"
+                    android:textColor="#F59E0B"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCompact"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="@string/compact"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:cornerRadius="50dp"
-                app:icon="@drawable/ic_car"
-                app:iconGravity="textStart"
-                app:iconPadding="12dp"
-                app:iconTint="@color/colorPrimary"
-                app:rippleColor="@color/homeFilterRipple"
-                app:strokeColor="@color/homeFilterStroke"
-                app:strokeWidth="1dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLuxury"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="@string/luxury"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:cornerRadius="50dp"
-                app:icon="@drawable/ic_car"
-                app:iconGravity="textStart"
-                app:iconPadding="12dp"
-                app:iconTint="@color/colorPrimary"
-                app:rippleColor="@color/homeFilterRipple"
-                app:strokeColor="@color/homeFilterStroke"
-                app:strokeWidth="1dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Available"
+                    android:textColor="#10B981"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <TextView
-        android:id="@+id/mostRentedTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="28dp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.02"
-        android:text="@string/home_most_rented_title"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryScroll" />
-
-    <ListView
-        android:id="@+id/carsListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/home_horizontal_padding"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="@dimen/home_horizontal_padding"
-        android:layout_marginBottom="24dp"
-        android:clipToPadding="false"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="20dp"
-        android:paddingBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mostRentedTitle" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
