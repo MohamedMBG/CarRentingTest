@@ -213,19 +213,17 @@
                             android:src="@drawable/ic_search"
                             android:tint="@color/iconTint" />
 
-                        <EditText
-                            android:id="@+id/searchEditText"
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchView"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:layout_weight="1"
                             android:background="@android:color/transparent"
-                            android:hint="@string/search_field_hint"
-                            android:imeOptions="actionSearch"
-                            android:inputType="text"
+                            android:iconifiedByDefault="false"
                             android:padding="0dp"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="15sp" />
+                            android:queryHint="@string/search_field_hint"
+                            app:queryBackground="@android:color/transparent" />
 
                         <ImageButton
                             android:id="@+id/voiceSearchButton"
@@ -344,6 +342,70 @@
                 android:orientation="vertical"
                 android:paddingStart="@dimen/home_horizontal_padding"
                 android:paddingEnd="@dimen/home_horizontal_padding">
+
+                <LinearLayout
+                    android:id="@+id/filterContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAll"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/all"
+                        android:textAllCaps="false"
+                        app:cornerRadius="18dp"
+                        app:strokeColor="@color/homeFilterStroke"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSUV"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/suv"
+                        android:textAllCaps="false"
+                        app:cornerRadius="18dp"
+                        app:strokeColor="@color/homeFilterStroke"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCompact"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/compact"
+                        android:textAllCaps="false"
+                        app:cornerRadius="18dp"
+                        app:strokeColor="@color/homeFilterStroke"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLuxury"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/luxury"
+                        android:textAllCaps="false"
+                        app:cornerRadius="18dp"
+                        app:strokeColor="@color/homeFilterStroke"
+                        app:strokeWidth="1dp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
