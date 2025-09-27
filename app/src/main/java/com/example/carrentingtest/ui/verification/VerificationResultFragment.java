@@ -13,10 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.verification.data.FirebaseVerificationService;
 import com.example.carrentingtest.verification.data.VerificationResult;
 import com.example.carrentingtest.verification.data.VerificationService;
-import com.example.carrentingtest.verification.data.MockVerificationService;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,7 +38,7 @@ public class VerificationResultFragment extends Fragment {
 
         TextView txt = view.findViewById(R.id.txtResult);
 
-        verificationService = new MockVerificationService(requireContext());
+        verificationService = new FirebaseVerificationService();
 
         Uri selfie = viewModel.getSelfieUri();
         Uri license = viewModel.getLicenseUri();
