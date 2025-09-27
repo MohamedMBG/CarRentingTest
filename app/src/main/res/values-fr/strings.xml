@@ -58,6 +58,7 @@
     <string name="phone_label">Téléphone :</string>
     <string name="driver_license_label">Permis de conduire :</string>
     <string name="car_available">Disponible</string>
+    <string name="home_available_cars">Véhicules disponibles</string>
     <string name="price_per_day_format">%.2f dhs / jour</string>
     <string name="full_name">Nom complet</string>
     <string name="email">E-mail</string>
