@@ -33,6 +33,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:hint="@string/hint_seats">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSeats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/label_transmission"
+        android:textColor="@color/textColorPrimary"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgTransmission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+
+        <RadioButton
+            android:id="@+id/rbAutomatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/transmission_automatic"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbManual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/transmission_manual" />
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:hint="Price per day">
 
         <com.google.android.material.textfield.TextInputEditText

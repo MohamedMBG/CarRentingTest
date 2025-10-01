@@ -7,10 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
@@ -18,8 +18,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.RentalFormActivity;
-import com.example.carrentingtest.adapters.CarAdapter;
+import com.example.carrentingtest.adapters.CarGridAdapter;
 import com.example.carrentingtest.models.Car;
+import com.example.carrentingtest.utils.GridSpacingItemDecoration;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,8 +31,8 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
-    private ListView carsListView;
-    private CarAdapter carAdapter;
+    private RecyclerView carsRecyclerView;
+    private CarGridAdapter carAdapter;
     private List<Car> carList;
     private List<Car> filteredCarList; // For search/filter functionality
     private FirebaseFirestore db;
@@ -66,27 +67,29 @@ public class HomeFragment extends Fragment {
         }
 
         // Initialize views
-        carsListView = view.findViewById(R.id.carsListView);
+        carsRecyclerView = view.findViewById(R.id.carsRecyclerView);
         searchView = view.findViewById(R.id.searchView);
         filterContainer = view.findViewById(R.id.filterContainer);
 
         // Initialize car lists
         carList = new ArrayList<>();
         filteredCarList = new ArrayList<>();
-        carAdapter = new CarAdapter(requireContext(), filteredCarList); // Use filtered list for adapter
-        carsListView.setAdapter(carAdapter);
-
-        // Set item click listener for ListView
-        carsListView.setOnItemClickListener((parent, view1, position, id) -> {
-            Car selectedCar = filteredCarList.get(position); // Get car from filtered list
+        carAdapter = new CarGridAdapter(filteredCarList, selectedCar -> {
             if (selectedCar.isAvailable()) {
                 Intent intent = new Intent(getActivity(), RentalFormActivity.class);
-                intent.putExtra("selectedCar", selectedCar); // Pass Car object
+                intent.putExtra("selectedCar", selectedCar);
                 startActivity(intent);
             } else {
                 Toast.makeText(getContext(), "This car is currently unavailable.", Toast.LENGTH_SHORT).show();
             }
         });
+        carsRecyclerView.setAdapter(carAdapter);
+        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
+        carsRecyclerView.setLayoutManager(layoutManager);
+        int spacing = getResources().getDimensionPixelSize(R.dimen.home_car_grid_spacing);
+        carsRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, spacing, true));
+        carsRecyclerView.setClipToPadding(false);
+        carsRecyclerView.setHasFixedSize(true);
 
         // Setup search functionality
         setupSearchView();
@@ -187,7 +190,7 @@ public class HomeFragment extends Fragment {
                 filteredCarList.add(car);
             }
         }
-        carAdapter.notifyDataSetChanged(); // Update the ListView
+        carAdapter.notifyDataSetChanged(); // Update the RecyclerView grid
         Log.d(TAG, "Applied filters. Type: " + currentFilterType + ", Query: '" + currentSearchQuery + "'. Filtered list size: " + filteredCarList.size());
     }
 
