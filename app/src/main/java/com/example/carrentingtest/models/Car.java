@@ -10,6 +10,8 @@ public class Car implements Serializable {
     private String imageUrl;
     private boolean available;
     private String companyId;
+    private int seats;
+    private String transmissionType;
 
     // Empty constructor for Firestore
     public Car() {}
@@ -37,4 +39,10 @@ public class Car implements Serializable {
 
     public String getCompanyId() { return companyId; }
     public void setCompanyId(String companyId) { this.companyId = companyId; }
+
+    public int getSeats() { return seats; }
+    public void setSeats(int seats) { this.seats = seats; }
+
+    public String getTransmissionType() { return transmissionType; }
+    public void setTransmissionType(String transmissionType) { this.transmissionType = transmissionType; }
 }

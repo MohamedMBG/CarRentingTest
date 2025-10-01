@@ -4,62 +4,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp"
     android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/black"
-    app:strokeWidth="0.5dp">
+    app:cardCornerRadius="22dp"
+    app:cardElevation="6dp"
+    app:strokeColor="@color/homeCardStroke"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:padding="18dp">
 
         <!-- Header Section -->
-        <LinearLayout
-            android:id="@+id/headerSection"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/carAvailability"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/bg_badge_luxury"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.05"
+            android:text="@string/car_available"
+            android:textAllCaps="true"
+            android:textColor="@color/homeHighlightTitle"
+            android:textSize="10sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:id="@+id/carAvailability"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_luxury"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.05"
-                android:text="@string/car_available"
-                android:textAllCaps="true"
-                android:textColor="@color/homeHighlightTitle"
-                android:textSize="10sp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/favoriteIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_favorite_border"
-                app:tint="@color/iconTint"
-                android:contentDescription="@string/favorite" />
-
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Car Image with Gradient Background -->
         <androidx.cardview.widget.CardView
@@ -69,7 +45,7 @@
             android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
-            app:layout_constraintTop_toBottomOf="@id/headerSection"
+            app:layout_constraintTop_toBottomOf="@id/carAvailability"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -78,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
                 android:src="@drawable/car_placeholder"
                 android:contentDescription="@string/car_image_content_description" />
 
@@ -109,6 +85,7 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
             android:gravity="start"
+            android:baselineAligned="false"
             app:layout_constraintTop_toBottomOf="@id/carModel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -160,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="Auto"
+                    android:text="@string/transmission_unknown"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:fontFamily="sans-serif" />
@@ -186,7 +163,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="4 Seats"
+                    android:text="@string/seats_unknown"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:fontFamily="sans-serif" />
@@ -250,14 +227,16 @@
                 android:id="@+id/rentButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="Rent Now"
+                android:text="@string/rent_now"
                 android:textAllCaps="false"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-medium"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
+                android:textColor="@color/colorOnPrimary"
                 app:cornerRadius="12dp"
                 app:elevation="0dp"
+                app:backgroundTint="@color/colorPrimary"
                 style="@style/Widget.MaterialComponents.Button" />
 
         </LinearLayout>

@@ -29,6 +29,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
         ImageView carImage;
         TextView carModel;
         TextView carType;
+        TextView carTransmission;
+        TextView carSeats;
         TextView carPrice;
         TextView carAvailability;
     }
@@ -45,6 +47,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
             holder.carImage = convertView.findViewById(R.id.carImage);
             holder.carModel = convertView.findViewById(R.id.carModel);
             holder.carType = convertView.findViewById(R.id.carType);
+            holder.carTransmission = convertView.findViewById(R.id.carTransmission);
+            holder.carSeats = convertView.findViewById(R.id.carSeats);
             holder.carPrice = convertView.findViewById(R.id.carPrice);
             holder.carAvailability = convertView.findViewById(R.id.carAvailability);
 
@@ -57,6 +61,18 @@ public class CarAdapter extends ArrayAdapter<Car> {
             // Set texts
             holder.carModel.setText(car.getModel());
             holder.carType.setText(car.getType());
+
+            String transmission = car.getTransmissionType();
+            if (transmission == null || transmission.trim().isEmpty()) {
+                transmission = getContext().getString(R.string.transmission_unknown);
+            }
+            holder.carTransmission.setText(transmission);
+
+            int seats = car.getSeats();
+            String seatsText = seats > 0
+                    ? getContext().getResources().getQuantityString(R.plurals.car_seats_count, seats, seats)
+                    : getContext().getString(R.string.seats_unknown);
+            holder.carSeats.setText(seatsText);
 
             // Format price
             holder.carPrice.setText(String.format(getContext().getString(R.string.price_per_day_format), car.getPricePerDay()));

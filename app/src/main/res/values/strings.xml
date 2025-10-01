@@ -34,6 +34,7 @@
     <string name="home_hero_caption">Exclusive fleet, premium support and seamless verification</string>
     <string name="home_highlight_title">Member concierge</string>
     <string name="home_highlight_subtitle">Personalized car recommendations and priority pick-up</string>
+    <string name="home_filter_label">Browse by type</string>
     <string name="home_quick_filters">Quick filters</string>
     <string name="filter_suv_getaways">SUV getaways</string>
     <string name="filter_under_price_daily">Under $90/day</string>
@@ -62,6 +63,7 @@
     <string name="suv">SUV</string>
     <string name="compact">Compact</string>
     <string name="luxury">Luxury</string>
+    <string name="rent_now">Rent now</string>
     <string name="available_for_rent">Available for rent</string>
     <string name="add_new_car">Add New Car</string>
     <string name="company_name">Company Name</string>
@@ -99,6 +101,16 @@
     <string name="car_available">Available</string>
     <string name="price_per_day_format">%.2f dhs / day</string>
     <string name="car_image_content_description">Car preview</string>
+    <string name="hint_seats">Number of seats</string>
+    <string name="label_transmission">Transmission</string>
+    <string name="transmission_automatic">Automatic</string>
+    <string name="transmission_manual">Manual</string>
+    <string name="transmission_unknown">Transmission</string>
+    <string name="seats_unknown">Seats</string>
+    <plurals name="car_seats_count">
+        <item quantity="one">%d seat</item>
+        <item quantity="other">%d seats</item>
+    </plurals>
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
     <string name="next">Next</string>

@@ -2,9 +2,14 @@ package com.example.carrentingtest.admin;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -104,8 +109,12 @@ public class ManageCarsActivity extends AppCompatActivity {
         // Get references to all form fields
         EditText etModel = view.findViewById(R.id.etModel),
                 etType = view.findViewById(R.id.etType),
+                etSeats = view.findViewById(R.id.etSeats),
                 etPrice = view.findViewById(R.id.etPrice),
                 etImageUrl = view.findViewById(R.id.etImageUrl);
+        RadioGroup rgTransmission = view.findViewById(R.id.rgTransmission);
+        RadioButton rbAutomatic = view.findViewById(R.id.rbAutomatic);
+        RadioButton rbManual = view.findViewById(R.id.rbManual);
         SwitchCompat swAvailable = view.findViewById(R.id.swAvailable);
 
         boolean isEdit = car != null;  // Determine if we're editing or adding
@@ -115,9 +124,21 @@ public class ManageCarsActivity extends AppCompatActivity {
         if (isEdit) {
             etModel.setText(car.getModel());
             etType.setText(car.getType());
+            if (car.getSeats() > 0) {
+                etSeats.setText(String.valueOf(car.getSeats()));
+            }
             etPrice.setText(String.valueOf(car.getPricePerDay()));
             etImageUrl.setText(car.getImageUrl());
             swAvailable.setChecked(car.isAvailable());
+
+            String transmission = car.getTransmissionType();
+            if (!TextUtils.isEmpty(transmission)) {
+                if (transmission.equalsIgnoreCase(getString(R.string.transmission_manual))) {
+                    rgTransmission.check(R.id.rbManual);
+                } else {
+                    rgTransmission.check(R.id.rbAutomatic);
+                }
+            }
         }
 
         // Configure dialog buttons and behavior
@@ -127,10 +148,23 @@ public class ManageCarsActivity extends AppCompatActivity {
                     // Create or get the car object to save
                     Car c = isEdit ? car : new Car();
                     // Set all properties from form fields
-                    c.setModel(etModel.getText().toString());
-                    c.setType(etType.getText().toString());
-                    c.setPricePerDay(Double.parseDouble(etPrice.getText().toString()));
+                    c.setModel(etModel.getText().toString().trim());
+                    c.setType(etType.getText().toString().trim());
+
+                    String seatsText = etSeats.getText().toString().trim();
+                    int seats = TextUtils.isEmpty(seatsText) ? 0 : Integer.parseInt(seatsText);
+                    c.setSeats(seats);
+
+                    String priceText = etPrice.getText().toString().trim();
+                    double price = TextUtils.isEmpty(priceText) ? 0 : Double.parseDouble(priceText);
+                    c.setPricePerDay(price);
                     c.setImageUrl(etImageUrl.getText().toString());
+
+                    int selectedTransmissionId = rgTransmission.getCheckedRadioButtonId();
+                    String transmissionValue = selectedTransmissionId == R.id.rbManual
+                            ? getString(R.string.transmission_manual)
+                            : getString(R.string.transmission_automatic);
+                    c.setTransmissionType(transmissionValue);
                     // Set availability (only for edits, new cars are available by default)
                     if (isEdit) c.setAvailable(swAvailable.isChecked());
                     else c.setAvailable(true);
