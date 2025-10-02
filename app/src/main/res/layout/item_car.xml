@@ -4,19 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/home_car_item_spacing"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="22dp"
-    app:cardElevation="6dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
     app:strokeColor="@color/homeCardStroke"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="18dp">
+        android:padding="24dp">
 
         <!-- Header Section -->
         <TextView
@@ -41,9 +42,9 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/imageContainer"
             android:layout_width="0dp"
-            android:layout_height="180dp"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:layout_constraintTop_toBottomOf="@id/carAvailability"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +53,7 @@
             <ImageView
                 android:id="@+id/carImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/home_car_image_height"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
                 android:src="@drawable/car_placeholder"
@@ -65,13 +66,13 @@
             android:id="@+id/carModel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="20dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
             android:text="@string/car_model"
             android:textColor="@color/textColorPrimary"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/imageContainer"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +83,7 @@
             android:id="@+id/infoRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:gravity="start"
             android:baselineAligned="false"
@@ -112,7 +113,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/suv"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif" />
 
             </LinearLayout>
@@ -139,7 +140,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/transmission_unknown"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif" />
 
             </LinearLayout>
@@ -165,7 +166,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/seats_unknown"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif" />
 
             </LinearLayout>
@@ -177,8 +178,8 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="#37000000"
+            android:layout_marginTop="20dp"
+            android:background="@color/homeCardStroke"
             app:layout_constraintTop_toBottomOf="@id/infoRow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -188,7 +189,7 @@
             android:id="@+id/bottomRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             app:layout_constraintTop_toBottomOf="@id/divider"
@@ -207,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:text="Price"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:fontFamily="sans-serif" />
 
                 <TextView
@@ -218,7 +219,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="@string/price_per_day_format"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="22sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -227,6 +228,7 @@
                 android:id="@+id/rentButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/rent_now"
                 android:textAllCaps="false"
                 android:textSize="14sp"
