@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/homeBackground"
+    android:background="@color/white"
     android:fillViewport="true"
-    android:paddingStart="@dimen/home_screen_padding"
-    android:paddingEnd="@dimen/home_screen_padding"
-    android:paddingTop="32dp"
-    android:paddingBottom="@dimen/home_section_spacing">
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"

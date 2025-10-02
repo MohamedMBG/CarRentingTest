@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@android:color/transparent"
     tools:context=".MainActivity">
 
     <!-- FrameLayout to hold the fragments -->
@@ -12,38 +12,41 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_nav_container" />
-
-    <!-- Elevated Bottom Navigation -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bottom_nav_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
-        android:clipToPadding="false"
-        app:cardCornerRadius="28dp"
-        app:cardElevation="12dp"
-        app:cardUseCompatPadding="false"
-        app:strokeColor="@android:color/transparent"
-        app:cardBackgroundColor="@color/palette_white">
+        android:layout_marginBottom="-2dp">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            style="@style/Widget.CarRentingTest.BottomNavigation"
+        <!-- Elevated Bottom Navigation -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottom_nav_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:itemIconTint="@color/bottom_nav_item_color_selector"
-            app:itemTextAppearanceActive="@style/TextAppearance.CarRentingTest.BottomNav.Active"
-            app:itemTextAppearanceInactive="@style/TextAppearance.CarRentingTest.BottomNav.Inactive"
-            app:itemTextColor="@color/bottom_nav_item_color_selector"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
+            android:layout_height="85dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:clipToPadding="false"
+            app:cardBackgroundColor="@color/palette_white"
+            app:cardCornerRadius="28dp"
+            android:layout_gravity="bottom"
+            app:cardElevation="12dp"
+            app:cardUseCompatPadding="false"
+            app:strokeColor="@android:color/transparent">
 
-    </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                style="@style/Widget.CarRentingTest.BottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:itemIconTint="@color/bottom_nav_item_color_selector"
+                app:itemTextAppearanceActive="@style/TextAppearance.CarRentingTest.BottomNav.Active"
+                app:itemTextAppearanceInactive="@style/TextAppearance.CarRentingTest.BottomNav.Inactive"
+                app:itemTextColor="@color/bottom_nav_item_color_selector"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_nav_menu" />
+
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+
 
 </RelativeLayout>
 
