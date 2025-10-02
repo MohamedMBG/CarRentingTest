@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.CarRentingTest.BottomNavigation" parent="@style/Widget.Material3.BottomNavigationView">
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="itemIconSize">22dp</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.CarRentingTest.BottomNavigation.ActiveIndicator</item>
+        <item name="itemRippleColor">@color/homeFilterRipple</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.BottomNavigation.ActiveIndicator">
+        <item name="android:width">72dp</item>
+        <item name="android:height">32dp</item>
+        <item name="android:color">@color/palette_light_blue</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.CarRentingTest.BottomNav.ActiveIndicator</item>
+    </style>
+
+    <style name="ShapeAppearance.CarRentingTest.BottomNav.ActiveIndicator" parent="@style/ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomLeft">16dp</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+    </style>
+
+    <style name="TextAppearance.CarRentingTest.BottomNav.Active" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+
+    <style name="TextAppearance.CarRentingTest.BottomNav.Inactive" parent="@style/TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+</resources>
