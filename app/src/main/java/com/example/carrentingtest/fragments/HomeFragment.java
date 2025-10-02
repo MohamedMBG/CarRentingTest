@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +20,6 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.RentalFormActivity;
 import com.example.carrentingtest.adapters.CarGridAdapter;
 import com.example.carrentingtest.models.Car;
-import com.example.carrentingtest.utils.GridSpacingItemDecoration;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -84,10 +83,8 @@ public class HomeFragment extends Fragment {
             }
         });
         carsRecyclerView.setAdapter(carAdapter);
-        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
         carsRecyclerView.setLayoutManager(layoutManager);
-        int spacing = getResources().getDimensionPixelSize(R.dimen.home_car_grid_spacing);
-        carsRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, spacing, true));
         carsRecyclerView.setClipToPadding(false);
         carsRecyclerView.setHasFixedSize(true);
 
