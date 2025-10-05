@@ -57,6 +57,9 @@
     <string name="email_label">البريد الإلكتروني:</string>
     <string name="phone_label">الهاتف:</string>
     <string name="driver_license_label">رخصة القيادة:</string>
+    <string name="profile_contact_title">بيانات التواصل</string>
+    <string name="profile_identity_title">الهوية والسلامة</string>
+    <string name="profile_identity_description">حافظ على توثيق حسابك لضمان حجوزات سلسة.</string>
     <string name="car_available">متاح</string>
     <string name="home_available_cars">المركبات المتاحة</string>
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
