@@ -60,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:iconifiedByDefault="false"
-                android:padding="12dp"
                 android:queryHint="@string/search_field_hint" />
         </com.google.android.material.card.MaterialCardView>
 
@@ -146,6 +145,7 @@
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
+            android:layout_marginBottom="60dp"
             android:paddingBottom="@dimen/home_section_spacing" />
     </LinearLayout>
 

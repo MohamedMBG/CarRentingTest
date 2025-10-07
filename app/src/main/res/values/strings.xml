@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CarRentingTest</string>
     <string name="admin_login_title">Admin Login</string>
     <string name="login">Login</string>
@@ -18,52 +18,52 @@
     <string name="submit_rental_request">Submit Rental Request</string>
     <string name="find_perfect_car">Find Your Perfect Car</string>
     <string name="choose_from_selection">Choose from our wide selection of vehicles</string>
-    <string name="home_tagline">Premium rides, simplified</string>
-    <string name="home_subtitle">Discover clean, well-maintained cars tailored to every journey.</string>
-    <string name="home_badge_text">Member-exclusive curation</string>
-    <string name="home_badge_subtitle">Handpicked models from our concierge team</string>
-    <string name="home_categories_title">Browse by category</string>
-    <string name="home_most_rented_title">Most rented</string>
-    <string name="home_filter_content_description">Open car filters</string>
-    <string name="search_cars_hint">Search cars, models or trims</string>
+    <string name="home_tagline" tools:ignore="MissingTranslation">Premium rides, simplified</string>
+    <string name="home_subtitle" tools:ignore="MissingTranslation">Discover clean, well-maintained cars tailored to every journey.</string>
+    <string name="home_badge_text" tools:ignore="MissingTranslation">Member-exclusive curation</string>
+    <string name="home_badge_subtitle" tools:ignore="MissingTranslation">Handpicked models from our concierge team</string>
+    <string name="home_categories_title" tools:ignore="MissingTranslation">Browse by category</string>
+    <string name="home_most_rented_title" tools:ignore="MissingTranslation">Most rented</string>
+    <string name="home_filter_content_description" tools:ignore="MissingTranslation">Open car filters</string>
+    <string name="search_cars_hint" tools:ignore="MissingTranslation">Search cars, models or trims</string>
 
     <!-- Refreshed home experience strings -->
-    <string name="home_welcome_back">Welcome back</string>
-    <string name="home_subheadline">Plan your next drive</string>
-    <string name="home_hero_title">Find the right car for every journey</string>
-    <string name="home_hero_caption">Exclusive fleet, premium support and seamless verification</string>
-    <string name="home_highlight_title">Member concierge</string>
-    <string name="home_highlight_subtitle">Personalized car recommendations and priority pick-up</string>
-    <string name="home_filter_label">Browse by type</string>
-    <string name="home_quick_filters">Quick filters</string>
-    <string name="filter_suv_getaways">SUV getaways</string>
-    <string name="filter_under_price_daily">Under $90/day</string>
-    <string name="filter_long_trips">Long trips</string>
-    <string name="filter_electric">Electric</string>
-    <string name="home_popular_categories">Popular categories</string>
-    <string name="action_view_all">View all</string>
-    <string name="category_all_cars">All cars</string>
-    <string name="category_all_cars_meta">+250 in stock</string>
-    <string name="category_suv_adventures">SUV adventures</string>
-    <string name="category_suv_adventures_meta">85 options</string>
-    <string name="category_weekend_ready">Weekend ready</string>
-    <string name="category_weekend_ready_meta">Flexible return</string>
-    <string name="category_business_class">Business class</string>
-    <string name="category_business_class_meta">Premium sedans</string>
+    <string name="home_welcome_back" tools:ignore="MissingTranslation">Welcome back</string>
+    <string name="home_subheadline" tools:ignore="MissingTranslation">Plan your next drive</string>
+    <string name="home_hero_title" tools:ignore="MissingTranslation">Find the right car for every journey</string>
+    <string name="home_hero_caption" tools:ignore="MissingTranslation">Exclusive fleet, premium support and seamless verification</string>
+    <string name="home_highlight_title" tools:ignore="MissingTranslation">Member concierge</string>
+    <string name="home_highlight_subtitle" tools:ignore="MissingTranslation">Personalized car recommendations and priority pick-up</string>
+    <string name="home_filter_label" tools:ignore="MissingTranslation">Browse by type</string>
+    <string name="home_quick_filters" tools:ignore="MissingTranslation">Quick filters</string>
+    <string name="filter_suv_getaways" tools:ignore="MissingTranslation">SUV getaways</string>
+    <string name="filter_under_price_daily" tools:ignore="MissingTranslation">Under $90/day</string>
+    <string name="filter_long_trips" tools:ignore="MissingTranslation">Long trips</string>
+    <string name="filter_electric" tools:ignore="MissingTranslation">Electric</string>
+    <string name="home_popular_categories" tools:ignore="MissingTranslation">Popular categories</string>
+    <string name="action_view_all" tools:ignore="MissingTranslation">View all</string>
+    <string name="category_all_cars" tools:ignore="MissingTranslation">All cars</string>
+    <string name="category_all_cars_meta" tools:ignore="MissingTranslation">+250 in stock</string>
+    <string name="category_suv_adventures" tools:ignore="MissingTranslation">SUV adventures</string>
+    <string name="category_suv_adventures_meta" tools:ignore="MissingTranslation">85 options</string>
+    <string name="category_weekend_ready" tools:ignore="MissingTranslation">Weekend ready</string>
+    <string name="category_weekend_ready_meta" tools:ignore="MissingTranslation">Flexible return</string>
+    <string name="category_business_class" tools:ignore="MissingTranslation">Business class</string>
+    <string name="category_business_class_meta" tools:ignore="MissingTranslation">Premium sedans</string>
     <string name="home_available_cars">Available vehicles</string>
-    <string name="home_featured_rides">Featured rides</string>
-    <string name="home_featured_rides_subtitle">Curated picks loved by our community</string>
-    <string name="search_field_hint">Search by model, brand or experience</string>
-    <string name="search_trip_pickup">Pick-up</string>
-    <string name="search_trip_dates">Dates</string>
-    <string name="search_trip_vehicle">Vehicle</string>
-    <string name="reserve">Reserve</string>
+    <string name="home_featured_rides" tools:ignore="MissingTranslation">Featured rides</string>
+    <string name="home_featured_rides_subtitle" tools:ignore="MissingTranslation">Curated picks loved by our community</string>
+    <string name="search_field_hint" tools:ignore="MissingTranslation">Search by model, brand or experience</string>
+    <string name="search_trip_pickup" tools:ignore="MissingTranslation">Pick-up</string>
+    <string name="search_trip_dates" tools:ignore="MissingTranslation">Dates</string>
+    <string name="search_trip_vehicle" tools:ignore="MissingTranslation">Vehicle</string>
+    <string name="reserve" tools:ignore="MissingTranslation">Reserve</string>
     <string name="categories">Categories</string>
     <string name="all">All</string>
     <string name="suv">SUV</string>
     <string name="compact">Compact</string>
     <string name="luxury">Luxury</string>
-    <string name="rent_now">Rent now</string>
+    <string name="rent_now" tools:ignore="MissingTranslation">Rent now</string>
     <string name="available_for_rent">Available for rent</string>
     <string name="add_new_car">Add New Car</string>
     <string name="company_name">Company Name</string>
@@ -102,15 +102,15 @@
     <string name="profile_identity_title">Identity &amp; Safety</string>
     <string name="profile_identity_description">Keep your account verified for seamless bookings.</string>
     <string name="car_available">Available</string>
-    <string name="price_per_day_format"> dhs / day</string>
-    <string name="car_image_content_description">Car preview</string>
-    <string name="hint_seats">Number of seats</string>
-    <string name="label_transmission">Transmission</string>
-    <string name="transmission_automatic">Automatic</string>
-    <string name="transmission_manual">Manual</string>
-    <string name="transmission_unknown">Transmission</string>
-    <string name="seats_unknown">Seats</string>
-    <plurals name="car_seats_count">
+    <string name="price_per_day_format">%.0f dhs / day</string>
+    <string name="car_image_content_description" tools:ignore="MissingTranslation">Car preview</string>
+    <string name="hint_seats" tools:ignore="MissingTranslation">Number of seats</string>
+    <string name="label_transmission" tools:ignore="MissingTranslation">Transmission</string>
+    <string name="transmission_automatic" tools:ignore="MissingTranslation">Automatic</string>
+    <string name="transmission_manual" tools:ignore="MissingTranslation">Manual</string>
+    <string name="transmission_unknown" tools:ignore="MissingTranslation">Transmission</string>
+    <string name="seats_unknown" tools:ignore="MissingTranslation">Seats</string>
+    <plurals name="car_seats_count" tools:ignore="MissingTranslation">
         <item quantity="one">%d seat</item>
         <item quantity="other">%d seats</item>
     </plurals>
@@ -122,46 +122,47 @@
     <string name="company_id">Company ID</string>
 
     <string name="edit_profile">Edit profile</string>
-    <string name="remember_me">Remember me</string>
+    <string name="remember_me" tools:ignore="MissingTranslation">Remember me</string>
 
     <!-- Verification strings -->
-    <string name="verify_license">Verify license</string>
-    <string name="license_verified_badge">License verified ✅</string>
-    <string name="modal_title_quick_safety">Quick safety check</string>
-    <string name="modal_body_verify_once">Verify your driver’s license once to protect the community and prevent fraud.</string>
-    <string name="modal_button_verify_now">Verify now</string>
-    <string name="modal_button_cancel">Cancel</string>
-    <string name="selfie_step_header">Step 1 of 2 — Take a quick selfie</string>
-    <string name="license_step_header">Step 2 of 2 — Scan your driver’s license</string>
-    <string name="verification_success">✅ Verification successful — you’re ready to drive!</string>
-    <string name="verification_pending">We’re reviewing your info. You’ll get a notification shortly.</string>
-    <string name="verification_failed">We couldn’t verify your details. Please try again or contact support.</string>
+    <string name="verify_license" tools:ignore="MissingTranslation">Verify license</string>
+    <string name="license_verified_badge" tools:ignore="MissingTranslation">License verified ✅</string>
+    <string name="modal_title_quick_safety" tools:ignore="MissingTranslation">Quick safety check</string>
+    <string name="modal_body_verify_once" tools:ignore="MissingTranslation">Verify your driver’s license once to protect the community and prevent fraud.</string>
+    <string name="modal_button_verify_now" tools:ignore="MissingTranslation">Verify now</string>
+    <string name="modal_button_cancel" tools:ignore="MissingTranslation">Cancel</string>
+    <string name="selfie_step_header" tools:ignore="MissingTranslation">Step 1 of 2 — Take a quick selfie</string>
+    <string name="license_step_header" tools:ignore="MissingTranslation">Step 2 of 2 — Scan your driver’s license</string>
+    <string name="verification_success" tools:ignore="MissingTranslation">✅ Verification successful — you’re ready to drive!</string>
+    <string name="verification_pending" tools:ignore="MissingTranslation">We’re reviewing your info. You’ll get a notification shortly.</string>
+    <string name="verification_failed" tools:ignore="MissingTranslation">We couldn’t verify your details. Please try again or contact support.</string>
 
     <!-- Legacy/onboarding and capture strings to satisfy existing layouts -->
-    <string name="skip">Skip</string>
-    <string name="continue_label">Continue</string>
-    <string name="capture_front">Capture front</string>
-    <string name="capture_back">Capture back</string>
-    <string name="capture">Capture</string>
-    <string name="verify_title">Verify your identity</string>
-    <string name="verify_reasons">We verify to protect the community and prevent fraud.</string>
-    <string name="verify_start">Start verification</string>
-    <string name="back">Back</string>
-    <string name="verify_in_progress">Submitting your verification…</string>
-    <string name="onboarding_headline_1">Book your ride in seconds</string>
-    <string name="onboarding_headline_2">Verified drivers only</string>
-    <string name="onboarding_headline_3">Drive with peace of mind</string>
+    <string name="skip" tools:ignore="MissingTranslation">Skip</string>
+    <string name="continue_label" tools:ignore="MissingTranslation">Continue</string>
+    <string name="capture_front" tools:ignore="MissingTranslation">Capture front</string>
+    <string name="capture_back" tools:ignore="MissingTranslation">Capture back</string>
+    <string name="capture" tools:ignore="MissingTranslation">Capture</string>
+    <string name="verify_title" tools:ignore="MissingTranslation">Verify your identity</string>
+    <string name="verify_reasons" tools:ignore="MissingTranslation">We verify to protect the community and prevent fraud.</string>
+    <string name="verify_start" tools:ignore="MissingTranslation">Start verification</string>
+    <string name="back" tools:ignore="MissingTranslation">Back</string>
+    <string name="verify_in_progress" tools:ignore="MissingTranslation">Submitting your verification…</string>
+    <string name="onboarding_headline_1" tools:ignore="MissingTranslation">Book your ride in seconds</string>
+    <string name="onboarding_headline_2" tools:ignore="MissingTranslation">Verified drivers only</string>
+    <string name="onboarding_headline_3" tools:ignore="MissingTranslation">Drive with peace of mind</string>
     <string name="reports">Reports</string>
     <string name="business_overview">Business Overview</string>
     <string name="most_rented_cars">Most Rented Cars</string>
     <string name="total_rentals">Total Rentals: %1$d</string>
-    <string name="camera_permission_denied">Camera permission denied</string>
-    <string name="capture_failed">Couldn’t capture image. Try again.</string>
-    <string name="license_uploaded">License photo uploaded</string>
-    <string name="upload_failed">Upload failed. Check your connection and retry.</string>
-    <string name="selfie_uploaded">Selfie uploaded successfully</string>
+    <string name="camera_permission_denied" tools:ignore="MissingTranslation">Camera permission denied</string>
+    <string name="capture_failed" tools:ignore="MissingTranslation">Couldn’t capture image. Try again.</string>
+    <string name="license_uploaded" tools:ignore="MissingTranslation">License photo uploaded</string>
+    <string name="upload_failed" tools:ignore="MissingTranslation">Upload failed. Check your connection and retry.</string>
+    <string name="selfie_uploaded" tools:ignore="MissingTranslation">Selfie uploaded successfully</string>
 
-    <string name="verify_success">Verification successful</string>
-    <string name="verify_fail">Verification failed</string>
-    <string name="favorite">favorite</string>
+    <string name="verify_success" tools:ignore="MissingTranslation">Verification successful</string>
+    <string name="verify_fail" tools:ignore="MissingTranslation">Verification failed</string>
+    <string name="favorite" tools:ignore="MissingTranslation">favorite</string>
+    <string name="edit">Edit</string>
 </resources>

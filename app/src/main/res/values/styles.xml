@@ -36,7 +36,8 @@
         <item name="android:textFontWeight">500</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.CarRentingTest.Circle" parent="@style/ShapeAppearanceOverlay.Material3.Corner.Full">
+
+    <style name="ShapeAppearanceOverlay.CarRentingTest.Circle" parent="@style/ShapeAppearance.Material3.Corner.None">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>

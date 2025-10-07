@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,10 +20,16 @@ import java.util.List;
 public class CarAdapter extends ArrayAdapter<Car> {
 
     private final LayoutInflater inflater;
+    private boolean setClientOrAdmin = false;
 
     public CarAdapter(Context context, List<Car> cars) {
         super(context, 0, cars);
         inflater = LayoutInflater.from(context);
+    }
+
+    public void setClientOrAdmin(boolean value) {
+        this.setClientOrAdmin = value;
+        notifyDataSetChanged();
     }
 
     static class ViewHolder {
@@ -33,6 +40,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
         TextView carSeats;
         TextView carPrice;
         TextView carAvailability;
+        Button btnRent;
+        Button btnEdit;
     }
 
     @Override
@@ -40,9 +49,14 @@ public class CarAdapter extends ArrayAdapter<Car> {
         Car car = getItem(position);
         ViewHolder holder;
 
+
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.item_car, parent, false);
             holder = new ViewHolder();
+
+            holder.btnRent = convertView.findViewById(R.id.rentButton);
+            holder.btnEdit = convertView.findViewById(R.id.btnEdit);
+
 
             holder.carImage = convertView.findViewById(R.id.carImage);
             holder.carModel = convertView.findViewById(R.id.carModel);
@@ -55,6 +69,14 @@ public class CarAdapter extends ArrayAdapter<Car> {
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
+        }
+
+        if (setClientOrAdmin) {
+            holder.btnRent.setVisibility(View.GONE);
+            holder.btnEdit.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnRent.setVisibility(View.VISIBLE);
+            holder.btnEdit.setVisibility(View.GONE);
         }
 
         if (car != null) {

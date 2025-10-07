@@ -76,6 +76,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.4")
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
+    implementation("com.google.android.material:material:1.12.0") // or newer
+
 
     // Concurrent futures used by some camera utils
     implementation(libs.concurrent.futures)

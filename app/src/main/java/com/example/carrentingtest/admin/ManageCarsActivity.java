@@ -60,6 +60,7 @@ public class ManageCarsActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(doc -> {
                         companyId = doc.getString("companyId");
+                        carAdapter.setClientOrAdmin(true);
                         loadCars();
                     })
                     .addOnFailureListener(e -> Toast.makeText(this,
