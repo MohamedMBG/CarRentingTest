@@ -90,12 +90,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:hint="Image URL">
+        android:hint="@string/hint_image_urls">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etImageUrl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:inputType="textUri|textMultiLine"
+            android:maxLines="4"
+            android:minLines="2"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
