@@ -70,13 +70,33 @@
                     android:background="#ffff"
                     android:padding="20dp">
 
-                    <ImageView
-                        android:id="@+id/ivCarImage"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_car" />
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="12dp">
+
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/vpCarImages"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/tvImageIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="12dp"
+                            android:background="@drawable/bg_image_indicator"
+                            android:paddingStart="12dp"
+                            android:paddingTop="6dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="6dp"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

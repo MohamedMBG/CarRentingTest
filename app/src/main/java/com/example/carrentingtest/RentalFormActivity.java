@@ -7,13 +7,10 @@ import android.os.Bundle;
 import android.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
+import androidx.viewpager2.widget.ViewPager2;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,10 +19,12 @@ import com.example.carrentingtest.utils.NavUtils;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.carrentingtest.adapters.CarImagePagerAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.List;
 
 public class RentalFormActivity extends AppCompatActivity {
     // Tag for logging purposes
@@ -37,7 +36,10 @@ public class RentalFormActivity extends AppCompatActivity {
     // UI components
     private EditText etAdditionalRequests;
     private TextView tvStartDate, tvEndDate;
-    private ImageView ivCarImage;
+    private ViewPager2 vpCarImages;
+    private TextView tvImageIndicator;
+    private CarImagePagerAdapter imagePagerAdapter;
+    private ViewPager2.OnPageChangeCallback imagePageChangeCallback;
     private String companyId;
 
 
@@ -90,7 +92,8 @@ public class RentalFormActivity extends AppCompatActivity {
         etAdditionalRequests = findViewById(R.id.etAdditionalRequests);
         tvStartDate = findViewById(R.id.tvStartDate);
         tvEndDate = findViewById(R.id.tvEndDate);
-        ivCarImage = findViewById(R.id.ivCarImage);
+        vpCarImages = findViewById(R.id.vpCarImages);
+        tvImageIndicator = findViewById(R.id.tvImageIndicator);
     }
 
     // Method to set up car details in the UI
@@ -98,18 +101,24 @@ public class RentalFormActivity extends AppCompatActivity {
         // Set the car model text
         ((TextView) findViewById(R.id.tvSelectedCar)).setText(selectedCar.getModel());
 
-        // Load car image using Glide library with rounded corners
-        if (selectedCar.getImageUrl() != null && !selectedCar.getImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(selectedCar.getImageUrl())  // Load image from URL
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.car_placeholder)  // Show placeholder while loading
-                            .error(R.drawable.car_placeholder)  // Show placeholder if error occurs
-                            .transform(new RoundedCorners(24)))  // Apply rounded corners
-                    .into(ivCarImage);  // Set the loaded image to ImageView
+        List<String> imageUrls = selectedCar.getImageUrls();
+        imagePagerAdapter = new CarImagePagerAdapter(this, imageUrls);
+        vpCarImages.setAdapter(imagePagerAdapter);
+
+        int imageCount = imagePagerAdapter.getItemCount();
+        if (imageCount > 1) {
+            tvImageIndicator.setVisibility(View.VISIBLE);
+            tvImageIndicator.setText(getString(R.string.image_indicator_format, 1, imageCount));
+            imagePageChangeCallback = new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    tvImageIndicator.setText(getString(R.string.image_indicator_format, position + 1, imageCount));
+                }
+            };
+            vpCarImages.registerOnPageChangeCallback(imagePageChangeCallback);
         } else {
-            // If no image URL, use placeholder
-            ivCarImage.setImageResource(R.drawable.car_placeholder);
+            tvImageIndicator.setVisibility(View.GONE);
         }
     }
 
@@ -289,5 +298,13 @@ public class RentalFormActivity extends AppCompatActivity {
                     Log.e(TAG, "Error submitting request: ", e);
                     Toast.makeText(this, "Failed to submit request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (vpCarImages != null && imagePageChangeCallback != null) {
+            vpCarImages.unregisterOnPageChangeCallback(imagePageChangeCallback);
+        }
+        super.onDestroy();
     }
 }

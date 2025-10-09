@@ -133,7 +133,10 @@ public class ManageCarsActivity extends AppCompatActivity {
                 etSeats.setText(String.valueOf(car.getSeats()));
             }
             etPrice.setText(String.valueOf(car.getPricePerDay()));
-            etImageUrl.setText(car.getImageUrl());
+            List<String> existingUrls = car.getImageUrls();
+            if (!existingUrls.isEmpty()) {
+                etImageUrl.setText(TextUtils.join("\n", existingUrls));
+            }
             swAvailable.setChecked(car.isAvailable());
 
             String transmission = car.getTransmissionType();
@@ -163,7 +166,7 @@ public class ManageCarsActivity extends AppCompatActivity {
                     String priceText = etPrice.getText().toString().trim();
                     double price = TextUtils.isEmpty(priceText) ? 0 : Double.parseDouble(priceText);
                     c.setPricePerDay(price);
-                    c.setImageUrl(etImageUrl.getText().toString());
+                    c.setImageUrls(parseImageUrls(etImageUrl.getText().toString()));
 
                     int selectedTransmissionId = rgTransmission.getCheckedRadioButtonId();
                     String transmissionValue = selectedTransmissionId == R.id.rbManual
@@ -182,6 +185,23 @@ public class ManageCarsActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)  // Cancel button does nothing
                 .show();
+    }
+
+    private List<String> parseImageUrls(String rawInput) {
+        List<String> urls = new ArrayList<>();
+        if (TextUtils.isEmpty(rawInput)) {
+            return urls;
+        }
+
+        String[] tokens = rawInput.split("[\n,]");
+        for (String token : tokens) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                urls.add(trimmed);
+            }
+        }
+
+        return urls;
     }
 
     /**

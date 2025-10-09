@@ -105,6 +105,7 @@
     <string name="price_per_day_format">%.0f dhs / day</string>
     <string name="car_image_content_description" tools:ignore="MissingTranslation">Car preview</string>
     <string name="hint_seats" tools:ignore="MissingTranslation">Number of seats</string>
+    <string name="hint_image_urls" tools:ignore="MissingTranslation">Image URLs (one per line)</string>
     <string name="label_transmission" tools:ignore="MissingTranslation">Transmission</string>
     <string name="transmission_automatic" tools:ignore="MissingTranslation">Automatic</string>
     <string name="transmission_manual" tools:ignore="MissingTranslation">Manual</string>
@@ -165,4 +166,5 @@
     <string name="verify_fail" tools:ignore="MissingTranslation">Verification failed</string>
     <string name="favorite" tools:ignore="MissingTranslation">favorite</string>
     <string name="edit">Edit</string>
+    <string name="image_indicator_format" tools:ignore="MissingTranslation">%1$d / %2$d</string>
 </resources>
