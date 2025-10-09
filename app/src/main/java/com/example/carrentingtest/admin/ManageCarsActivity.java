@@ -48,6 +48,17 @@ public class ManageCarsActivity extends AppCompatActivity {
         carAdapter = new CarAdapter(this, carList);
         carsListView.setAdapter(carAdapter);
 
+        carAdapter.setOnCarActionListener(new CarAdapter.OnCarActionListener() {
+            @Override
+            public void onEdit(Car car) {
+                showCarDialog(car);
+            }
+            @Override
+            public void onDelete(Car car) {
+                deleteCar(car);
+            }
+        });
+
         // Set click listener for "Add Car" button
         findViewById(R.id.btnAddCar).setOnClickListener(v -> showCarDialog(null));
 

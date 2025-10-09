@@ -22,6 +22,17 @@ public class CarAdapter extends ArrayAdapter<Car> {
     private final LayoutInflater inflater;
     private boolean setClientOrAdmin = false;
 
+    public interface OnCarActionListener {
+        void onEdit(Car car);
+        void onDelete(Car car);
+    }
+
+    private OnCarActionListener actionListener;
+
+    public void setOnCarActionListener(OnCarActionListener listener) {
+        this.actionListener = listener;
+    }
+
     public CarAdapter(Context context, List<Car> cars) {
         super(context, 0, cars);
         inflater = LayoutInflater.from(context);
@@ -120,6 +131,15 @@ public class CarAdapter extends ArrayAdapter<Car> {
                 holder.carAvailability.setVisibility(View.GONE);
             }
         }
+
+        // --- Button actions ---
+        holder.btnEdit.setOnClickListener(v -> {
+            if (actionListener != null && car != null) actionListener.onEdit(car);
+        });
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (actionListener != null && car != null) actionListener.onDelete(car);
+        });
 
         return convertView;
     }
