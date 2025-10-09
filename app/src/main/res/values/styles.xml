@@ -41,4 +41,62 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="ThemeOverlay.CarRentingTest.DatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorPrimary">@color/palette_dark_blue</item>
+        <item name="colorOnPrimary">@color/palette_white</item>
+        <item name="colorSecondary">@color/palette_teal</item>
+        <item name="colorOnSecondary">@color/palette_dark_blue</item>
+        <item name="materialCalendarStyle">@style/Widget.CarRentingTest.MaterialDatePicker</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.CarRentingTest.PickerSurface</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.CarRentingTest.PickerSurface</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.MaterialDatePicker" parent="Widget.MaterialComponents.MaterialCalendar">
+        <item name="daySelectedStyle">@style/Widget.CarRentingTest.MaterialDatePicker.DaySelected</item>
+        <item name="dayTodayStyle">@style/Widget.CarRentingTest.MaterialDatePicker.DayToday</item>
+        <item name="dayStyle">@style/Widget.CarRentingTest.MaterialDatePicker.Day</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.MaterialDatePicker.DaySelected" parent="Widget.MaterialComponents.MaterialCalendar.Day.Selected">
+        <item name="itemFillColor">@color/palette_teal</item>
+        <item name="itemTextColor">@color/palette_dark_blue</item>
+        <item name="itemShapeAppearance">@style/ShapeAppearance.CarRentingTest.PickerDay</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.MaterialDatePicker.DayToday" parent="Widget.MaterialComponents.MaterialCalendar.Day.Today">
+        <item name="itemStrokeColor">@color/palette_teal</item>
+        <item name="itemTextColor">@color/palette_dark_blue</item>
+        <item name="itemShapeAppearance">@style/ShapeAppearance.CarRentingTest.PickerDay</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.MaterialDatePicker.Day" parent="Widget.MaterialComponents.MaterialCalendar.Day">
+        <item name="itemTextColor">@color/palette_dark_blue</item>
+        <item name="itemShapeAppearance">@style/ShapeAppearance.CarRentingTest.PickerDay</item>
+    </style>
+
+    <style name="ShapeAppearance.CarRentingTest.PickerSurface" parent="@style/ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="ShapeAppearance.CarRentingTest.PickerDay" parent="@style/ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ThemeOverlay.CarRentingTest.TimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorPrimary">@color/palette_dark_blue</item>
+        <item name="colorOnPrimary">@color/palette_white</item>
+        <item name="colorSecondary">@color/palette_teal</item>
+        <item name="colorOnSecondary">@color/palette_dark_blue</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.CarRentingTest.PickerSurface</item>
+        <item name="materialTimePickerStyle">@style/Widget.CarRentingTest.MaterialTimePicker</item>
+    </style>
+
+    <style name="Widget.CarRentingTest.MaterialTimePicker" parent="Widget.MaterialComponents.TimePicker">
+        <item name="clockFaceBackgroundColor">@color/palette_light_blue</item>
+        <item name="clockHandColor">@color/palette_teal</item>
+        <item name="clockNumberTextColor">@color/palette_dark_blue</item>
+    </style>
 </resources>

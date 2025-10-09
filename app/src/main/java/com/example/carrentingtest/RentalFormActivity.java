@@ -2,7 +2,6 @@
 package com.example.carrentingtest;
 
 // Import all required Android and Firebase libraries
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.util.Log;
@@ -21,11 +20,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.example.carrentingtest.adapters.CarImagePagerAdapter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.CompositeDateValidator;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
 
 public class RentalFormActivity extends AppCompatActivity {
     // Tag for logging purposes
@@ -135,29 +143,115 @@ public class RentalFormActivity extends AppCompatActivity {
 
     // Method to show date picker dialog
     private void showDatePicker(boolean isStartDate) {
-        // Get current date
-        Calendar cal = Calendar.getInstance();
-        // Create date picker dialog
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    // When date is selected, update the calendar and display the formatted date
-                    cal.set(year, month, dayOfMonth);
-                    String formattedDate = dateFormat.format(cal.getTime());
-                    if (isStartDate) {
-                        tvStartDate.setText(formattedDate);
-                    } else {
-                        tvEndDate.setText(formattedDate);
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
+        List<CalendarConstraints.DateValidator> validators = new ArrayList<>();
+        validators.add(DateValidatorPointForward.now());
+
+        Long initialSelection = null;
+        Long enforcedEarliestSelection = null;
+        String selectedText = (isStartDate ? tvStartDate : tvEndDate).getText().toString();
+        String defaultText = getString(isStartDate ? R.string.select_start_date : R.string.select_end_date);
+
+        if (!selectedText.equals(defaultText)) {
+            try {
+                Calendar selectedCal = Calendar.getInstance();
+                selectedCal.setTime(Objects.requireNonNull(dateFormat.parse(selectedText)));
+                initialSelection = toUtcMidnight(selectedCal);
+                constraintsBuilder.setOpenAt(initialSelection);
+            } catch (ParseException e) {
+                Log.w(TAG, "Unable to parse previously selected date", e);
+            }
+        }
+
+        if (!isStartDate) {
+            String startText = tvStartDate.getText().toString();
+            if (!startText.equals(getString(R.string.select_start_date))) {
+                try {
+                    Calendar startCal = Calendar.getInstance();
+                    startCal.setTime(Objects.requireNonNull(dateFormat.parse(startText)));
+                    long startUtc = toUtcMidnight(startCal) + TimeUnit.DAYS.toMillis(1);
+                    validators.add(DateValidatorPointForward.from(startUtc));
+                    enforcedEarliestSelection = startUtc;
+                    if (initialSelection == null) {
+                        constraintsBuilder.setOpenAt(startUtc);
                     }
-                },
-                cal.get(Calendar.YEAR),  // Initial year
-                cal.get(Calendar.MONTH),  // Initial month
-                cal.get(Calendar.DAY_OF_MONTH)  // Initial day
-        );
-        // Set minimum date to today (can't select past dates)
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        // Show the dialog
-        datePickerDialog.show();
+                } catch (ParseException e) {
+                    Log.w(TAG, "Unable to parse start date for constraints", e);
+                }
+            }
+        }
+
+        constraintsBuilder.setValidator(CompositeDateValidator.allOf(validators));
+
+        long selectionToUse = MaterialDatePicker.todayInUtcMilliseconds();
+        if (initialSelection != null) {
+            selectionToUse = initialSelection;
+        } else if (enforcedEarliestSelection != null && selectionToUse < enforcedEarliestSelection) {
+            selectionToUse = enforcedEarliestSelection;
+        }
+
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText(isStartDate ? R.string.select_start_date : R.string.select_end_date)
+                .setCalendarConstraints(constraintsBuilder.build())
+                .setSelection(selectionToUse)
+                .setTheme(R.style.ThemeOverlay_CarRentingTest_DatePicker)
+                .build();
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            if (selection == null) {
+                return;
+            }
+
+            Calendar chosenDate = fromUtcSelection(selection);
+            String formattedDate = dateFormat.format(chosenDate.getTime());
+
+            if (isStartDate) {
+                tvStartDate.setText(formattedDate);
+                resetEndDateIfBeforeStart();
+            } else {
+                tvEndDate.setText(formattedDate);
+            }
+        });
+
+        datePicker.show(getSupportFragmentManager(), isStartDate ? "START_DATE_PICKER" : "END_DATE_PICKER");
+    }
+
+    private void resetEndDateIfBeforeStart() {
+        String endText = tvEndDate.getText().toString();
+        if (endText.equals(getString(R.string.select_end_date))) {
+            return;
+        }
+
+        try {
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(Objects.requireNonNull(dateFormat.parse(tvStartDate.getText().toString())));
+            Calendar endCal = Calendar.getInstance();
+            endCal.setTime(Objects.requireNonNull(dateFormat.parse(endText)));
+
+            if (!endCal.after(startCal)) {
+                tvEndDate.setText(R.string.select_end_date);
+            }
+        } catch (ParseException e) {
+            Log.w(TAG, "Unable to compare dates when resetting end date", e);
+            tvEndDate.setText(R.string.select_end_date);
+        }
+    }
+
+    private long toUtcMidnight(Calendar localCalendar) {
+        Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        utcCalendar.clear();
+        utcCalendar.set(localCalendar.get(Calendar.YEAR), localCalendar.get(Calendar.MONTH), localCalendar.get(Calendar.DAY_OF_MONTH));
+        return utcCalendar.getTimeInMillis();
+    }
+
+    private Calendar fromUtcSelection(long utcSelection) {
+        Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        utcCalendar.setTimeInMillis(utcSelection);
+
+        Calendar localCalendar = Calendar.getInstance();
+        localCalendar.clear();
+        localCalendar.set(utcCalendar.get(Calendar.YEAR), utcCalendar.get(Calendar.MONTH), utcCalendar.get(Calendar.DAY_OF_MONTH));
+        return localCalendar;
     }
 
     // Method to validate inputs and fetch user's driver license
