@@ -244,6 +244,25 @@
                 android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:text="Delete"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/colorError"
+                app:cornerRadius="12dp"
+                app:elevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/colorError"
+                app:backgroundTint="@android:color/transparent"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/rentButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"

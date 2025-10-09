@@ -54,6 +54,7 @@ public class ManageCarsActivity extends AppCompatActivity {
         // Set click listener for ListView items (for edit/delete)
         carsListView.setOnItemClickListener((p, v, pos, id) -> showOptionsDialog(carList.get(pos)));
 
+
         if (auth.getCurrentUser() != null) {
             db.collection("users")
                     .document(auth.getCurrentUser().getUid())
@@ -69,14 +70,17 @@ public class ManageCarsActivity extends AppCompatActivity {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+
+
     }
 
     /**
-     * Loads car data from Firestore database
-     * - Clears existing list
-     * - Fetches all documents from 'cars' collection
-     * - Updates adapter when data is loaded
-     */
+     Loads car data from Firestore database
+     - Clears existing list
+     - Fetches all documents from 'cars' collection
+     - Updates adapter when data is loaded
+    */
     private void loadCars() {
         if (companyId == null) return;
         db.collection("cars")

@@ -40,8 +40,7 @@ public class CarAdapter extends ArrayAdapter<Car> {
         TextView carSeats;
         TextView carPrice;
         TextView carAvailability;
-        Button btnRent;
-        Button btnEdit;
+        Button btnRent, btnDelete, btnEdit;
     }
 
     @Override
@@ -56,6 +55,7 @@ public class CarAdapter extends ArrayAdapter<Car> {
 
             holder.btnRent = convertView.findViewById(R.id.rentButton);
             holder.btnEdit = convertView.findViewById(R.id.btnEdit);
+            holder.btnDelete = convertView.findViewById(R.id.btnDelete);
 
 
             holder.carImage = convertView.findViewById(R.id.carImage);
@@ -74,9 +74,11 @@ public class CarAdapter extends ArrayAdapter<Car> {
         if (setClientOrAdmin) {
             holder.btnRent.setVisibility(View.GONE);
             holder.btnEdit.setVisibility(View.VISIBLE);
+            holder.btnDelete.setVisibility(View.VISIBLE);
         } else {
             holder.btnRent.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.GONE);
+            holder.btnDelete.setVisibility(View.GONE);
         }
 
         if (car != null) {
