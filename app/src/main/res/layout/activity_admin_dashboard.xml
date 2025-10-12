@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffff"
+    android:background="@color/colorSurface"
     tools:context=".admin.AdminDashboardActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffff"
+        android:background="@color/colorSurface"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -39,7 +39,7 @@
                 android:id="@+id/cardViewReports"
                 style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/colorSurface"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
@@ -97,7 +97,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardManageCars"
                 style="?attr/materialCardViewElevatedStyle"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/colorSurface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -150,7 +150,7 @@
                 android:id="@+id/cardViewRequests"
                 style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/colorSurface"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
@@ -217,7 +217,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/colorSurface"
                     android:layout_marginEnd="8dp">
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -247,7 +247,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/colorSurface"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp">
                     <LinearLayout
@@ -278,7 +278,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/colorSurface"
                     android:layout_marginStart="8dp">
                     <LinearLayout
                         android:layout_width="match_parent"

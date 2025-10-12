@@ -1,10 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorBackground">#000000</color>
-    <color name="colorOnBackground">#FFFFFF</color>
-    <color name="colorSurface">#333333</color>
-    <color name="colorOnSurface">#FFFFFF</color>
-    <color name="bottomNavBackground">#000000</color>
-    <color name="bottomNavItemActive">#1F7A8C</color>
-    <color name="bottomNavItemInactive">#FFFFFF</color>
+    <!-- Dark theme palette -->
+    <color name="palette_dark_blue">#0B1424</color>
+    <color name="palette_deep_blue">#101A33</color>
+    <color name="palette_teal">#D4AF37</color>
+    <color name="palette_light_blue">#1F2A44</color>
+    <color name="palette_very_light_blue">#0F192E</color>
+    <color name="palette_white">#F5F7FF</color>
+
+    <!-- Theme colors -->
+    <color name="colorPrimary">@color/palette_teal</color>
+    <color name="colorPrimaryVariant">#B9932D</color>
+    <color name="colorOnPrimary">#0B1424</color>
+
+    <color name="colorSecondary">@color/palette_teal</color>
+    <color name="colorSecondaryVariant">#B9932D</color>
+    <color name="colorOnSecondary">#07111F</color>
+
+    <color name="colorBackground">#050A16</color>
+    <color name="colorOnBackground">#E6EAF7</color>
+
+    <color name="colorSurface">#111B2E</color>
+    <color name="colorOnSurface">#E6EAF7</color>
+
+    <color name="colorError">#F77A8E</color>
+    <color name="colorOnError">#0B1424</color>
+
+    <color name="homeBackground">#080F1E</color>
+    <color name="homeHeroStart">#101B33</color>
+    <color name="homeHeroEnd">#050A16</color>
+    <color name="homeCardStroke">#27324B</color>
+    <color name="homeChipBackground">#152038</color>
+    <color name="homeChipStroke">#24304A</color>
+    <color name="homeSearchBackground">#0F172A</color>
+    <color name="homeSearchStroke">#27324B</color>
+    <color name="homeFilterDefaultBackground">#141F34</color>
+    <color name="homeFilterStroke">#27324B</color>
+    <color name="homeFilterRipple">#66D4AF37</color>
+    <color name="homeHighlightStroke">#33FFFFFF</color>
+    <color name="homeHighlightTitle">#F6E7C3</color>
+    <color name="homeHighlightSubtitle">#D9BA7D</color>
+
+    <!-- UI element colors -->
+    <color name="textColorPrimary">#E6EAF7</color>
+    <color name="textColorSecondary">#A5B1D6</color>
+    <color name="iconTint">#E6EAF7</color>
+    <color name="bottomNavBackground">#0B1424</color>
+    <color name="bottomNavItemActive">@color/palette_teal</color>
+    <color name="bottomNavItemInactive">#93A1C8</color>
+    <color name="primary_blue">@color/palette_dark_blue</color>
+    <color name="colorSuccess">#64E884</color>
+    <color name="colorWarning">#F6705F</color>
+
+    <!-- Legacy colors -->
+    <color name="black">#E6EAF7</color>
+    <color name="colorText">#E6EAF7</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#141F34</color>
+    <color name="dark_gray">#A5B1D6</color>
+    <color name="green">#64E884</color>
 </resources>

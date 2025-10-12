@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    android:background="#FFFFFF">
+    android:background="@color/colorBackground">
 
     <!-- App Logo (Optional) -->
     <ImageView
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="@string/admin_login_title"
         android:textSize="28sp"
-        android:textColor="@color/black"
+        android:textColor="@color/textColorPrimary"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
@@ -40,7 +40,7 @@
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/textColorPrimary"
             android:inputType="text"
             android:imeOptions="actionNext"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -61,7 +61,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/textColorPrimary"
             android:inputType="textPassword"
             android:imeOptions="actionDone"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:textColor="@color/white"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/textColorPrimary"
         android:layout_marginBottom="16dp"
         android:padding="12dp"
         app:cornerRadius="8dp"

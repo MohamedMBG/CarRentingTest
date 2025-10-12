@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/colorBackground"
     android:fillViewport="true"
     tools:context=".RentalFormActivity"
     tools:ignore="ResAuto">
@@ -60,14 +60,14 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffff"
+                android:background="@color/colorSurface"
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="#ffff"
+                    android:background="@color/colorSurface"
                     android:padding="20dp">
 
                     <FrameLayout
