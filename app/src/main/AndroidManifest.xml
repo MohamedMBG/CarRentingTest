@@ -46,6 +46,12 @@
             android:name=".admin.ViewRequestsActivity"
             android:exported="false" />
         <activity
+            android:name=".admin.ActiveRentalsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ClientReportsActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.ManageCarsActivity"
             android:exported="false" />
         <activity

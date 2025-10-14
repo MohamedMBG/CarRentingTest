@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.RentalRequest;
+import com.google.android.material.button.MaterialButton;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,11 +21,20 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
 
     private final List<RentalRequest> requests; // List of rental requests to display
     private final Context context; // Application context for resources
+    private OnReportClickListener reportClickListener;
 
     // Constructor: Initializes with context and data list
     public ClientRentalRequestAdapter(Context context, List<RentalRequest> requests) {
         this.context = context;
         this.requests = requests;
+    }
+
+    public interface OnReportClickListener {
+        void onReport(RentalRequest request);
+    }
+
+    public void setOnReportClickListener(OnReportClickListener listener) {
+        this.reportClickListener = listener;
     }
 
     /**
@@ -68,6 +78,15 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         if (hasRequests) {
             h.tvRequests.setText("Requests: " + r.getAdditionalRequests());
         }
+
+        boolean canReport = r.getStatus() != null && ("approved".equalsIgnoreCase(r.getStatus()) || "ongoing".equalsIgnoreCase(r.getStatus()));
+        if (canReport && reportClickListener != null) {
+            h.btnReportIssue.setVisibility(View.VISIBLE);
+            h.btnReportIssue.setOnClickListener(v -> reportClickListener.onReport(r));
+        } else {
+            h.btnReportIssue.setVisibility(View.GONE);
+            h.btnReportIssue.setOnClickListener(null);
+        }
     }
 
     /**
@@ -93,6 +112,7 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
      */
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvCarModel, tvDates, tvStatus, tvRequests;
+        MaterialButton btnReportIssue;
 
         // Constructor: Finds and stores all views
         ViewHolder(View v) {
@@ -101,6 +121,7 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
             tvDates = v.findViewById(R.id.tvClientDates);
             tvStatus = v.findViewById(R.id.tvClientStatus);
             tvRequests = v.findViewById(R.id.tvClientAdditionalRequests);
+            btnReportIssue = v.findViewById(R.id.btnReportIssue);
         }
     }
 

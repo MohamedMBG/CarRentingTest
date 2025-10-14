@@ -2,8 +2,12 @@
 package com.example.carrentingtest;
 
 // Import all required Android and Firebase libraries
-import android.os.Bundle;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -11,15 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.carrentingtest.adapters.CarImagePagerAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
-import com.google.firebase.auth.FirebaseAuth;
-import com.example.carrentingtest.verification.VerificationGuard;
 import com.example.carrentingtest.utils.NavUtils;
+import com.example.carrentingtest.verification.VerificationGuard;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.example.carrentingtest.adapters.CarImagePagerAdapter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,9 +53,15 @@ public class RentalFormActivity extends AppCompatActivity {
     private TextView tvStartDate, tvEndDate;
     private ViewPager2 vpCarImages;
     private TextView tvImageIndicator;
+    private View adminContactCard;
+    private TextView tvAdminName;
+    private TextView tvAdminEmail;
+    private TextView tvAdminPhone;
+    private MaterialButton btnCallAdmin;
     private CarImagePagerAdapter imagePagerAdapter;
     private ViewPager2.OnPageChangeCallback imagePageChangeCallback;
     private String companyId;
+    private String adminPhoneNumber;
 
 
     // Date formatter for displaying dates
@@ -94,6 +106,9 @@ public class RentalFormActivity extends AppCompatActivity {
 
         // Set up click listeners for buttons and date pickers
         setupClickListeners();
+
+        // Fetch admin contact details for the selected company
+        loadAdminContactInfo();
     }
 
     // Method to initialize all view references
@@ -103,6 +118,11 @@ public class RentalFormActivity extends AppCompatActivity {
         tvEndDate = findViewById(R.id.tvEndDate);
         vpCarImages = findViewById(R.id.vpCarImages);
         tvImageIndicator = findViewById(R.id.tvImageIndicator);
+        adminContactCard = findViewById(R.id.cardAdminContact);
+        tvAdminName = findViewById(R.id.tvAdminName);
+        tvAdminEmail = findViewById(R.id.tvAdminEmail);
+        tvAdminPhone = findViewById(R.id.tvAdminPhone);
+        btnCallAdmin = findViewById(R.id.btnCallAdmin);
     }
 
     // Method to set up car details in the UI
@@ -139,6 +159,64 @@ public class RentalFormActivity extends AppCompatActivity {
         tvEndDate.setOnClickListener(v -> showDatePicker(false));
         // Submit button handler
         findViewById(R.id.btnSubmitRequest).setOnClickListener(v -> validateAndFetchLicense());
+    }
+
+    private void loadAdminContactInfo() {
+        if (adminContactCard == null || btnCallAdmin == null) {
+            return;
+        }
+
+        adminContactCard.setVisibility(View.GONE);
+        btnCallAdmin.setEnabled(false);
+        btnCallAdmin.setAlpha(0.6f);
+
+        if (companyId == null) {
+            return;
+        }
+
+        db.collection("users")
+                .whereEqualTo("companyId", companyId)
+                .whereEqualTo("role", "admin")
+                .limit(1)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
+                        String adminName = doc.getString("displayName");
+                        String adminEmail = doc.getString("email");
+                        adminPhoneNumber = doc.getString("phone");
+
+                        tvAdminName.setText(!TextUtils.isEmpty(adminName) ? adminName : getString(R.string.admin));
+                        tvAdminEmail.setText(!TextUtils.isEmpty(adminEmail) ? adminEmail : "-");
+
+                        if (!TextUtils.isEmpty(adminPhoneNumber)) {
+                            tvAdminPhone.setText(adminPhoneNumber);
+                            btnCallAdmin.setEnabled(true);
+                            btnCallAdmin.setAlpha(1f);
+                            btnCallAdmin.setOnClickListener(v -> openDialer(adminPhoneNumber));
+                        } else {
+                            tvAdminPhone.setText(getString(R.string.no_phone_available));
+                            btnCallAdmin.setOnClickListener(v -> Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show());
+                        }
+
+                        adminContactCard.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to load admin contact", e));
+    }
+
+    private void openDialer(String phoneNumber) {
+        if (TextUtils.isEmpty(phoneNumber)) {
+            Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Method to show date picker dialog
@@ -311,10 +389,15 @@ public class RentalFormActivity extends AppCompatActivity {
                         // Get user name and driver license from document
                         String userName = document.getString("name");
                         String userDriverLicense = document.getString("driverLicense");
+                        String userPhone = document.getString("phone");
 
                         // Use email as fallback if name is not available
                         if (userName == null) {
                             userName = user.getEmail();
+                        }
+
+                        if (TextUtils.isEmpty(userPhone)) {
+                            userPhone = user.getPhoneNumber();
                         }
 
                         // License number not required if verification is used; optional
@@ -330,7 +413,7 @@ public class RentalFormActivity extends AppCompatActivity {
                         }
 
                         // Submit the rental request with all collected data
-                        submitRequest(user.getUid(), userName, userDriverLicense, startCal, endCal);
+                        submitRequest(user.getUid(), userName, userDriverLicense, userPhone, startCal, endCal);
 
                     } else {
                         // Handle Firestore fetch errors
@@ -353,7 +436,7 @@ public class RentalFormActivity extends AppCompatActivity {
     }
 
     // Method to submit the rental request to Firestore
-    private void submitRequest(String userId, String userName, String userDriverLicense, Calendar startCal, Calendar endCal) {
+    private void submitRequest(String userId, String userName, String userDriverLicense, String userPhone, Calendar startCal, Calendar endCal) {
         // Create new rental request object
         RentalRequest request = new RentalRequest();
         // Set all request properties
@@ -362,6 +445,7 @@ public class RentalFormActivity extends AppCompatActivity {
         request.setUserId(userId);
         request.setUserName(userName);
         request.setUserDriverLicense(userDriverLicense);
+        request.setUserPhone(userPhone);
         request.setAdditionalRequests(etAdditionalRequests.getText().toString().trim());
         request.setStatus("pending");
         request.setCompanyId(companyId);

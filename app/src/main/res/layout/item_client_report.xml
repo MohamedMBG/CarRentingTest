@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvReportCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/palette_dark_blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="BMW X5" />
+
+        <TextView
+            android:id="@+id/tvReportClient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="14sp"
+            tools:text="Client: Sarah Lee" />
+
+        <TextView
+            android:id="@+id/tvReportPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="14sp"
+            tools:text="Phone: +1 555 123 456" />
+
+        <TextView
+            android:id="@+id/tvReportCreated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="13sp"
+            tools:text="Reported on Apr 12, 2024" />
+
+        <TextView
+            android:id="@+id/tvReportPeriod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="13sp"
+            tools:text="04/10/2024 to 04/15/2024" />
+
+        <TextView
+            android:id="@+id/tvReportStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Status: open" />
+
+        <TextView
+            android:id="@+id/tvReportDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/palette_dark_blue"
+            android:textSize="14sp"
+            tools:text="Description of the issue reported by the client." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCallFromReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/call_client"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

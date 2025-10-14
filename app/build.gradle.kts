@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.mlkit.facedetection)
     implementation(libs.tensorflow.lite)
 
+    // Excel export support
+    implementation("org.apache.poi:poi-ooxml-lite:5.2.5")
+
     // CameraX (basic deps; can be expanded later)
     implementation("androidx.camera:camera-core:1.3.4")
     implementation("androidx.camera:camera-camera2:1.3.4")

@@ -68,6 +68,8 @@
     <string name="add_new_car">Add New Car</string>
     <string name="company_name">Company Name</string>
     <string name="admin_email">Admin Email</string>
+    <string name="admin_phone">Admin phone</string>
+    <string name="admin_phone_helper">Shared with renters for quick assistance.</string>
     <string name="register">Register</string>
     <string name="business_signup_subtitle">Provide your business details and an admin contact to get started.</string>
     <string name="company_phone">Company phone</string>
@@ -82,6 +84,7 @@
     <string name="error_company_phone_invalid">Enter a valid phone number.</string>
     <string name="error_company_address_required">Add the company address.</string>
     <string name="error_admin_name_required">Enter the admin’s full name.</string>
+    <string name="error_admin_phone_invalid">Enter a valid admin phone number.</string>
     <string name="error_email_invalid">Enter a valid email address.</string>
     <string name="error_password_requirements">Use at least 8 characters with a letter and a number.</string>
     <string name="error_passwords_mismatch">Passwords do not match.</string>
@@ -91,6 +94,10 @@
     <string name="manage_description">Add, edit or remove vehicles</string>
     <string name="rental_requests">Rental Requests</string>
     <string name="approve_reject_bookings">Approve or reject bookings</string>
+    <string name="active_rentals">Active Rentals</string>
+    <string name="active_rentals_description">Track ongoing bookings and reach clients</string>
+    <string name="client_reports">Client Reports</string>
+    <string name="client_reports_description">Review incident reports from renters</string>
     <string name="quick_stats">Quick Stats</string>
     <string name="pending">Pending</string>
     <string name="available">Available</string>
@@ -138,6 +145,13 @@
     <string name="phone_number">Phone number</string>
     <string name="driver_license_number">Driver License Number</string>
     <string name="company_id">Company ID</string>
+    <string name="report_issue">Report an issue</string>
+    <string name="report_issue_title">Tell us what happened</string>
+    <string name="report_issue_message">We’ll send this directly to the rental admin.</string>
+    <string name="report_issue_hint">Describe the issue…</string>
+    <string name="report_issue_success">Report sent to the admin.</string>
+    <string name="report_issue_error">Couldn’t submit the report. Please try again.</string>
+    <string name="report_issue_validation">Please describe the issue before submitting.</string>
 
     <string name="edit_profile">Edit profile</string>
     <string name="remember_me" tools:ignore="MissingTranslation">Remember me</string>
@@ -173,6 +187,26 @@
     <string name="business_overview">Business Overview</string>
     <string name="most_rented_cars">Most Rented Cars</string>
     <string name="total_rentals">Total Rentals: %1$d</string>
+    <string name="admin_contact_title">Need assistance?</string>
+    <string name="admin_contact_subtitle">Contact the rental admin directly.</string>
+    <string name="admin_contact_email_label">Email:</string>
+    <string name="admin_contact_phone_label">Phone:</string>
+    <string name="call_admin">Call admin</string>
+    <string name="call_client">Call client</string>
+    <string name="no_phone_available">Phone number unavailable</string>
+    <string name="active_rentals_empty">No cars are currently rented.</string>
+    <string name="client_reports_empty">No reports from clients yet.</string>
+    <string name="export_to_excel">Export to Excel</string>
+    <string name="export_success">Excel file saved successfully.</string>
+    <string name="export_failed">Failed to export data.</string>
+    <string name="export_file_name">active_rentals.xlsx</string>
+    <string name="rental_period_format">%1$s to %2$s</string>
+    <string name="elapsed_time_label">Elapsed</string>
+    <string name="remaining_time_label">Remaining</string>
+    <string name="hours_suffix">%1$d hrs</string>
+    <string name="days_hours_format">%1$d d %2$d h</string>
+    <string name="report_created_on">Reported on %1$s</string>
+    <string name="status_label">Status: %1$s</string>
     <string name="camera_permission_denied" tools:ignore="MissingTranslation">Camera permission denied</string>
     <string name="capture_failed" tools:ignore="MissingTranslation">Couldn’t capture image. Try again.</string>
     <string name="license_uploaded" tools:ignore="MissingTranslation">License photo uploaded</string>
