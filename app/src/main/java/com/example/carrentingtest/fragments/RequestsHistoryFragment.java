@@ -1,12 +1,12 @@
 package com.example.carrentingtest.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,14 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.ClientRentalRequestAdapter;
 import com.example.carrentingtest.models.RentalRequest;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FieldValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RequestsHistoryFragment extends Fragment {
 
@@ -57,6 +62,7 @@ public class RequestsHistoryFragment extends Fragment {
         requestsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         requestList = new ArrayList<>();
         adapter = new ClientRentalRequestAdapter(requireContext(), requestList);
+        adapter.setOnReportClickListener(this::showReportDialog);
         requestsRecyclerView.setAdapter(adapter);
 
         // Fetch rental history
@@ -98,5 +104,50 @@ public class RequestsHistoryFragment extends Fragment {
                     // Refresh the list if we have data
                     if (!empty) adapter.notifyDataSetChanged();
                 });
+    }
+
+    private void showReportDialog(RentalRequest request) {
+        if (!isAdded()) {
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_report_issue, null, false);
+        TextInputEditText input = dialogView.findViewById(R.id.etReportDescription);
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.report_issue_title)
+                .setMessage(R.string.report_issue_message)
+                .setView(dialogView)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String description = input.getText() != null ? input.getText().toString().trim() : "";
+                    if (TextUtils.isEmpty(description)) {
+                        Toast.makeText(requireContext(), R.string.report_issue_validation, Toast.LENGTH_SHORT).show();
+                        } else {
+                        submitReport(request, description);
+                    }
+                })
+                .show();
+    }
+
+    private void submitReport(RentalRequest request, String description) {
+        Map<String, Object> report = new HashMap<>();
+        report.put("requestId", request.getRequestId());
+        report.put("carId", request.getCarId());
+        report.put("carModel", request.getCarModel());
+        report.put("userId", request.getUserId());
+        report.put("userName", request.getUserName());
+        report.put("userPhone", request.getUserPhone());
+        report.put("companyId", request.getCompanyId());
+        report.put("description", description);
+        report.put("status", "open");
+        report.put("startDate", request.getStartDate());
+        report.put("endDate", request.getEndDate());
+        report.put("createdAt", FieldValue.serverTimestamp());
+
+        db.collection("rental_reports")
+                .add(report)
+                .addOnSuccessListener(doc -> Toast.makeText(requireContext(), R.string.report_issue_success, Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(requireContext(), R.string.report_issue_error, Toast.LENGTH_SHORT).show());
     }
 }

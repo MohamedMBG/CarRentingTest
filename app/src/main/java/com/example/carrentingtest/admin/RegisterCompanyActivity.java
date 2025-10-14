@@ -21,9 +21,9 @@ import java.util.Map;
 
 public class RegisterCompanyActivity extends AppCompatActivity {
     private TextInputLayout tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilAdminName, tilAdminEmail,
-            tilAdminPassword, tilConfirmPassword;
+            tilAdminPhone, tilAdminPassword, tilConfirmPassword;
     private TextInputEditText etCompanyName, etCompanyPhone, etCompanyAddress, etAdminName, etAdminEmail,
-            etAdminPassword, etConfirmPassword;
+            etAdminPhone, etAdminPassword, etConfirmPassword;
     private MaterialButton btnRegisterCompany;
     private View progressBar;
     private FirebaseAuth mAuth;
@@ -35,6 +35,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     private String adminName;
     private String email;
     private String password;
+    private String adminPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         tilAdminName = findViewById(R.id.tilAdminName);
         tilAdminEmail = findViewById(R.id.tilAdminEmail);
         tilAdminPassword = findViewById(R.id.tilAdminPassword);
+        tilAdminPhone = findViewById(R.id.tilAdminPhone);
         tilConfirmPassword = findViewById(R.id.tilConfirmPassword);
 
         etCompanyName = findViewById(R.id.etCompanyName);
@@ -57,6 +59,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         etCompanyAddress = findViewById(R.id.etCompanyAddress);
         etAdminName = findViewById(R.id.etAdminName);
         etAdminEmail = findViewById(R.id.etAdminEmail);
+        etAdminPhone = findViewById(R.id.etAdminPhone);
         etAdminPassword = findViewById(R.id.etAdminPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         progressBar = findViewById(R.id.progressBar);
@@ -82,6 +85,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
                 company.put("address", companyAddress);
                 company.put("primaryContactName", adminName);
                 company.put("primaryContactEmail", email);
+                company.put("primaryContactPhone", adminPhone);
                 company.put("status", "pending_review");
                 company.put("createdAt", FieldValue.serverTimestamp());
                 db.collection("companies").document(companyId).set(company)
@@ -106,6 +110,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         user.put("role", "admin");
         user.put("companyId", companyId);
         user.put("displayName", adminName);
+        user.put("phone", adminPhone);
         user.put("status", "active");
         user.put("createdAt", FieldValue.serverTimestamp());
 
@@ -131,6 +136,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         companyAddress = getText(etCompanyAddress);
         adminName = getText(etAdminName);
         email = getText(etAdminEmail);
+        adminPhone = getText(etAdminPhone);
         password = getText(etAdminPassword);
         String confirmPassword = getText(etConfirmPassword);
 
@@ -156,6 +162,11 @@ public class RegisterCompanyActivity extends AppCompatActivity {
             isValid = false;
         }
 
+        if (!isValidPhone(adminPhone)) {
+            tilAdminPhone.setError(getString(R.string.error_admin_phone_invalid));
+            isValid = false;
+        }
+
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilAdminEmail.setError(getString(R.string.error_email_invalid));
             isValid = false;
@@ -177,7 +188,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     private void clearErrors() {
         TextInputLayout[] layouts = new TextInputLayout[]{
                 tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilAdminName,
-                tilAdminEmail, tilAdminPassword, tilConfirmPassword
+                tilAdminEmail, tilAdminPhone, tilAdminPassword, tilConfirmPassword
         };
         for (TextInputLayout layout : layouts) {
             if (layout != null) {

@@ -9,6 +9,7 @@ public class RentalRequest {
     private String userId;
     private String userName;
     private String userDriverLicense; // Added driver license field
+    private String userPhone;
     private Date startDate;
     private Date endDate;
     private String additionalRequests;
@@ -59,6 +60,14 @@ public class RentalRequest {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     public String getUserDriverLicense() { // Getter for driver license
