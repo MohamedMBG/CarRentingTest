@@ -19,10 +19,14 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.WriteBatch;
 
 
 import java.io.IOException;
@@ -41,7 +45,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRentalAdapter.OnCallClientListener {
+public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRentalAdapter.RentalActionListener {
 
     private RecyclerView recyclerView;
     private TextView tvEmptyState;
@@ -53,6 +57,8 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
     private String companyId;
     private ActivityResultLauncher<Intent> exportLauncher;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+    private ListenerRegistration activeRentalsRegistration;
+    private int lastOverdueReminderCount = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +114,11 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
         }
 
         progressBar.setVisibility(View.VISIBLE);
-        db.collection("rental_requests")
+        if (activeRentalsRegistration != null) {
+            activeRentalsRegistration.remove();
+        }
+
+        activeRentalsRegistration = db.collection("rental_requests")
                 .whereEqualTo("companyId", companyId)
                 .whereEqualTo("status", "approved")
                 .addSnapshotListener((snapshot, error) -> {
@@ -119,22 +129,18 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
                     }
 
                     activeRentals.clear();
-                    long now = System.currentTimeMillis();
                     for (DocumentSnapshot doc : snapshot) {
                         RentalRequest request = doc.toObject(RentalRequest.class);
                         if (request == null) {
                             continue;
                         }
                         request.setRequestId(doc.getId());
-                        Date endDate = request.getEndDate();
-                        if (endDate != null && endDate.getTime() < now) {
-                            continue;
-                        }
                         activeRentals.add(request);
                     }
                     adapter.notifyDataSetChanged();
                     resolveMissingPhones();
                     updateEmptyState();
+                    showPendingReturnReminder();
                 });
     }
 
@@ -164,6 +170,25 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
         tvEmptyState.setVisibility(activeRentals.isEmpty() ? View.VISIBLE : View.GONE);
         btnExport.setEnabled(!activeRentals.isEmpty());
         btnExport.setAlpha(activeRentals.isEmpty() ? 0.6f : 1f);
+    }
+
+    private void showPendingReturnReminder() {
+        int overdueCount = 0;
+        long now = System.currentTimeMillis();
+        for (RentalRequest request : activeRentals) {
+            Date endDate = request.getEndDate();
+            if (endDate != null && endDate.getTime() < now) {
+                overdueCount++;
+            }
+        }
+        if (overdueCount > 0 && overdueCount != lastOverdueReminderCount) {
+            Toast.makeText(this,
+                    getResources().getQuantityString(R.plurals.pending_return_reminder, overdueCount, overdueCount),
+                    Toast.LENGTH_LONG).show();
+            lastOverdueReminderCount = overdueCount;
+        } else if (overdueCount == 0 && lastOverdueReminderCount != 0) {
+            lastOverdueReminderCount = 0;
+        }
     }
 
     private void promptExport() {
@@ -259,5 +284,64 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onMarkAsReturned(RentalRequest request) {
+        if (request == null) {
+            return;
+        }
+        String carLabel = !TextUtils.isEmpty(request.getCarModel()) ? request.getCarModel() : getString(R.string.active_rental_unknown_car);
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.confirm_mark_returned_title)
+                .setMessage(getString(R.string.confirm_mark_returned_message, carLabel))
+                .setNegativeButton(R.string.confirm_mark_returned_negative, null)
+                .setPositiveButton(R.string.confirm_mark_returned_positive, (dialog, which) -> markRentalAsReturned(request))
+                .show();
+    }
+
+    private void markRentalAsReturned(RentalRequest request) {
+        if (request.getRequestId() == null) {
+            return;
+        }
+        progressBar.setVisibility(View.VISIBLE);
+        WriteBatch batch = db.batch();
+        DocumentReference rentalRef = db.collection("rental_requests").document(request.getRequestId());
+        batch.update(rentalRef,
+                "status", "completed",
+                "completedAt", FieldValue.serverTimestamp());
+
+        if (!TextUtils.isEmpty(request.getCarId())) {
+            DocumentReference carRef = db.collection("cars").document(request.getCarId());
+            batch.update(carRef, "available", true);
+        }
+
+        batch.commit()
+                .addOnSuccessListener(unused -> {
+                    progressBar.setVisibility(View.GONE);
+                    int index = activeRentals.indexOf(request);
+                    if (index >= 0) {
+                        activeRentals.remove(index);
+                        adapter.notifyItemRemoved(index);
+                    } else {
+                        loadActiveRentals();
+                    }
+                    updateEmptyState();
+                    lastOverdueReminderCount = 0;
+                    Toast.makeText(this, R.string.rental_marked_returned, Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(this, R.string.error_mark_returned, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (activeRentalsRegistration != null) {
+            activeRentalsRegistration.remove();
+            activeRentalsRegistration = null;
+        }
+        super.onDestroy();
     }
 }

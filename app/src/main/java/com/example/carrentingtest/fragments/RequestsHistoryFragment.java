@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -38,6 +39,7 @@ public class RequestsHistoryFragment extends Fragment {
     private TextView tvNoRequests;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private ListenerRegistration historyRegistration;
 
     @Nullable
     @Override
@@ -76,33 +78,37 @@ public class RequestsHistoryFragment extends Fragment {
         // Query Firestore for rental requests:
         // 1. Filter by current user's ID
         // 2. Sort by start date (newest first)
-        db.collection("rental_requests")
+        if (historyRegistration != null) {
+            historyRegistration.remove();
+        }
+
+        historyRegistration = db.collection("rental_requests")
                 .whereEqualTo("userId", user.getUid())
                 .orderBy("startDate", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    // Clear existing data
+                .addSnapshotListener((snapshot, error) -> {
+                    if (!isAdded()) {
+                        return;
+                    }
+
                     requestList.clear();
 
-                    // If query was successful, process results
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            // Convert Firestore document to RentalRequest object
+                    if (error != null) {
+                        Toast.makeText(requireContext(), R.string.no_requests_found, Toast.LENGTH_SHORT).show();
+                    } else if (snapshot != null) {
+                        for (QueryDocumentSnapshot doc : snapshot) {
                             RentalRequest req = doc.toObject(RentalRequest.class);
-                            // Set the document ID as request ID
+                            if (req == null) {
+                                continue;
+                            }
                             req.setRequestId(doc.getId());
-                            // Add to list
                             requestList.add(req);
                         }
                     }
 
-                    // Update UI based on whether we found requests
                     boolean empty = requestList.isEmpty();
                     requestsRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
                     tvNoRequests.setVisibility(empty ? View.VISIBLE : View.GONE);
-
-                    // Refresh the list if we have data
-                    if (!empty) adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                 });
     }
 
@@ -149,5 +155,13 @@ public class RequestsHistoryFragment extends Fragment {
                 .add(report)
                 .addOnSuccessListener(doc -> Toast.makeText(requireContext(), R.string.report_issue_success, Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(requireContext(), R.string.report_issue_error, Toast.LENGTH_SHORT).show());
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (historyRegistration != null) {
+            historyRegistration.remove();
+            historyRegistration = null;
+        }
     }
 }

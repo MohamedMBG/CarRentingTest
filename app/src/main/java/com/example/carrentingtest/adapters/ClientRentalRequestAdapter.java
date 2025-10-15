@@ -21,6 +21,7 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
 
     private final List<RentalRequest> requests; // List of rental requests to display
     private final Context context; // Application context for resources
+    private final SimpleDateFormat completedFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
     private OnReportClickListener reportClickListener;
 
     // Constructor: Initializes with context and data list
@@ -37,46 +38,37 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         this.reportClickListener = listener;
     }
 
-    /**
-     * Creates new ViewHolder instances when needed
-     * @param parent The ViewGroup into which the new View will be added
-     * @param viewType The view type of the new View
-     * @return A new ViewHolder that holds the inflated view
-     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout and create ViewHolder
         return new ViewHolder(LayoutInflater.from(context)
                 .inflate(R.layout.item_client_rental_request, parent, false));
     }
 
-    /**
-     * Binds data to the views for a specific position
-     * @param h The ViewHolder to bind data to
-     * @param p The position in the data list
-     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int p) {
         RentalRequest r = requests.get(p); // Get request at position
 
-        // Set car model text with null check
-        h.tvCarModel.setText(r.getCarModel() != null ? r.getCarModel() : "Unknown");
-
-        // Set formatted date range
+        h.tvCarModel.setText(r.getCarModel() != null ? r.getCarModel() : context.getString(R.string.active_rental_unknown_car));
         h.tvDates.setText(formatDates(r.getStartDate(), r.getEndDate()));
-
-        // Set status text with null check
-        h.tvStatus.setText("Status: " + (r.getStatus() != null ? r.getStatus() : "Unknown"));
-
-        // Set status text color
+        h.tvStatus.setText(context.getString(R.string.status_label, r.getStatus() != null ? r.getStatus() : context.getString(R.string.unknown_status)));
         h.tvStatus.setTextColor(getStatusColor(r.getStatus()));
 
-        // Show/hide additional requests based on availability
+        Date completedAt = r.getCompletedAt();
+        boolean showCompletion = completedAt != null && r.getStatus() != null && "completed".equalsIgnoreCase(r.getStatus());
+        h.tvCompletedAt.setVisibility(showCompletion ? View.VISIBLE : View.GONE);
+        if (showCompletion) {
+            h.tvCompletedAt.setText(context.getString(R.string.completed_on_format, completedFormat.format(completedAt)));
+        } else {
+            h.tvCompletedAt.setText(null);
+        }
+
         boolean hasRequests = r.getAdditionalRequests() != null && !r.getAdditionalRequests().isEmpty();
         h.tvRequests.setVisibility(hasRequests ? View.VISIBLE : View.GONE);
         if (hasRequests) {
-            h.tvRequests.setText("Requests: " + r.getAdditionalRequests());
+            h.tvRequests.setText(context.getString(R.string.additional_requests_format, r.getAdditionalRequests()));
+        } else {
+            h.tvRequests.setText(null);
         }
 
         boolean canReport = r.getStatus() != null && ("approved".equalsIgnoreCase(r.getStatus()) || "ongoing".equalsIgnoreCase(r.getStatus()));
@@ -89,65 +81,47 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         }
     }
 
-    /**
-     * Returns total number of items in data set
-     * @return The total count of rental requests
-     */
     @Override
     public int getItemCount() {
         return requests.size();
     }
 
-    /**
-     * ViewHolder class that holds references to all views in an item
-     */
-    /*
-     * The ViewHolder is a static inner class that holds references to all views in a single list item.
-     * Its purpose is to:
-     * 1. Cache view references (via findViewById) when first created
-     * 2. Allow RecyclerView to reuse these views when scrolling
-     * 3. Improve performance by avoiding repeated findViewById calls
-     *
-     * This pattern is what makes RecyclerView more efficient than ListView.
-     */
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCarModel, tvDates, tvStatus, tvRequests;
-        MaterialButton btnReportIssue;
+        final TextView tvCarModel;
+        final TextView tvDates;
+        final TextView tvStatus;
+        final TextView tvRequests;
+        final TextView tvCompletedAt;
+        final MaterialButton btnReportIssue;
 
-        // Constructor: Finds and stores all views
         ViewHolder(View v) {
             super(v);
             tvCarModel = v.findViewById(R.id.tvClientCarModel);
             tvDates = v.findViewById(R.id.tvClientDates);
             tvStatus = v.findViewById(R.id.tvClientStatus);
             tvRequests = v.findViewById(R.id.tvClientAdditionalRequests);
+            tvCompletedAt = v.findViewById(R.id.tvClientCompletedAt);
             btnReportIssue = v.findViewById(R.id.btnReportIssue);
         }
     }
 
-    /**
-     * Formats date range string from two Date objects
-     * @param s Start date (nullable)
-     * @param e End date (nullable)
-     * @return Formatted date range string
-     */
     private String formatDates(Date s, Date e) {
         SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        // Uses epoch (Jan 1, 1970) as fallback for null dates
         return f.format(s != null ? s : new Date(0)) + " to " + f.format(e != null ? e : new Date(0));
     }
 
-    /**
-     * Determines color based on request status
-     * @param s Status string (nullable)
-     * @return Color resource ID based on status
-     */
     private int getStatusColor(String s) {
-        if (s == null) return ContextCompat.getColor(context, R.color.colorWarning);
-        switch (s.toLowerCase()) {
-            case "approved": return ContextCompat.getColor(context, R.color.colorSuccess);
-            case "rejected": return ContextCompat.getColor(context, R.color.colorError);
-            default: return ContextCompat.getColor(context, R.color.colorWarning);
+        if (s == null) {
+            return ContextCompat.getColor(context, R.color.colorWarning);
+        }
+        switch (s.toLowerCase(Locale.getDefault())) {
+            case "approved":
+            case "completed":
+                return ContextCompat.getColor(context, R.color.colorSuccess);
+            case "rejected":
+                return ContextCompat.getColor(context, R.color.colorError);
+            default:
+                return ContextCompat.getColor(context, R.color.colorWarning);
         }
     }
 }

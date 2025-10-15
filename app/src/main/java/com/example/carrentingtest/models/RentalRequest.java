@@ -15,6 +15,7 @@ public class RentalRequest {
     private String additionalRequests;
     private String status; // "pending", "approved", "rejected"
     private String companyId;
+    private Date completedAt;
 
 
     public RentalRequest() {
@@ -115,5 +116,13 @@ public class RentalRequest {
 
     public void setCompanyId(String companyId) {
         this.companyId = companyId;
+    }
+
+    public Date getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(Date completedAt) {
+        this.completedAt = completedAt;
     }
 }

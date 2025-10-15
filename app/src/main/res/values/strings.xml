@@ -198,6 +198,23 @@
     <string name="client_reports_empty">No reports from clients yet.</string>
     <string name="export_to_excel">Export to Excel</string>
     <string name="export_success">Excel file saved successfully.</string>
+    <string name="mark_as_returned">Mark as returned</string>
+    <string name="confirm_mark_returned_title">Confirm return</string>
+    <string name="confirm_mark_returned_message">Mark %1$s as returned?</string>
+    <string name="confirm_mark_returned_positive">Mark returned</string>
+    <string name="confirm_mark_returned_negative">Cancel</string>
+    <string name="rental_marked_returned">Rental marked as returned.</string>
+    <string name="error_mark_returned">Unable to update the rental. Please try again.</string>
+    <string name="status_with_reminder">Status: %1$s • return overdue</string>
+    <string name="overdue_time_label">Overdue by %1$s</string>
+    <string name="active_rental_unknown_car">this car</string>
+    <string name="unknown_status">Unknown</string>
+    <string name="additional_requests_format">Requests: %1$s</string>
+    <string name="completed_on_format">Completed on %1$s</string>
+    <plurals name="pending_return_reminder">
+        <item quantity="one">1 rental is overdue for return.</item>
+        <item quantity="other">%d rentals are overdue for return.</item>
+    </plurals>
     <string name="export_failed">Failed to export data.</string>
     <string name="export_file_name">active_rentals.xlsx</string>
     <string name="rental_period_format">%1$s to %2$s</string>

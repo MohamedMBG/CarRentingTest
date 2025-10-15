@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.R;
@@ -21,17 +22,19 @@ import java.util.concurrent.TimeUnit;
 
 public class ActiveRentalAdapter extends RecyclerView.Adapter<ActiveRentalAdapter.ViewHolder> {
 
-    public interface OnCallClientListener {
+    public interface RentalActionListener {
         void onCallClient(String phoneNumber);
+
+        void onMarkAsReturned(RentalRequest request);
     }
 
     private final List<RentalRequest> rentals;
-    private final OnCallClientListener callListener;
+    private final RentalActionListener actionListener;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
-    public ActiveRentalAdapter(List<RentalRequest> rentals, OnCallClientListener callListener) {
+    public ActiveRentalAdapter(List<RentalRequest> rentals, RentalActionListener actionListener) {
         this.rentals = rentals;
-        this.callListener = callListener;
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -56,20 +59,37 @@ public class ActiveRentalAdapter extends RecyclerView.Adapter<ActiveRentalAdapte
             holder.tvClientPhone.setText(holder.itemView.getContext().getString(R.string.phone_label) + " " + phone);
         }
 
-        String periodText = formatPeriod(request.getStartDate(), request.getEndDate(), holder);
-        holder.tvRentalPeriod.setText(periodText);
-
+        holder.tvRentalPeriod.setText(formatPeriod(request.getStartDate(), request.getEndDate(), holder));
         holder.tvElapsed.setText(holder.itemView.getContext().getString(R.string.elapsed_time_label) + ": " + formatDuration(request.getStartDate(), System.currentTimeMillis(), holder));
-        holder.tvRemaining.setText(holder.itemView.getContext().getString(R.string.remaining_time_label) + ": " + formatRemaining(request.getEndDate(), System.currentTimeMillis(), holder));
 
-        holder.tvStatus.setText(holder.itemView.getContext().getString(R.string.status_label, request.getStatus() != null ? request.getStatus() : "-"));
+        boolean overdue = request.getEndDate() != null && request.getEndDate().getTime() < System.currentTimeMillis();
+        if (overdue) {
+            long overdueMillis = System.currentTimeMillis() - request.getEndDate().getTime();
+            holder.tvRemaining.setText(holder.itemView.getContext().getString(
+                    R.string.overdue_time_label,
+                    formatMillis(overdueMillis, holder)));
+            holder.tvRemaining.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorError));
+            holder.tvStatus.setText(holder.itemView.getContext().getString(
+                    R.string.status_with_reminder,
+                    request.getStatus() != null ? request.getStatus() : "-"));
+        } else {
+            holder.tvRemaining.setText(holder.itemView.getContext().getString(R.string.remaining_time_label) + ": " + formatRemaining(request.getEndDate(), System.currentTimeMillis(), holder));
+            holder.tvRemaining.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.textColorSecondary));
+            holder.tvStatus.setText(holder.itemView.getContext().getString(R.string.status_label, request.getStatus() != null ? request.getStatus() : "-"));
+        }
 
         boolean canCall = !TextUtils.isEmpty(phone);
         holder.btnCallClient.setEnabled(canCall);
         holder.btnCallClient.setAlpha(canCall ? 1f : 0.6f);
         holder.btnCallClient.setOnClickListener(v -> {
-            if (canCall && callListener != null) {
-                callListener.onCallClient(phone);
+            if (canCall && actionListener != null) {
+                actionListener.onCallClient(phone);
+            }
+        });
+
+        holder.btnMarkReturned.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onMarkAsReturned(request);
             }
         });
     }
@@ -88,6 +108,7 @@ public class ActiveRentalAdapter extends RecyclerView.Adapter<ActiveRentalAdapte
         final TextView tvRemaining;
         final TextView tvStatus;
         final MaterialButton btnCallClient;
+        final MaterialButton btnMarkReturned;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -99,6 +120,7 @@ public class ActiveRentalAdapter extends RecyclerView.Adapter<ActiveRentalAdapte
             tvRemaining = itemView.findViewById(R.id.tvRemaining);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnCallClient = itemView.findViewById(R.id.btnCallClient);
+            btnMarkReturned = itemView.findViewById(R.id.btnMarkReturned);
         }
     }
 
