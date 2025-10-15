@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+cameraCore = "1.3.4"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -20,12 +21,20 @@ mlkit_face_detection = "16.1.5"
 mpandroidchart = "3.1.0"
 concurrentFutures = "1.1.0"
 firebaseBom = "33.2.0"
+poiOoxml = "5.2.3"
+poiOoxmlLite = "5.2.5"
 
 
 [libraries]
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCore" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poiOoxml" }
+poi-ooxml-lite = { module = "org.apache.poi:poi-ooxml-lite", version.ref = "poiOoxmlLite" }
 tensorflow-lite = "org.tensorflow:tensorflow-lite:2.14.0"
 mlkit_facedetection = { module = "com.google.mlkit:face-detection", version.ref = "mlkit_face_detection" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

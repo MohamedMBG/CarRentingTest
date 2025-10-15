@@ -72,14 +72,15 @@ dependencies {
     implementation(libs.tensorflow.lite)
 
     // Excel export support
-    implementation("org.apache.poi:poi-ooxml-lite:5.2.5")
+    implementation(libs.poi.ooxml.lite)
+    implementation(libs.poi.ooxml)
 
     // CameraX (basic deps; can be expanded later)
-    implementation("androidx.camera:camera-core:1.3.4")
-    implementation("androidx.camera:camera-camera2:1.3.4")
-    implementation("androidx.camera:camera-lifecycle:1.3.4")
-    implementation("androidx.camera:camera-view:1.3.4")
-    implementation("com.google.android.material:material:1.12.0") // or newer
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.material) // or newer
 
 
     // Concurrent futures used by some camera utils

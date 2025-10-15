@@ -23,10 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,6 +35,11 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRentalAdapter.OnCallClientListener {
 
