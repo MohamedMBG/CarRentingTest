@@ -156,6 +156,56 @@
     <string name="edit_profile">Edit profile</string>
     <string name="remember_me" tools:ignore="MissingTranslation">Remember me</string>
 
+
+    <string name="error_not_authenticated">User not authenticated.</string>
+    <string name="error_company_not_found">Unable to load company details.</string>
+    <string name="error_loading_cars">Failed to load cars.</string>
+    <string name="error_loading_rentals">Failed to load rental history.</string>
+    <string name="pos_toolbar_title">Point of Sale</string>
+    <string name="pos_card_description">Track rentals, revenue and invoices</string>
+    <string name="pos_total_profit_placeholder">Total profit: -</string>
+    <string name="pos_total_profit_value">Total profit: %1$s</string>
+    <string name="pos_empty_state">No completed rentals to display yet.</string>
+    <string name="pos_unknown_car">Unknown car</string>
+    <string name="pos_car_revenue">Total revenue: %1$s</string>
+    <string name="pos_client_label">Client: %1$s</string>
+    <string name="pos_phone_label">Phone: %1$s</string>
+    <string name="pos_period_label">Rental period: %1$s - %2$s</string>
+    <string name="pos_value_placeholder">N/A</string>
+    <string name="pos_status_label">Status: %1$s</string>
+    <string name="pos_amount_label">Amount: %1$s</string>
+    <string name="pos_payment_proof_attached">Payment proof attached</string>
+    <string name="pos_payment_proof_missing">No payment proof yet</string>
+    <string name="pos_generate_invoice">Invoice</string>
+    <string name="pos_attach_payment_proof">Add proof</string>
+    <string name="pos_view_payment_proof">View proof</string>
+    <string name="pos_select_proof_source">Attach payment proof</string>
+    <string name="pos_select_from_gallery">Choose from gallery</string>
+    <string name="pos_take_photo">Take photo</string>
+    <string name="pos_upload_success">Payment proof uploaded.</string>
+    <string name="pos_upload_failed">Failed to upload proof. Try again.</string>
+    <string name="pos_invoice_success">Invoice generated successfully.</string>
+    <string name="pos_invoice_failed">Could not create invoice. Please try again.</string>
+    <string name="pos_invoice_title">Rental Invoice</string>
+    <string name="pos_invoice_car">Car: %1$s</string>
+    <string name="pos_invoice_client">Client: %1$s</string>
+    <string name="pos_invoice_phone">Phone: %1$s</string>
+    <string name="pos_invoice_period">Rental period: %1$s - %2$s</string>
+    <string name="pos_invoice_days">Total days: %1$d</string>
+    <string name="pos_invoice_total">Total amount: %1$s</string>
+    <string name="pos_invoice_file_name">Invoice_%1$s</string>
+    <string name="pos_preview_failed">Unable to open payment proof.</string>
+    <string name="pos_take_photo_error">Cannot open camera right now.</string>
+    <string name="pos_unknown_status">Unknown</string>
+    <plurals name="pos_rental_count">
+        <item quantity="one">%d rental</item>
+        <item quantity="other">%d rentals</item>
+    </plurals>
+    <plurals name="pos_days_count">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
     <!-- Verification strings -->
     <string name="verify_license" tools:ignore="MissingTranslation">Verify license</string>
     <string name="license_verified_badge" tools:ignore="MissingTranslation">License verified ✅</string>

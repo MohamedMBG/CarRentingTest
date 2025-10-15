@@ -16,6 +16,8 @@ public class RentalRequest {
     private String status; // "pending", "approved", "rejected"
     private String companyId;
     private Date completedAt;
+    private double totalPrice;
+    private String paymentProofUrl;
 
 
     public RentalRequest() {
@@ -124,5 +126,21 @@ public class RentalRequest {
 
     public void setCompletedAt(Date completedAt) {
         this.completedAt = completedAt;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getPaymentProofUrl() {
+        return paymentProofUrl;
+    }
+
+    public void setPaymentProofUrl(String paymentProofUrl) {
+        this.paymentProofUrl = paymentProofUrl;
     }
 }

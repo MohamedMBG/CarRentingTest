@@ -64,6 +64,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
         findViewById(R.id.cardViewReports).setOnClickListener(v ->
                 startActivity(new Intent(this, AdminReportsActivity.class)));
 
+        findViewById(R.id.cardPos).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminPosActivity.class)));
+
         // 4. Logout button - triggers logout process
         findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
 

@@ -14,6 +14,10 @@ public final class StoragePaths {
     public static String licenseBackPath(String uid) {
         return "verifications/" + uid + "/license_back.jpg";
     }
+
+    public static String paymentProofPath(String requestId) {
+        return "rental_payments/" + requestId + "/proof.jpg";
+    }
 }
 
 
