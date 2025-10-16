@@ -29,14 +29,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +42,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.Date;
 
 public class PastRentalsActivity extends AppCompatActivity implements PastRentalAdapter.InvoiceListener {
 
@@ -153,7 +153,6 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
         pastRentalsRegistration = db.collection("rental_requests")
                 .whereEqualTo("companyId", companyId)
                 .whereEqualTo("status", "completed")
-                .orderBy("completedAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshot, error) -> {
                     showLoading(false);
                     if (error != null || snapshot == null) {
@@ -174,6 +173,20 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
                         enhanceRequestWithCarData(request);
                         pastRentals.add(request);
                     }
+                    Collections.sort(pastRentals, (first, second) -> {
+                        Date firstDate = first.getCompletedAt();
+                        Date secondDate = second.getCompletedAt();
+                        if (firstDate == null && secondDate == null) {
+                            return 0;
+                        }
+                        if (firstDate == null) {
+                            return 1;
+                        }
+                        if (secondDate == null) {
+                            return -1;
+                        }
+                        return secondDate.compareTo(firstDate);
+                    });
                     adapter.notifyDataSetChanged();
                     resolveMissingClientDetails();
                     updateEmptyState();

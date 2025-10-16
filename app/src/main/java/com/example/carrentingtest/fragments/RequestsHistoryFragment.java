@@ -19,16 +19,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.FieldValue;
+
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 public class RequestsHistoryFragment extends Fragment {
 
@@ -84,7 +85,6 @@ public class RequestsHistoryFragment extends Fragment {
 
         historyRegistration = db.collection("rental_requests")
                 .whereEqualTo("userId", user.getUid())
-                .orderBy("startDate", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshot, error) -> {
                     if (!isAdded()) {
                         return;
@@ -93,7 +93,7 @@ public class RequestsHistoryFragment extends Fragment {
                     requestList.clear();
 
                     if (error != null) {
-                        Toast.makeText(requireContext(), R.string.no_requests_found, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.error_loading_rentals, Toast.LENGTH_SHORT).show();
                     } else if (snapshot != null) {
                         for (QueryDocumentSnapshot doc : snapshot) {
                             RentalRequest req = doc.toObject(RentalRequest.class);
@@ -103,6 +103,20 @@ public class RequestsHistoryFragment extends Fragment {
                             req.setRequestId(doc.getId());
                             requestList.add(req);
                         }
+                        Collections.sort(requestList, (first, second) -> {
+                            Date firstDate = first.getStartDate();
+                            Date secondDate = second.getStartDate();
+                            if (firstDate == null && secondDate == null) {
+                                return 0;
+                            }
+                            if (firstDate == null) {
+                                return 1;
+                            }
+                            if (secondDate == null) {
+                                return -1;
+                            }
+                            return secondDate.compareTo(firstDate);
+                        });
                     }
 
                     boolean empty = requestList.isEmpty();
