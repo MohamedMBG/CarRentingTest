@@ -63,6 +63,17 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
     }
 
     public void updateData(List<PosCarSummary> newData) {
+        if (newData == null) {
+            data.clear();
+            notifyDataSetChanged();
+            return;
+        }
+
+        if (newData == data) {
+            notifyDataSetChanged();
+            return;
+        }
+
         data.clear();
         data.addAll(newData);
         notifyDataSetChanged();
