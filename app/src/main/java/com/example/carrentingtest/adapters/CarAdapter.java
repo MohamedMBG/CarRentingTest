@@ -51,6 +51,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
         TextView carSeats;
         TextView carPrice;
         TextView carAvailability;
+        TextView carRentalCount;
+        View rentalCountGroup;
         Button btnRent, btnDelete, btnEdit;
     }
 
@@ -76,6 +78,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
             holder.carSeats = convertView.findViewById(R.id.carSeats);
             holder.carPrice = convertView.findViewById(R.id.carPrice);
             holder.carAvailability = convertView.findViewById(R.id.carAvailability);
+            holder.carRentalCount = convertView.findViewById(R.id.carRentalCount);
+            holder.rentalCountGroup = convertView.findViewById(R.id.rentalCountGroup);
 
             convertView.setTag(holder);
         } else {
@@ -90,6 +94,9 @@ public class CarAdapter extends ArrayAdapter<Car> {
             holder.btnRent.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.GONE);
             holder.btnDelete.setVisibility(View.GONE);
+        }
+        if (holder.rentalCountGroup != null) {
+            holder.rentalCountGroup.setVisibility(setClientOrAdmin ? View.VISIBLE : View.GONE);
         }
 
         if (car != null) {
@@ -111,6 +118,14 @@ public class CarAdapter extends ArrayAdapter<Car> {
 
             // Format price
             holder.carPrice.setText(String.format(getContext().getString(R.string.price_per_day_format), car.getPricePerDay()));
+
+            if (holder.carRentalCount != null) {
+                int count = Math.max(0, car.getRentalCount());
+                String text = count == 0
+                        ? getContext().getString(R.string.times_rented_never)
+                        : getContext().getResources().getQuantityString(R.plurals.times_rented_value, count, count);
+                holder.carRentalCount.setText(text);
+            }
 
             // Load image with Glide
             Glide.with(getContext())

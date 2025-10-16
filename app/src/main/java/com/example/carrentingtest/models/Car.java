@@ -15,6 +15,7 @@ public class Car implements Serializable {
     private String companyId;
     private int seats;
     private String transmissionType;
+    private int rentalCount;
 
     // Empty constructor for Firestore
     public Car() {}
@@ -92,4 +93,7 @@ public class Car implements Serializable {
 
     public String getTransmissionType() { return transmissionType; }
     public void setTransmissionType(String transmissionType) { this.transmissionType = transmissionType; }
+
+    public int getRentalCount() { return rentalCount; }
+    public void setRentalCount(int rentalCount) { this.rentalCount = rentalCount; }
 }

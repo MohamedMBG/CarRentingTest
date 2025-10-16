@@ -103,14 +103,49 @@ public class ManageCarsActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot doc : task.getResult()) {
                     Car car = doc.toObject(Car.class);  // Convert document to Car object
                     car.setDocumentId(doc.getId());  // Store document ID for future reference
+                    car.setRentalCount(0);
                     carList.add(car);  // Add to local list
                 }
                 carAdapter.notifyDataSetChanged();  // Refresh ListView
+                loadRentalCounts();
             } else {
                 // Show error message if loading fails
                 Toast.makeText(this, "Failed to load cars", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loadRentalCounts() {
+        if (companyId == null || carList.isEmpty()) {
+            return;
+        }
+
+        db.collection("rental_requests")
+                .whereEqualTo("companyId", companyId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    Map<String, Integer> counts = new HashMap<>();
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        String status = doc.getString("status");
+                        if (status == null) continue;
+                        if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status)) continue;
+                        String carId = doc.getString("carId");
+                        if (TextUtils.isEmpty(carId)) continue;
+                        counts.put(carId, counts.getOrDefault(carId, 0) + 1);
+                    }
+
+                    for (Car car : carList) {
+                        int count = counts.getOrDefault(car.getDocumentId(), 0);
+                        car.setRentalCount(count);
+                    }
+                    carAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    for (Car car : carList) {
+                        car.setRentalCount(0);
+                    }
+                    carAdapter.notifyDataSetChanged();
+                });
     }
 
     /**

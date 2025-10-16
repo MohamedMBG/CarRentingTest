@@ -26,6 +26,9 @@
         android:theme="@style/Theme.CarRentingTest"
         tools:targetApi="31">
         <activity
+            android:name=".admin.PastRentalsActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.AdminPosActivity"
             android:exported="false" />
 

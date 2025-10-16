@@ -96,6 +96,8 @@
     <string name="approve_reject_bookings">Approve or reject bookings</string>
     <string name="active_rentals">Active Rentals</string>
     <string name="active_rentals_description">Track ongoing bookings and reach clients</string>
+    <string name="past_rentals">Past Rentals</string>
+    <string name="past_rentals_description">Review completed rentals and download invoices</string>
     <string name="client_reports">Client Reports</string>
     <string name="client_reports_description">Review incident reports from renters</string>
     <string name="quick_stats">Quick Stats</string>
@@ -128,6 +130,12 @@
     <string name="car_available">Available</string>
     <string name="price_per_day_format">%.0f dhs / day</string>
     <string name="car_image_content_description" tools:ignore="MissingTranslation">Car preview</string>
+    <string name="times_rented_label">Times rented</string>
+    <string name="times_rented_never">Never rented yet</string>
+    <plurals name="times_rented_value">
+        <item quantity="one">Rented %d time</item>
+        <item quantity="other">Rented %d times</item>
+    </plurals>
     <string name="hint_seats" tools:ignore="MissingTranslation">Number of seats</string>
     <string name="hint_image_urls" tools:ignore="MissingTranslation">Image URLs (one per line)</string>
     <string name="label_transmission" tools:ignore="MissingTranslation">Transmission</string>
@@ -161,6 +169,10 @@
     <string name="error_company_not_found">Unable to load company details.</string>
     <string name="error_loading_cars">Failed to load cars.</string>
     <string name="error_loading_rentals">Failed to load rental history.</string>
+    <string name="past_rentals_empty">No completed rentals yet.</string>
+    <string name="past_rental_completed_on">Completed on %1$s</string>
+    <string name="past_rental_total_label">Total: %1$s</string>
+    <string name="past_rental_duration_label">Duration: %1$d days</string>
     <string name="pos_toolbar_title">Point of Sale</string>
     <string name="pos_card_description">Track rentals, revenue and invoices</string>
     <string name="pos_total_profit_placeholder">Total profit: -</string>
