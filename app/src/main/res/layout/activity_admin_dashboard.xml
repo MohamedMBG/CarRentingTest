@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Admin Dashboard"
+                android:text="@string/admin_dashboard_title"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:layout_marginBottom="20dp"
@@ -425,7 +425,7 @@
                             style="?attr/textAppearanceHeadlineMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="@string/stat_placeholder_dash"
                             android:textColor="@color/bottomNavItemInactive"/>
                         <TextView
                             style="?attr/textAppearanceLabelMedium"
@@ -456,7 +456,7 @@
                             style="?attr/textAppearanceHeadlineMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="@string/stat_placeholder_dash"
                             android:textColor="@color/bottomNavItemInactive"/>
                         <TextView
                             style="?attr/textAppearanceLabelMedium"
@@ -486,7 +486,7 @@
                             style="?attr/textAppearanceHeadlineMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="@string/stat_placeholder_dash"
                             android:textColor="@color/bottomNavItemInactive"/>
                         <TextView
                             style="?attr/textAppearanceLabelMedium"

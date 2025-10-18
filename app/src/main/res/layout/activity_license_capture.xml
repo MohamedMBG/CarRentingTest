@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload License Front Side"
+        android:text="@string/license_upload_front_title"
         android:textSize="18sp"
         android:layout_marginBottom="8dp"/>
 
@@ -23,13 +23,13 @@
         android:id="@+id/btnUploadFront"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Front Side"
+        android:text="@string/license_upload_front_action"
         android:layout_marginBottom="16dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload License Back Side"
+        android:text="@string/license_upload_back_title"
         android:textSize="18sp"
         android:layout_marginBottom="8dp"/>
 
@@ -44,14 +44,14 @@
         android:id="@+id/btnUploadBack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Back Side"
+        android:text="@string/license_upload_back_action"
         android:layout_marginBottom="16dp"/>
 
     <Button
         android:id="@+id/btnVerify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Verify License"/>
+        android:text="@string/verify_license"/>
 
     <TextView
         android:id="@+id/tvVerificationResult"

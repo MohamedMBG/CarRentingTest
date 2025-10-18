@@ -18,12 +18,12 @@
         android:id="@+id/btnCaptureSelfie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture Selfie" />
+        android:text="@string/capture_selfie" />
 
     <Button
         android:id="@+id/btnSelfieNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next"
+        android:text="@string/next"
         android:layout_marginTop="16dp" />
 </LinearLayout>

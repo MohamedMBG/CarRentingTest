@@ -17,7 +17,7 @@
         android:id="@+id/btnCapture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture license front"/>
+        android:text="@string/capture_front"/>
 
 </LinearLayout>
 
