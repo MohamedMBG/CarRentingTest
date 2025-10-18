@@ -76,6 +76,9 @@
     <string name="company_address">Company address</string>
     <string name="company_phone_helper">We’ll use this to reach your team if we need more details.</string>
     <string name="company_address_helper">Helps renters know where to collect vehicles.</string>
+    <string name="company_location_helper">Use coordinates so renters can open the pickup location in maps.</string>
+    <string name="company_latitude">Store latitude</string>
+    <string name="company_longitude">Store longitude</string>
     <string name="admin_full_name">Admin full name</string>
     <string name="confirm_password">Confirm password</string>
     <string name="password_requirement_hint">Use 8+ characters with at least one letter and number.</string>
@@ -83,6 +86,8 @@
     <string name="error_company_name_required">Enter the company name.</string>
     <string name="error_company_phone_invalid">Enter a valid phone number.</string>
     <string name="error_company_address_required">Add the company address.</string>
+    <string name="error_company_latitude_invalid">Enter a valid latitude between -90 and 90.</string>
+    <string name="error_company_longitude_invalid">Enter a valid longitude between -180 and 180.</string>
     <string name="error_admin_name_required">Enter the admin’s full name.</string>
     <string name="error_admin_phone_invalid">Enter a valid admin phone number.</string>
     <string name="error_email_invalid">Enter a valid email address.</string>
@@ -160,6 +165,13 @@
     <string name="report_issue_success">Report sent to the admin.</string>
     <string name="report_issue_error">Couldn’t submit the report. Please try again.</string>
     <string name="report_issue_validation">Please describe the issue before submitting.</string>
+
+    <string name="pickup_location_title">Pickup location</string>
+    <string name="pickup_location_subtitle">See where to collect the vehicle.</string>
+    <string name="pickup_address_unavailable">Address not provided.</string>
+    <string name="open_in_maps">Open in maps</string>
+    <string name="maps_app_not_found">No maps application found.</string>
+    <string name="location_not_available">Location not available.</string>
 
     <string name="edit_profile">Edit profile</string>
     <string name="remember_me" tools:ignore="MissingTranslation">Remember me</string>

@@ -86,6 +86,46 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCompanyLatitude"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:importantForAutofill="yes"
+            app:boxStrokeColor="@color/colorPrimary"
+            app:helperText="@string/company_location_helper">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCompanyLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="latitude"
+                android:hint="@string/company_latitude"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal|numberSigned" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCompanyLongitude"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:importantForAutofill="yes"
+            app:boxStrokeColor="@color/colorPrimary"
+            app:helperText="@string/company_location_helper">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCompanyLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="longitude"
+                android:hint="@string/company_longitude"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal|numberSigned" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilAdminName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"

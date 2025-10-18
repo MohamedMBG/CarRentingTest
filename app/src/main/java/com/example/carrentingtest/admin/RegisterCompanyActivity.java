@@ -15,14 +15,17 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterCompanyActivity extends AppCompatActivity {
-    private TextInputLayout tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilAdminName, tilAdminEmail,
+    private TextInputLayout tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilCompanyLatitude,
+            tilCompanyLongitude, tilAdminName, tilAdminEmail,
             tilAdminPhone, tilAdminPassword, tilConfirmPassword;
-    private TextInputEditText etCompanyName, etCompanyPhone, etCompanyAddress, etAdminName, etAdminEmail,
+    private TextInputEditText etCompanyName, etCompanyPhone, etCompanyAddress, etCompanyLatitude,
+            etCompanyLongitude, etAdminName, etAdminEmail,
             etAdminPhone, etAdminPassword, etConfirmPassword;
     private MaterialButton btnRegisterCompany;
     private View progressBar;
@@ -32,6 +35,8 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     private String companyName;
     private String companyPhone;
     private String companyAddress;
+    private double companyLatitude;
+    private double companyLongitude;
     private String adminName;
     private String email;
     private String password;
@@ -48,6 +53,8 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         tilCompanyName = findViewById(R.id.tilCompanyName);
         tilCompanyPhone = findViewById(R.id.tilCompanyPhone);
         tilCompanyAddress = findViewById(R.id.tilCompanyAddress);
+        tilCompanyLatitude = findViewById(R.id.tilCompanyLatitude);
+        tilCompanyLongitude = findViewById(R.id.tilCompanyLongitude);
         tilAdminName = findViewById(R.id.tilAdminName);
         tilAdminEmail = findViewById(R.id.tilAdminEmail);
         tilAdminPassword = findViewById(R.id.tilAdminPassword);
@@ -57,6 +64,8 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         etCompanyName = findViewById(R.id.etCompanyName);
         etCompanyPhone = findViewById(R.id.etCompanyPhone);
         etCompanyAddress = findViewById(R.id.etCompanyAddress);
+        etCompanyLatitude = findViewById(R.id.etCompanyLatitude);
+        etCompanyLongitude = findViewById(R.id.etCompanyLongitude);
         etAdminName = findViewById(R.id.etAdminName);
         etAdminEmail = findViewById(R.id.etAdminEmail);
         etAdminPhone = findViewById(R.id.etAdminPhone);
@@ -83,6 +92,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
                 company.put("name", companyName);
                 company.put("phone", companyPhone);
                 company.put("address", companyAddress);
+                company.put("location", new GeoPoint(companyLatitude, companyLongitude));
                 company.put("primaryContactName", adminName);
                 company.put("primaryContactEmail", email);
                 company.put("primaryContactPhone", adminPhone);
@@ -134,6 +144,8 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         companyName = getText(etCompanyName);
         companyPhone = getText(etCompanyPhone);
         companyAddress = getText(etCompanyAddress);
+        String latitudeText = getText(etCompanyLatitude);
+        String longitudeText = getText(etCompanyLongitude);
         adminName = getText(etAdminName);
         email = getText(etAdminEmail);
         adminPhone = getText(etAdminPhone);
@@ -155,6 +167,22 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(companyAddress) || companyAddress.length() < 6) {
             tilCompanyAddress.setError(getString(R.string.error_company_address_required));
             isValid = false;
+        }
+
+        Double parsedLatitude = parseCoordinate(latitudeText, -90d, 90d);
+        if (parsedLatitude == null) {
+            tilCompanyLatitude.setError(getString(R.string.error_company_latitude_invalid));
+            isValid = false;
+        } else {
+            companyLatitude = parsedLatitude;
+        }
+
+        Double parsedLongitude = parseCoordinate(longitudeText, -180d, 180d);
+        if (parsedLongitude == null) {
+            tilCompanyLongitude.setError(getString(R.string.error_company_longitude_invalid));
+            isValid = false;
+        } else {
+            companyLongitude = parsedLongitude;
         }
 
         if (TextUtils.isEmpty(adminName)) {
@@ -187,7 +215,8 @@ public class RegisterCompanyActivity extends AppCompatActivity {
 
     private void clearErrors() {
         TextInputLayout[] layouts = new TextInputLayout[]{
-                tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilAdminName,
+                tilCompanyName, tilCompanyPhone, tilCompanyAddress, tilCompanyLatitude, tilCompanyLongitude,
+                tilAdminName,
                 tilAdminEmail, tilAdminPhone, tilAdminPassword, tilConfirmPassword
         };
         for (TextInputLayout layout : layouts) {
@@ -215,6 +244,21 @@ public class RegisterCompanyActivity extends AppCompatActivity {
 
     private String getText(TextInputEditText editText) {
         return editText.getText() != null ? editText.getText().toString().trim() : "";
+    }
+
+    private Double parseCoordinate(String value, double min, double max) {
+        if (TextUtils.isEmpty(value)) {
+            return null;
+        }
+        try {
+            double parsed = Double.parseDouble(value);
+            if (parsed < min || parsed > max) {
+                return null;
+            }
+            return parsed;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private void toggleLoading(boolean loading) {
