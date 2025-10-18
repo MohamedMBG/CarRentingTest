@@ -316,6 +316,24 @@
     <string name="upload_failed" tools:ignore="MissingTranslation">Upload failed. Check your connection and retry.</string>
     <string name="selfie_uploaded" tools:ignore="MissingTranslation">Selfie uploaded successfully</string>
 
+    <string name="agency_location">Agency location</string>
+    <string name="agency_location_description">Update the pickup address and optional GPS coordinates renters will see.</string>
+    <string name="location_address_label">Agency address</string>
+    <string name="agency_address_hint">Enter the main pickup address</string>
+    <string name="agency_coordinates_helper">Add precise coordinates so renters can open the location in maps (optional).</string>
+    <string name="location_latitude_label">Latitude</string>
+    <string name="location_latitude_hint">e.g. 33.5731</string>
+    <string name="location_longitude_label">Longitude</string>
+    <string name="location_longitude_hint">e.g. -7.5898</string>
+    <string name="save_location">Save location</string>
+    <string name="location_load_failed">Couldn’t load the agency location.</string>
+    <string name="location_save_success">Location saved successfully.</string>
+    <string name="location_save_failed">Couldn’t save the location. Try again.</string>
+    <string name="location_address_required">Enter the agency address.</string>
+    <string name="location_coordinates_required">Enter both latitude and longitude.</string>
+    <string name="location_invalid_latitude">Latitude must be between -90 and 90.</string>
+    <string name="location_invalid_longitude">Longitude must be between -180 and 180.</string>
+
     <string name="license_upload_front_title">Upload license front side</string>
     <string name="license_upload_front_action">Upload front side</string>
     <string name="license_upload_back_title">Upload license back side</string>
