@@ -63,6 +63,10 @@
     <string name="car_available">متاح</string>
     <string name="home_available_cars">المركبات المتاحة</string>
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
+    <string name="car_price_label">السعر</string>
+    <string name="hint_car_model">الطراز</string>
+    <string name="hint_car_type">النوع</string>
+    <string name="hint_car_price_per_day">السعر لكل يوم</string>
     <string name="full_name">الاسم الكامل</string>
     <string name="email">البريد الإلكتروني</string>
     <string name="next">التالي</string>
@@ -75,4 +79,16 @@
     <string name="business_overview">نظرة عامة على الأعمال</string>
     <string name="most_rented_cars">أكثر السيارات تأجيرًا</string>
     <string name="total_rentals">إجمالي عمليات التأجير: %1$d</string>
+    <string name="action_delete">حذف</string>
+    <string name="rental_additional_requests_hint">طلبات إضافية</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_history">السجل</string>
+    <string name="nav_profile">الملف الشخصي</string>
+    <string name="admin_dashboard_title">لوحة تحكم المسؤول</string>
+    <string name="stat_placeholder_dash">-</string>
+    <string name="capture_selfie">التقاط سيلفي</string>
+    <string name="license_upload_front_title">تحميل جانب الرخصة الأمامي</string>
+    <string name="license_upload_front_action">تحميل الجانب الأمامي</string>
+    <string name="license_upload_back_title">تحميل جانب الرخصة الخلفي</string>
+    <string name="license_upload_back_action">تحميل الجانب الخلفي</string>
 </resources>

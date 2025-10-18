@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:hint="Model">
+        android:hint="@string/hint_car_model">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etModel"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:hint="Type">
+        android:hint="@string/hint_car_type">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etType"
@@ -77,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:hint="Price per day">
+        android:hint="@string/hint_car_price_per_day">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPrice"

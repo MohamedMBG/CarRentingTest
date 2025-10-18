@@ -63,6 +63,8 @@
     <string name="suv">SUV</string>
     <string name="compact">Compact</string>
     <string name="luxury">Luxury</string>
+    <string name="car_price_label">Price</string>
+    <string name="action_delete">Delete</string>
     <string name="rent_now" tools:ignore="MissingTranslation">Rent now</string>
     <string name="available_for_rent">Available for rent</string>
     <string name="add_new_car">Add New Car</string>
@@ -134,6 +136,9 @@
     <string name="profile_identity_description">Keep your account verified for seamless bookings.</string>
     <string name="car_available">Available</string>
     <string name="price_per_day_format">%.0f dhs / day</string>
+    <string name="hint_car_model">Model</string>
+    <string name="hint_car_type">Type</string>
+    <string name="hint_car_price_per_day">Price per day</string>
     <string name="car_image_content_description" tools:ignore="MissingTranslation">Car preview</string>
     <string name="times_rented_label">Times rented</string>
     <string name="times_rented_never">Never rented yet</string>
@@ -162,6 +167,7 @@
     <string name="report_issue_title">Tell us what happened</string>
     <string name="report_issue_message">We’ll send this directly to the rental admin.</string>
     <string name="report_issue_hint">Describe the issue…</string>
+    <string name="rental_additional_requests_hint">Additional requests</string>
     <string name="report_issue_success">Report sent to the admin.</string>
     <string name="report_issue_error">Couldn’t submit the report. Please try again.</string>
     <string name="report_issue_validation">Please describe the issue before submitting.</string>
@@ -175,6 +181,11 @@
 
     <string name="edit_profile">Edit profile</string>
     <string name="remember_me" tools:ignore="MissingTranslation">Remember me</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_profile">Profile</string>
+    <string name="admin_dashboard_title">Admin Dashboard</string>
+    <string name="stat_placeholder_dash">-</string>
 
 
     <string name="error_not_authenticated">User not authenticated.</string>
@@ -249,6 +260,7 @@
     <string name="capture_front" tools:ignore="MissingTranslation">Capture front</string>
     <string name="capture_back" tools:ignore="MissingTranslation">Capture back</string>
     <string name="capture" tools:ignore="MissingTranslation">Capture</string>
+    <string name="capture_selfie" tools:ignore="MissingTranslation">Capture selfie</string>
     <string name="verify_title" tools:ignore="MissingTranslation">Verify your identity</string>
     <string name="verify_reasons" tools:ignore="MissingTranslation">We verify to protect the community and prevent fraud.</string>
     <string name="verify_start" tools:ignore="MissingTranslation">Start verification</string>
@@ -303,6 +315,11 @@
     <string name="license_uploaded" tools:ignore="MissingTranslation">License photo uploaded</string>
     <string name="upload_failed" tools:ignore="MissingTranslation">Upload failed. Check your connection and retry.</string>
     <string name="selfie_uploaded" tools:ignore="MissingTranslation">Selfie uploaded successfully</string>
+
+    <string name="license_upload_front_title">Upload license front side</string>
+    <string name="license_upload_front_action">Upload front side</string>
+    <string name="license_upload_back_title">Upload license back side</string>
+    <string name="license_upload_back_action">Upload back side</string>
 
     <string name="verify_success" tools:ignore="MissingTranslation">Verification successful</string>
     <string name="verify_fail" tools:ignore="MissingTranslation">Verification failed</string>

@@ -3,14 +3,14 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@android:drawable/ic_menu_search" 
-        android:title="Home" />
+        android:title="@string/nav_home" />
     <item
         android:id="@+id/navigation_requests"
         android:icon="@android:drawable/ic_menu_recent_history" 
-        android:title="History" />
+        android:title="@string/nav_history" />
     <item
         android:id="@+id/navigation_profile"
         android:icon="@android:drawable/ic_menu_myplaces" 
-        android:title="Profile" />
+        android:title="@string/nav_profile" />
 </menu>
 

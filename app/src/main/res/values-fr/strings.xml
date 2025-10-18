@@ -63,6 +63,10 @@
     <string name="car_available">Disponible</string>
     <string name="home_available_cars">Véhicules disponibles</string>
     <string name="price_per_day_format">%.2f dhs / jour</string>
+    <string name="car_price_label">Prix</string>
+    <string name="hint_car_model">Modèle</string>
+    <string name="hint_car_type">Type</string>
+    <string name="hint_car_price_per_day">Prix par jour</string>
     <string name="full_name">Nom complet</string>
     <string name="email">E-mail</string>
     <string name="next">Suivant</string>
@@ -74,5 +78,17 @@
     <string name="most_rented_cars">Voitures les plus louées</string>
     <string name="total_rentals">Nombre total de locations : %1$d</string>
     <string name="edit_profile">Modifier profile</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="rental_additional_requests_hint">Demandes supplémentaires</string>
+    <string name="nav_home">Accueil</string>
+    <string name="nav_history">Historique</string>
+    <string name="nav_profile">Profil</string>
+    <string name="admin_dashboard_title">Tableau de bord administrateur</string>
+    <string name="stat_placeholder_dash">-</string>
+    <string name="capture_selfie">Prendre un selfie</string>
+    <string name="license_upload_front_title">Télécharger la face avant du permis</string>
+    <string name="license_upload_front_action">Télécharger la face avant</string>
+    <string name="license_upload_back_title">Télécharger la face arrière du permis</string>
+    <string name="license_upload_back_action">Télécharger la face arrière</string>
 
 </resources>

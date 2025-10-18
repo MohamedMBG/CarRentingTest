@@ -361,7 +361,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
-                    android:hint="additional request"
+                    android:hint="@string/rental_additional_requests_hint"
                     android:minLines="3"
                     android:maxLines="5"
                     android:gravity="top"
