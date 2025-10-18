@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,14 +55,21 @@ public class RentalFormActivity extends AppCompatActivity {
     private ViewPager2 vpCarImages;
     private TextView tvImageIndicator;
     private View adminContactCard;
+    private View companyLocationCard;
     private TextView tvAdminName;
     private TextView tvAdminEmail;
     private TextView tvAdminPhone;
+    private TextView tvPickupCompanyName;
+    private TextView tvPickupAddress;
     private MaterialButton btnCallAdmin;
+    private MaterialButton btnOpenMaps;
     private CarImagePagerAdapter imagePagerAdapter;
     private ViewPager2.OnPageChangeCallback imagePageChangeCallback;
     private String companyId;
     private String adminPhoneNumber;
+    private GeoPoint companyLocation;
+    private String companyAddress;
+    private String companyDisplayName;
 
 
     // Date formatter for displaying dates
@@ -109,6 +117,7 @@ public class RentalFormActivity extends AppCompatActivity {
 
         // Fetch admin contact details for the selected company
         loadAdminContactInfo();
+        loadCompanyLocation();
     }
 
     // Method to initialize all view references
@@ -119,10 +128,19 @@ public class RentalFormActivity extends AppCompatActivity {
         vpCarImages = findViewById(R.id.vpCarImages);
         tvImageIndicator = findViewById(R.id.tvImageIndicator);
         adminContactCard = findViewById(R.id.cardAdminContact);
+        companyLocationCard = findViewById(R.id.cardCompanyLocation);
         tvAdminName = findViewById(R.id.tvAdminName);
         tvAdminEmail = findViewById(R.id.tvAdminEmail);
         tvAdminPhone = findViewById(R.id.tvAdminPhone);
+        tvPickupCompanyName = findViewById(R.id.tvPickupCompanyName);
+        tvPickupAddress = findViewById(R.id.tvPickupAddress);
         btnCallAdmin = findViewById(R.id.btnCallAdmin);
+        btnOpenMaps = findViewById(R.id.btnOpenInMaps);
+
+        if (btnOpenMaps != null) {
+            btnOpenMaps.setEnabled(false);
+            btnOpenMaps.setAlpha(0.6f);
+        }
     }
 
     // Method to set up car details in the UI
@@ -159,6 +177,10 @@ public class RentalFormActivity extends AppCompatActivity {
         tvEndDate.setOnClickListener(v -> showDatePicker(false));
         // Submit button handler
         findViewById(R.id.btnSubmitRequest).setOnClickListener(v -> validateAndFetchLicense());
+
+        if (btnOpenMaps != null) {
+            btnOpenMaps.setOnClickListener(v -> openLocationInMaps());
+        }
     }
 
     private void loadAdminContactInfo() {
@@ -205,6 +227,48 @@ public class RentalFormActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to load admin contact", e));
     }
 
+    private void loadCompanyLocation() {
+        if (companyId == null || companyLocationCard == null) {
+            return;
+        }
+
+        companyLocationCard.setVisibility(View.GONE);
+
+        db.collection("companies")
+                .document(companyId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot == null || !documentSnapshot.exists()) {
+                        return;
+                    }
+
+                    companyDisplayName = documentSnapshot.getString("name");
+                    companyAddress = documentSnapshot.getString("address");
+                    companyLocation = documentSnapshot.getGeoPoint("location");
+
+                    if (tvPickupCompanyName != null) {
+                        tvPickupCompanyName.setText(!TextUtils.isEmpty(companyDisplayName)
+                                ? companyDisplayName
+                                : getString(R.string.admin));
+                    }
+
+                    if (tvPickupAddress != null) {
+                        tvPickupAddress.setText(!TextUtils.isEmpty(companyAddress)
+                                ? companyAddress
+                                : getString(R.string.pickup_address_unavailable));
+                    }
+
+                    if (btnOpenMaps != null) {
+                        boolean hasLocation = companyLocation != null;
+                        btnOpenMaps.setEnabled(hasLocation);
+                        btnOpenMaps.setAlpha(hasLocation ? 1f : 0.6f);
+                    }
+
+                    companyLocationCard.setVisibility(View.VISIBLE);
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to load company location", e));
+    }
+
     private void openDialer(String phoneNumber) {
         if (TextUtils.isEmpty(phoneNumber)) {
             Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show();
@@ -216,6 +280,46 @@ public class RentalFormActivity extends AppCompatActivity {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openLocationInMaps() {
+        if (companyLocation == null) {
+            Toast.makeText(this, R.string.location_not_available, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double latitude = companyLocation.getLatitude();
+        double longitude = companyLocation.getLongitude();
+        String label = !TextUtils.isEmpty(companyDisplayName)
+                ? companyDisplayName
+                : companyAddress;
+        if (TextUtils.isEmpty(label)) {
+            label = getString(R.string.pickup_location_title);
+        }
+
+        String geoUri = String.format(Locale.ENGLISH,
+                "geo:%f,%f?q=%f,%f(%s)",
+                latitude,
+                longitude,
+                latitude,
+                longitude,
+                Uri.encode(label));
+
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+        try {
+            startActivity(mapIntent);
+        } catch (ActivityNotFoundException e) {
+            String webUri = String.format(Locale.ENGLISH,
+                    "https://www.google.com/maps/search/?api=1&query=%f,%f",
+                    latitude,
+                    longitude);
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webUri));
+            try {
+                startActivity(webIntent);
+            } catch (ActivityNotFoundException ex) {
+                Toast.makeText(this, R.string.maps_app_not_found, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
