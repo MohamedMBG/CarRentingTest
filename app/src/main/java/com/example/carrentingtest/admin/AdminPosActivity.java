@@ -348,9 +348,18 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
             clearCameraTempFile();
             return;
         }
+
+        String requestId = pendingProofRental.getRequestId();
+        if (TextUtils.isEmpty(requestId)) {
+            Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
+            pendingProofRental = null;
+            if (fromCamera) clearCameraTempFile();
+            return;
+        }
+
         showLoading(true);
         StorageReference ref = storage.getReference()
-                .child(StoragePaths.paymentProofPath(pendingProofRental.getRequestId()));
+                .child(StoragePaths.paymentProofPath(requestId));
 
         ref.putFile(uri)
                 .continueWithTask(task -> {

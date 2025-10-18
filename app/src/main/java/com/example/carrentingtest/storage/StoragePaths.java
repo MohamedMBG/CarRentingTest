@@ -16,6 +16,9 @@ public final class StoragePaths {
     }
 
     public static String paymentProofPath(String requestId) {
+        if (requestId == null || requestId.trim().isEmpty()) {
+            throw new IllegalArgumentException("requestId must not be null or empty");
+        }
         return "rental_payments/" + requestId + "/proof.jpg";
     }
 }
