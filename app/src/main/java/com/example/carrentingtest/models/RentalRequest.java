@@ -17,7 +17,7 @@ public class RentalRequest {
     private String companyId;
     private Date completedAt;
     private double totalPrice;
-    private String paymentProofUrl;
+    private boolean paymentProofProvided;
 
 
     public RentalRequest() {
@@ -136,11 +136,11 @@ public class RentalRequest {
         this.totalPrice = totalPrice;
     }
 
-    public String getPaymentProofUrl() {
-        return paymentProofUrl;
+    public boolean isPaymentProofProvided() {
+        return paymentProofProvided;
     }
 
-    public void setPaymentProofUrl(String paymentProofUrl) {
-        this.paymentProofUrl = paymentProofUrl;
+    public void setPaymentProofProvided(boolean paymentProofProvided) {
+        this.paymentProofProvided = paymentProofProvided;
     }
 }
