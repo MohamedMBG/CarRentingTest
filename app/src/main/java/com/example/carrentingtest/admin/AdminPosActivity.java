@@ -19,7 +19,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,20 +26,14 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.PosCarAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
-import com.example.carrentingtest.storage.StoragePaths;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -50,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter.PosActionListener {
@@ -65,17 +57,11 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     private NumberFormat currencyFormat;
 
     private FirebaseFirestore db;
-    private FirebaseStorage storage;
     private FirebaseAuth auth;
     private String companyId;
 
     private PosCarAdapter.PosRentalDisplay pendingInvoiceRental;
-    private PosCarAdapter.PosRentalDisplay pendingProofRental;
     private ActivityResultLauncher<Intent> invoiceLauncher;
-    private ActivityResultLauncher<String> galleryLauncher;
-    private ActivityResultLauncher<Uri> cameraLauncher;
-    private Uri cameraTempUri;
-    private File cameraTempFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +83,9 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        initActivityResultLaunchers();
+        initInvoiceLauncher();
 
         if (auth.getCurrentUser() == null) {
             Toast.makeText(this, R.string.error_not_authenticated, Toast.LENGTH_SHORT).show();
@@ -132,13 +117,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                 });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        clearCameraTempFile();
-    }
-
-    private void initActivityResultLaunchers() {
+    private void initInvoiceLauncher() {
         invoiceLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK && result.getData() != null && pendingInvoiceRental != null) {
                 Uri uri = result.getData().getData();
@@ -149,23 +128,6 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                 }
             } else {
                 pendingInvoiceRental = null;
-            }
-        });
-
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null && pendingProofRental != null) {
-                uploadPaymentProof(uri, false);
-            } else {
-                pendingProofRental = null;
-            }
-        });
-
-        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
-            if (success && cameraTempUri != null && pendingProofRental != null) {
-                uploadPaymentProof(cameraTempUri, true);
-            } else {
-                clearCameraTempFile();
-                pendingProofRental = null;
             }
         });
     }
@@ -244,7 +206,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                             rentalDisplay.setStatus(status);
                             rentalDisplay.setRentalDays(Math.max(1, rentalDays));
                             rentalDisplay.setTotalPrice(price);
-                            rentalDisplay.setPaymentProofUrl(request.getPaymentProofUrl());
+                            rentalDisplay.setPaymentProofProvided(request.isPaymentProofProvided());
 
                             perCar.computeIfAbsent(carId, k -> new ArrayList<>()).add(rentalDisplay);
                         }
@@ -294,7 +256,12 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     }
 
     private void showLoading(boolean show) {
-        progressIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show) {
+            progressIndicator.setIndeterminate(true);
+            progressIndicator.setVisibility(View.VISIBLE);
+        } else {
+            progressIndicator.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -310,162 +277,44 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     }
 
     @Override
-    public void onAttachPaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental) {
-        pendingProofRental = rental;
+    public void onUpdatePaymentProofStatus(@NonNull PosCarAdapter.PosRentalDisplay rental, boolean hasProof) {
+        if (TextUtils.isEmpty(rental.getRequestId())) {
+            Toast.makeText(this, R.string.pos_payment_proof_status_update_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (rental.hasPaymentProof() == hasProof) {
+            return;
+        }
+
+        int messageRes = hasProof
+                ? R.string.pos_confirm_mark_payment_proof_received
+                : R.string.pos_confirm_mark_payment_proof_missing;
+
         new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.pos_select_proof_source)
-                .setItems(new CharSequence[]{getString(R.string.pos_select_from_gallery), getString(R.string.pos_take_photo)}, (dialog, which) -> {
-                    if (which == 0) {
-                        galleryLauncher.launch("image/*");
-                    } else {
-                        launchCamera();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> pendingProofRental = null)
+                .setMessage(messageRes)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> updatePaymentProofStatus(rental, hasProof))
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    @Override
-    public void onPreviewProof(@NonNull String proofUrl) {
-        try {
-            if (TextUtils.isEmpty(proofUrl)) {
-                Toast.makeText(this, R.string.pos_preview_failed, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(proofUrl)));
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.pos_preview_failed, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void launchCamera() {
-        clearCameraTempFile();
-        try {
-            cameraTempFile = File.createTempFile("payment_proof_", ".jpg", getCacheDir());
-            cameraTempUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", cameraTempFile);
-            cameraLauncher.launch(cameraTempUri);
-        } catch (IOException e) {
-            Toast.makeText(this, R.string.pos_take_photo_error, Toast.LENGTH_SHORT).show();
-            pendingProofRental = null;
-        }
-    }
-    private void uploadPaymentProof(Uri uri, boolean fromCamera) {
-        if (pendingProofRental == null || uri == null) {
-            clearCameraTempFile();
-            return;
-        }
-
-        String requestId = pendingProofRental.getRequestId();
-        if (TextUtils.isEmpty(requestId) || TextUtils.isEmpty(requestId.trim())) {
-            Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
-            pendingProofRental = null;
-            if (fromCamera) clearCameraTempFile();
-            return;
-        }
-
+    private void updatePaymentProofStatus(PosCarAdapter.PosRentalDisplay rental, boolean hasProof) {
         showLoading(true);
-
-        // Detect MIME type
-        String mime = getContentResolver().getType(uri);
-        if (mime == null) mime = "image/jpeg";
-
-        // Make captured variables final/effectively-final for lambdas
-        final String finalRequestId = requestId;
-        final String finalMime = mime;
-
-        // Build storage ref and metadata using finalRequestId / finalMime
-        StorageReference ref = storage.getReference().child(StoragePaths.paymentProofPath(finalRequestId));
-        com.google.firebase.storage.StorageMetadata metadata =
-                new com.google.firebase.storage.StorageMetadata.Builder()
-                        .setContentType(finalMime)
-                        .build();
-
-        com.google.firebase.storage.UploadTask uploadTask = ref.putFile(uri, metadata);
-
-        // Optionally show progress by toggling the CircularProgressIndicator
-        progressIndicator.setIndeterminate(false);
-        progressIndicator.setVisibility(View.VISIBLE);
-
-        uploadTask
-                .addOnProgressListener(snapshot -> {
-                    long total = snapshot.getTotalByteCount();
-                    long transferred = snapshot.getBytesTransferred();
-                    if (total > 0) {
-                        int progress = (int) ((transferred * 100) / total);
-                        progressIndicator.setProgress(progress);
-                    }
+        db.collection("rental_requests")
+                .document(rental.getRequestId())
+                .update("paymentProofProvided", hasProof)
+                .addOnSuccessListener(unused -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    showLoading(false);
+                    rental.setPaymentProofProvided(hasProof);
+                    adapter.updatePaymentProofStatus(rental.getRequestId(), hasProof);
+                    Toast.makeText(this, R.string.pos_payment_proof_status_updated, Toast.LENGTH_SHORT).show();
                 })
-                .continueWithTask(task -> {
-                    if (!task.isSuccessful()) {
-                        throw Objects.requireNonNull(task.getException());
-                    }
-                    return ref.getDownloadUrl();
-                })
-                .addOnSuccessListener(downloadUri -> db.collection("rental_requests")
-                        .document(finalRequestId)
-                        .update("paymentProofUrl", downloadUri.toString())
-                        .addOnSuccessListener(unused -> {
-                            if (isFinishing() || isDestroyed()) return;
-                            showLoading(false);
-                            progressIndicator.setVisibility(View.GONE);
-                            if (pendingProofRental != null) {
-                                pendingProofRental.setPaymentProofUrl(downloadUri.toString());
-                            }
-                            adapter.updatePaymentProof(finalRequestId, downloadUri.toString());
-                            Toast.makeText(this, R.string.pos_upload_success, Toast.LENGTH_SHORT).show();
-                            pendingProofRental = null;
-                            if (fromCamera) clearCameraTempFile();
-                        })
-                        .addOnFailureListener(e -> {
-                            if (isFinishing() || isDestroyed()) return;
-                            showLoading(false);
-                            progressIndicator.setVisibility(View.GONE);
-                            Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
-                            pendingProofRental = null;
-                            if (fromCamera) clearCameraTempFile();
-                        }))
                 .addOnFailureListener(e -> {
-                    saveLocallyAndScheduleUpload(uri, finalRequestId, fromCamera, finalMime);
+                    if (isFinishing() || isDestroyed()) return;
+                    showLoading(false);
+                    Toast.makeText(this, R.string.pos_payment_proof_status_update_failed, Toast.LENGTH_SHORT).show();
                 });
-    }
-    private void saveLocallyAndScheduleUpload(Uri uri, String requestId, boolean fromCamera, String mime) {
-        try {
-            File dir = new File(getFilesDir(), "pending_proofs");
-            if (!dir.exists()) dir.mkdirs();
-            String name = requestId + "_" + System.currentTimeMillis() + ".jpg";
-            File outFile = new File(dir, name);
-
-            try (InputStream is = getContentResolver().openInputStream(uri);
-                 OutputStream os = new FileOutputStream(outFile)) {
-                if (is == null) throw new IOException("Cannot open input stream");
-                byte[] buf = new byte[8192];
-                int r;
-                while ((r = is.read(buf)) != -1) os.write(buf, 0, r);
-                os.flush();
-            }
-
-            PendingProofStore.PendingProof p = new PendingProofStore.PendingProof();
-            p.requestId = requestId;
-            p.filePath = outFile.getAbsolutePath();
-            p.fromCamera = fromCamera;
-            p.mime = mime;
-            p.timestamp = System.currentTimeMillis();
-            PendingProofStore.savePending(this, p);
-
-            // enqueue WorkManager job constrained to network
-            UploadPaymentProofWorker.enqueueWork(this);
-
-            Log.i("POS_UPLOAD", "Saved pending proof: " + outFile.getAbsolutePath());
-            Toast.makeText(this, "Failed to upload to the server, uploaded locally", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Log.e("POS_UPLOAD", "Failed to save proof locally", e);
-            Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
-        } finally {
-            pendingProofRental = null;
-            if (fromCamera) clearCameraTempFile();
-            showLoading(false);
-            progressIndicator.setVisibility(View.GONE);
-        }
     }
 
     private void writeInvoice(Uri uri, PosCarAdapter.PosRentalDisplay rental) {
@@ -544,15 +393,6 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         if (TextUtils.isEmpty(value)) return null;
         // keep letters, digits, underscore and dash
         return value.replaceAll("[^a-zA-Z0-9_\\-]", "_");
-    }
-
-    private void clearCameraTempFile() {
-        if (cameraTempFile != null && cameraTempFile.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            cameraTempFile.delete();
-        }
-        cameraTempFile = null;
-        cameraTempUri = null;
     }
 
     private NumberFormat buildCurrencyFormat() {

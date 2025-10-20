@@ -86,18 +86,10 @@
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/pos_attach_payment_proof"
+            android:text="@string/pos_mark_payment_proof_received"
             app:icon="@drawable/ic_camera"
             app:iconGravity="textStart"
             app:iconPadding="8dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnViewProof"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pos_view_payment_proof" />
 
     </LinearLayout>
 
