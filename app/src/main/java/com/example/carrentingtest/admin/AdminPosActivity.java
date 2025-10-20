@@ -1,5 +1,7 @@
 package com.example.carrentingtest.admin;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -60,7 +62,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     private PosCarAdapter adapter;
     private final List<PosCarAdapter.PosCarSummary> summaries = new ArrayList<>();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+    private NumberFormat currencyFormat;
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -87,6 +89,8 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         tvEmptyState = findViewById(R.id.tvEmptyState);
         tvTotalProfit = findViewById(R.id.tvTotalProfit);
         progressIndicator = findViewById(R.id.progressIndicator);
+
+        currencyFormat = buildCurrencyFormat();
 
         adapter = new PosCarAdapter(summaries, this, currencyFormat, dateFormat);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -549,5 +553,20 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         }
         cameraTempFile = null;
         cameraTempUri = null;
+    }
+
+    private NumberFormat buildCurrencyFormat() {
+        Locale locale = Locale.getDefault();
+        try {
+            return NumberFormat.getCurrencyInstance(locale);
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Failed to resolve currency for locale " + locale + ", falling back to USD", e);
+            try {
+                return NumberFormat.getCurrencyInstance(Locale.US);
+            } catch (IllegalArgumentException ex) {
+                Log.e(TAG, "Failed to build fallback currency format, using number instance", ex);
+                return NumberFormat.getNumberInstance(Locale.US);
+            }
+        }
     }
 }
