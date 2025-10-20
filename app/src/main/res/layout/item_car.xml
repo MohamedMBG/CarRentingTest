@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/home_car_item_spacing"
@@ -17,7 +18,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp">
 
         <!-- Header Section -->
         <TextView
@@ -224,33 +228,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/rentalCountGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/times_rented_label"
-                    android:textColor="@color/textColorSecondary"
-                    android:textSize="13sp"
-                    android:fontFamily="sans-serif" />
-
-                <TextView
-                    android:id="@+id/carRentalCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/times_rented_never"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
@@ -308,6 +286,41 @@
                 style="@style/Widget.MaterialComponents.Button" />
 
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rentalCountGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/bottomRow"
+            app:layout_constraintStart_toStartOf="@+id/bottomRow"
+            app:layout_constraintTop_toBottomOf="@+id/bottomRow">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/times_rented_label"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="13sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/carRentalCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/times_rented_never"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

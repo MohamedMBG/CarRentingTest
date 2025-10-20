@@ -11,6 +11,12 @@ public class StoragePathsTest {
         assertEquals("rental_payments/abc123/proof.jpg", path);
     }
 
+    @Test
+    public void paymentProofPath_trimsWhitespace() {
+        String path = StoragePaths.paymentProofPath("  abc123  ");
+        assertEquals("rental_payments/abc123/proof.jpg", path);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void paymentProofPath_rejectsBlankId() {
         StoragePaths.paymentProofPath("   ");

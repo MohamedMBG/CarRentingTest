@@ -8,6 +8,7 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -342,7 +345,6 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
             pendingProofRental = null;
         }
     }
-
     private void uploadPaymentProof(Uri uri, boolean fromCamera) {
         if (pendingProofRental == null || uri == null) {
             clearCameraTempFile();
@@ -350,7 +352,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         }
 
         String requestId = pendingProofRental.getRequestId();
-        if (TextUtils.isEmpty(requestId)) {
+        if (TextUtils.isEmpty(requestId) || TextUtils.isEmpty(requestId.trim())) {
             Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
             pendingProofRental = null;
             if (fromCamera) clearCameraTempFile();
@@ -358,22 +360,54 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         }
 
         showLoading(true);
-        StorageReference ref = storage.getReference()
-                .child(StoragePaths.paymentProofPath(requestId));
 
-        ref.putFile(uri)
+        // Detect MIME type
+        String mime = getContentResolver().getType(uri);
+        if (mime == null) mime = "image/jpeg";
+
+        // Make captured variables final/effectively-final for lambdas
+        final String finalRequestId = requestId;
+        final String finalMime = mime;
+
+        // Build storage ref and metadata using finalRequestId / finalMime
+        StorageReference ref = storage.getReference().child(StoragePaths.paymentProofPath(finalRequestId));
+        com.google.firebase.storage.StorageMetadata metadata =
+                new com.google.firebase.storage.StorageMetadata.Builder()
+                        .setContentType(finalMime)
+                        .build();
+
+        com.google.firebase.storage.UploadTask uploadTask = ref.putFile(uri, metadata);
+
+        // Optionally show progress by toggling the CircularProgressIndicator
+        progressIndicator.setIndeterminate(false);
+        progressIndicator.setVisibility(View.VISIBLE);
+
+        uploadTask
+                .addOnProgressListener(snapshot -> {
+                    long total = snapshot.getTotalByteCount();
+                    long transferred = snapshot.getBytesTransferred();
+                    if (total > 0) {
+                        int progress = (int) ((transferred * 100) / total);
+                        progressIndicator.setProgress(progress);
+                    }
+                })
                 .continueWithTask(task -> {
-                    if (!task.isSuccessful()) throw Objects.requireNonNull(task.getException());
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
                     return ref.getDownloadUrl();
                 })
                 .addOnSuccessListener(downloadUri -> db.collection("rental_requests")
-                        .document(pendingProofRental.getRequestId())
+                        .document(finalRequestId)
                         .update("paymentProofUrl", downloadUri.toString())
                         .addOnSuccessListener(unused -> {
                             if (isFinishing() || isDestroyed()) return;
                             showLoading(false);
-                            pendingProofRental.setPaymentProofUrl(downloadUri.toString());
-                            adapter.updatePaymentProof(pendingProofRental.getRequestId(), downloadUri.toString());
+                            progressIndicator.setVisibility(View.GONE);
+                            if (pendingProofRental != null) {
+                                pendingProofRental.setPaymentProofUrl(downloadUri.toString());
+                            }
+                            adapter.updatePaymentProof(finalRequestId, downloadUri.toString());
                             Toast.makeText(this, R.string.pos_upload_success, Toast.LENGTH_SHORT).show();
                             pendingProofRental = null;
                             if (fromCamera) clearCameraTempFile();
@@ -381,17 +415,53 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                         .addOnFailureListener(e -> {
                             if (isFinishing() || isDestroyed()) return;
                             showLoading(false);
+                            progressIndicator.setVisibility(View.GONE);
                             Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
                             pendingProofRental = null;
                             if (fromCamera) clearCameraTempFile();
                         }))
                 .addOnFailureListener(e -> {
-                    if (isFinishing() || isDestroyed()) return;
-                    showLoading(false);
-                    Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
-                    pendingProofRental = null;
-                    if (fromCamera) clearCameraTempFile();
+                    saveLocallyAndScheduleUpload(uri, finalRequestId, fromCamera, finalMime);
                 });
+    }
+    private void saveLocallyAndScheduleUpload(Uri uri, String requestId, boolean fromCamera, String mime) {
+        try {
+            File dir = new File(getFilesDir(), "pending_proofs");
+            if (!dir.exists()) dir.mkdirs();
+            String name = requestId + "_" + System.currentTimeMillis() + ".jpg";
+            File outFile = new File(dir, name);
+
+            try (InputStream is = getContentResolver().openInputStream(uri);
+                 OutputStream os = new FileOutputStream(outFile)) {
+                if (is == null) throw new IOException("Cannot open input stream");
+                byte[] buf = new byte[8192];
+                int r;
+                while ((r = is.read(buf)) != -1) os.write(buf, 0, r);
+                os.flush();
+            }
+
+            PendingProofStore.PendingProof p = new PendingProofStore.PendingProof();
+            p.requestId = requestId;
+            p.filePath = outFile.getAbsolutePath();
+            p.fromCamera = fromCamera;
+            p.mime = mime;
+            p.timestamp = System.currentTimeMillis();
+            PendingProofStore.savePending(this, p);
+
+            // enqueue WorkManager job constrained to network
+            UploadPaymentProofWorker.enqueueWork(this);
+
+            Log.i("POS_UPLOAD", "Saved pending proof: " + outFile.getAbsolutePath());
+            Toast.makeText(this, "Failed to upload to the server, uploaded locally", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("POS_UPLOAD", "Failed to save proof locally", e);
+            Toast.makeText(this, R.string.pos_upload_failed, Toast.LENGTH_SHORT).show();
+        } finally {
+            pendingProofRental = null;
+            if (fromCamera) clearCameraTempFile();
+            showLoading(false);
+            progressIndicator.setVisibility(View.GONE);
+        }
     }
 
     private void writeInvoice(Uri uri, PosCarAdapter.PosRentalDisplay rental) {

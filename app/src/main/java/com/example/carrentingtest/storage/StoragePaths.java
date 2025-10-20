@@ -16,10 +16,14 @@ public final class StoragePaths {
     }
 
     public static String paymentProofPath(String requestId) {
-        if (requestId == null || requestId.trim().isEmpty()) {
+        if (requestId == null) {
             throw new IllegalArgumentException("requestId must not be null or empty");
         }
-        return "rental_payments/" + requestId + "/proof.jpg";
+        String sanitized = requestId.trim();
+        if (sanitized.isEmpty()) {
+            throw new IllegalArgumentException("requestId must not be null or empty");
+        }
+        return "rental_payments/" + sanitized + "/proof.jpg";
     }
 }
 
