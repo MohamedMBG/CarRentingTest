@@ -18,6 +18,8 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,12 +28,15 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.PosCarAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.storage.StoragePaths;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,10 +63,13 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+    private FirebaseStorage storage;
     private String companyId;
 
     private PosCarAdapter.PosRentalDisplay pendingInvoiceRental;
     private ActivityResultLauncher<Intent> invoiceLauncher;
+    private ActivityResultLauncher<String> paymentProofPicker;
+    private PosCarAdapter.PosRentalDisplay pendingPaymentProofRental;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +92,10 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         initInvoiceLauncher();
+        initPaymentProofPicker();
 
         if (auth.getCurrentUser() == null) {
             Toast.makeText(this, R.string.error_not_authenticated, Toast.LENGTH_SHORT).show();
@@ -115,6 +125,18 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                     Toast.makeText(this, R.string.error_company_not_found, Toast.LENGTH_SHORT).show();
                     finish();
                 });
+    }
+
+    private void initPaymentProofPicker() {
+        paymentProofPicker = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (pendingPaymentProofRental == null) {
+                return;
+            }
+            if (uri != null) {
+                uploadPaymentProof(pendingPaymentProofRental, uri);
+            }
+            pendingPaymentProofRental = null;
+        });
     }
 
     private void initInvoiceLauncher() {
@@ -207,6 +229,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                             rentalDisplay.setRentalDays(Math.max(1, rentalDays));
                             rentalDisplay.setTotalPrice(price);
                             rentalDisplay.setPaymentProofProvided(request.isPaymentProofProvided());
+                            rentalDisplay.setPaymentProofUrl(request.getPaymentProofUrl());
 
                             perCar.computeIfAbsent(carId, k -> new ArrayList<>()).add(rentalDisplay);
                         }
@@ -277,43 +300,92 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     }
 
     @Override
-    public void onUpdatePaymentProofStatus(@NonNull PosCarAdapter.PosRentalDisplay rental, boolean hasProof) {
+    public void onUploadPaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental) {
+        if (TextUtils.isEmpty(rental.getRequestId())) {
+            Toast.makeText(this, R.string.pos_payment_proof_status_update_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        pendingPaymentProofRental = rental;
+        if (paymentProofPicker != null) {
+            paymentProofPicker.launch("image/*");
+        }
+    }
+
+    @Override
+    public void onRemovePaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental) {
         if (TextUtils.isEmpty(rental.getRequestId())) {
             Toast.makeText(this, R.string.pos_payment_proof_status_update_failed, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (rental.hasPaymentProof() == hasProof) {
-            return;
-        }
-
-        int messageRes = hasProof
-                ? R.string.pos_confirm_mark_payment_proof_received
-                : R.string.pos_confirm_mark_payment_proof_missing;
-
         new MaterialAlertDialogBuilder(this)
-                .setMessage(messageRes)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> updatePaymentProofStatus(rental, hasProof))
+                .setMessage(R.string.pos_confirm_remove_payment_proof)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> removePaymentProof(rental))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    private void updatePaymentProofStatus(PosCarAdapter.PosRentalDisplay rental, boolean hasProof) {
+    private void uploadPaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental, @NonNull Uri uri) {
         showLoading(true);
+        StorageReference reference = storage
+                .getReference()
+                .child(StoragePaths.paymentProofPath(rental.getRequestId()));
+        reference.putFile(uri)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return reference.getDownloadUrl();
+                })
+                .addOnSuccessListener(downloadUri -> savePaymentProofMetadata(rental, true, downloadUri.toString(),
+                        R.string.pos_payment_proof_upload_success,
+                        R.string.pos_payment_proof_upload_failed))
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    showLoading(false);
+                    Toast.makeText(this, R.string.pos_payment_proof_upload_failed, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void removePaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental) {
+        showLoading(true);
+        StorageReference reference = storage
+                .getReference()
+                .child(StoragePaths.paymentProofPath(rental.getRequestId()));
+        reference.delete()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful() && task.getException() != null) {
+                        Log.w(TAG, "Failed to delete payment proof from storage", task.getException());
+                    }
+                    savePaymentProofMetadata(rental, false, null,
+                            R.string.pos_payment_proof_remove_success,
+                            R.string.pos_payment_proof_remove_failed);
+                });
+    }
+
+    private void savePaymentProofMetadata(@NonNull PosCarAdapter.PosRentalDisplay rental,
+                                          boolean hasProof,
+                                          @Nullable String proofUrl,
+                                          @StringRes int successMessage,
+                                          @StringRes int failureMessage) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("paymentProofProvided", hasProof);
+        updates.put("paymentProofUrl", proofUrl);
         db.collection("rental_requests")
                 .document(rental.getRequestId())
-                .update("paymentProofProvided", hasProof)
+                .update(updates)
                 .addOnSuccessListener(unused -> {
                     if (isFinishing() || isDestroyed()) return;
                     showLoading(false);
                     rental.setPaymentProofProvided(hasProof);
-                    adapter.updatePaymentProofStatus(rental.getRequestId(), hasProof);
-                    Toast.makeText(this, R.string.pos_payment_proof_status_updated, Toast.LENGTH_SHORT).show();
+                    rental.setPaymentProofUrl(proofUrl);
+                    adapter.updatePaymentProofDetails(rental.getRequestId(), hasProof, proofUrl);
+                    Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     if (isFinishing() || isDestroyed()) return;
                     showLoading(false);
-                    Toast.makeText(this, R.string.pos_payment_proof_status_update_failed, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, failureMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 

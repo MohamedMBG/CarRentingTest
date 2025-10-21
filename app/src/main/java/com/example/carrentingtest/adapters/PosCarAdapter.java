@@ -4,14 +4,17 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.Car;
+import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -25,7 +28,9 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
     public interface PosActionListener {
         void onGenerateInvoice(@NonNull PosRentalDisplay rental);
 
-        void onUpdatePaymentProofStatus(@NonNull PosRentalDisplay rental, boolean hasProof);
+        void onUploadPaymentProof(@NonNull PosRentalDisplay rental);
+
+        void onRemovePaymentProof(@NonNull PosRentalDisplay rental);
     }
 
     private final List<PosCarSummary> data;
@@ -77,12 +82,13 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
         notifyDataSetChanged();
     }
 
-    public void updatePaymentProofStatus(String requestId, boolean hasProof) {
+    public void updatePaymentProofDetails(String requestId, boolean hasProof, String proofUrl) {
         for (int i = 0; i < data.size(); i++) {
             PosCarSummary summary = data.get(i);
             for (PosRentalDisplay rental : summary.getRentals()) {
                 if (TextUtils.equals(requestId, rental.getRequestId())) {
                     rental.setPaymentProofProvided(hasProof);
+                    rental.setPaymentProofUrl(proofUrl);
                     notifyItemChanged(i);
                     return;
                 }
@@ -159,8 +165,10 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
             private final TextView tvStatus;
             private final TextView tvAmount;
             private final TextView tvPaymentProof;
-            private final com.google.android.material.button.MaterialButton btnInvoice;
-            private final com.google.android.material.button.MaterialButton btnAttachProof;
+            private final ImageView ivPaymentProof;
+            private final MaterialButton btnInvoice;
+            private final MaterialButton btnUploadProof;
+            private final MaterialButton btnRemoveProof;
 
             RentalViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -171,8 +179,10 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
                 tvStatus = itemView.findViewById(R.id.tvRentalStatus);
                 tvAmount = itemView.findViewById(R.id.tvRentalAmount);
                 tvPaymentProof = itemView.findViewById(R.id.tvPaymentProofStatus);
+                ivPaymentProof = itemView.findViewById(R.id.ivPaymentProof);
                 btnInvoice = itemView.findViewById(R.id.btnInvoice);
-                btnAttachProof = itemView.findViewById(R.id.btnAttachProof);
+                btnUploadProof = itemView.findViewById(R.id.btnUploadProof);
+                btnRemoveProof = itemView.findViewById(R.id.btnRemoveProof);
             }
 
             void bind(PosRentalDisplay rental) {
@@ -203,21 +213,40 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
                         currencyFormat.format(rental.getTotalPrice())));
 
                 boolean hasProof = rental.hasPaymentProof();
+                boolean hasProofUrl = !TextUtils.isEmpty(rental.getPaymentProofUrl());
                 tvPaymentProof.setText(hasProof ?
                         itemView.getContext().getString(R.string.pos_payment_proof_attached) :
                         itemView.getContext().getString(R.string.pos_payment_proof_missing));
+
+                if (hasProof && hasProofUrl) {
+                    ivPaymentProof.setVisibility(View.VISIBLE);
+                    Glide.with(itemView.getContext())
+                            .load(rental.getPaymentProofUrl())
+                            .placeholder(R.drawable.car_placeholder)
+                            .error(R.drawable.car_placeholder)
+                            .into(ivPaymentProof);
+                } else {
+                    ivPaymentProof.setVisibility(View.GONE);
+                }
 
                 btnInvoice.setOnClickListener(v -> {
                     if (listener != null) {
                         listener.onGenerateInvoice(rental);
                     }
                 });
-                btnAttachProof.setText(hasProof ?
-                        itemView.getContext().getString(R.string.pos_mark_payment_proof_missing) :
-                        itemView.getContext().getString(R.string.pos_mark_payment_proof_received));
-                btnAttachProof.setOnClickListener(v -> {
+                btnUploadProof.setText(hasProof ?
+                        itemView.getContext().getString(R.string.pos_replace_payment_proof) :
+                        itemView.getContext().getString(R.string.pos_upload_payment_proof));
+                btnUploadProof.setOnClickListener(v -> {
                     if (listener != null) {
-                        listener.onUpdatePaymentProofStatus(rental, !hasProof);
+                        listener.onUploadPaymentProof(rental);
+                    }
+                });
+
+                btnRemoveProof.setVisibility(hasProof ? View.VISIBLE : View.GONE);
+                btnRemoveProof.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onRemovePaymentProof(rental);
                     }
                 });
             }
@@ -276,6 +305,7 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
         private int rentalDays;
         private double totalPrice;
         private boolean paymentProofProvided;
+        private String paymentProofUrl;
 
         public String getRequestId() {
             return requestId;
@@ -363,6 +393,14 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
 
         public void setPaymentProofProvided(boolean paymentProofProvided) {
             this.paymentProofProvided = paymentProofProvided;
+        }
+
+        public String getPaymentProofUrl() {
+            return paymentProofUrl;
+        }
+
+        public void setPaymentProofUrl(String paymentProofUrl) {
+            this.paymentProofUrl = paymentProofUrl;
         }
     }
 }
