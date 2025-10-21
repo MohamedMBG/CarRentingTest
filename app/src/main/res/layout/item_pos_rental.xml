@@ -63,6 +63,16 @@
         android:layout_marginTop="8dp"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
+    <ImageView
+        android:id="@+id/ivPaymentProof"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/pos_payment_proof_preview_content_desc"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,14 +92,22 @@
             app:iconPadding="8dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAttachProof"
+            android:id="@+id/btnUploadProof"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pos_mark_payment_proof_received"
+            android:text="@string/pos_upload_payment_proof"
             app:icon="@drawable/ic_camera"
             app:iconGravity="textStart"
             app:iconPadding="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRemoveProof"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/pos_remove_payment_proof" />
 
     </LinearLayout>
 
