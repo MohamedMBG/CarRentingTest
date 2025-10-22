@@ -1,114 +1,375 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:backgroundTint="@color/white"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/bg_badge_soft"
-    android:padding="15dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tvClientName"
-        style="?attr/textAppearanceBodyLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/colorOnSurface" />
-
-    <TextView
-        android:id="@+id/tvClientPhone"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="?attr/colorOnSurfaceVariant" />
-
-    <TextView
-        android:id="@+id/tvRentalPeriod"
-        style="?attr/textAppearanceBodyMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="?attr/colorOnSurface" />
-
-    <TextView
-        android:id="@+id/tvRentalDuration"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="?attr/colorOnSurfaceVariant" />
-
-    <TextView
-        android:id="@+id/tvRentalStatus"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="?attr/colorOnSurfaceVariant" />
-
-    <TextView
-        android:id="@+id/tvRentalAmount"
-        style="?attr/textAppearanceBodyMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="?attr/colorPrimary" />
-
-    <TextView
-        android:id="@+id/tvPaymentProofStatus"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="?attr/colorOnSurfaceVariant" />
-
-    <ImageView
-        android:id="@+id/ivPaymentProof"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/pos_payment_proof_preview_content_desc"
-        android:scaleType="centerCrop"
-        android:visibility="gone" />
+    app:cardCornerRadius="12dp"
+    android:layout_margin="5dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnInvoice"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
+        <!-- Client Information Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/pos_generate_invoice"
-            app:icon="@drawable/ic_card_membership"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp" />
+            android:orientation="vertical"
+            android:paddingBottom="12dp"
+            android:background="@drawable/bg_badge_soft"
+            android:padding="12dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUploadProof"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pos_upload_payment_proof"
-            app:icon="@drawable/ic_camera"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp" />
+            <TextView
+                android:id="@+id/tvClientName"
+                style="?attr/textAppearanceBodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="John Doe" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRemoveProof"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_phone"
+                    app:tint="?attr/colorOnSurfaceVariant"  />
+
+                <TextView
+                    android:id="@+id/tvClientPhone"
+                    style="?attr/textAppearanceBodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="+1 234 567 8900" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="12dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Rental Details Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/pos_remove_payment_proof" />
+            android:orientation="vertical">
+
+            <!-- Rental Period Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvRentalPeriod"
+                    style="?attr/textAppearanceBodyMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:text="Jan 15 - Jan 20, 2024" />
+
+            </LinearLayout>
+
+            <!-- Duration and Status Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvRentalDuration"
+                    style="?attr/textAppearanceBodySmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="5 days" />
+
+                <TextView
+                    android:id="@+id/tvRentalStatus"
+                    style="?attr/textAppearanceBodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="Active" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="12dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Payment Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Amount Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="?attr/textAppearanceBodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Amount:"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tvRentalAmount"
+                    style="?attr/textAppearanceTitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary"
+                    tools:text="$250.00" />
+
+            </LinearLayout>
+
+            <!-- Payment Proof Section -->
+            <LinearLayout
+                android:id="@+id/layoutPaymentProof"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Payment Proof Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_app_logo"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvPaymentProofStatus"
+                        style="?attr/textAppearanceBodySmall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        tools:text="Payment Proof Uploaded" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewFullscreen"
+                        style="@style/Widget.Material3.Button.TextButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View Full"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:iconSize="16dp" />
+
+                </LinearLayout>
+
+                <!-- Payment Proof Image Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPaymentProof"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="8dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="?attr/colorOutline">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/ivPaymentProof"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/pos_payment_proof_preview_content_desc" />
+
+                        <!-- Overlay gradient for better text visibility -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_gravity="bottom" />
+
+                        <!-- Upload Info Overlay -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:id="@+id/tvUploadedDate"
+                                style="?attr/textAppearanceBodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white"
+                                android:drawablePadding="4dp"
+                                android:shadowColor="#000000"
+                                android:shadowDx="1"
+                                android:shadowDy="1"
+                                android:shadowRadius="2"
+                                tools:text="Uploaded: Jan 15, 2024 at 10:30 AM"
+                                  />
+
+                            <TextView
+                                android:id="@+id/tvUploadedBy"
+                                style="?attr/textAppearanceBodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@android:color/white"
+                                android:drawablePadding="4dp"
+                                android:shadowColor="#000000"
+                                android:shadowDx="1"
+                                android:shadowDy="1"
+                                android:shadowRadius="2"
+                                tools:text="By: Admin Name"
+                                tools:drawableStart="@drawable/ic_person" />
+
+                        </LinearLayout>
+
+                        <!-- Verification Badge (Top Right) -->
+                        <ImageView
+                            android:id="@+id/ivVerifiedBadge"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="end|top"
+                            android:layout_margin="8dp"
+                            android:src="@drawable/car_placeholder"
+                            android:visibility="gone"  />
+
+                    </FrameLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- No Payment Proof Message -->
+                <LinearLayout
+                    android:id="@+id/layoutNoProof"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_badge_soft"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/car_placeholder"
+                        app:tint="?attr/colorOnSurfaceVariant"
+                        android:alpha="0.5"  />
+
+                    <TextView
+                        style="?attr/textAppearanceBodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/pos_upload_payment_proof"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnInvoice"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/pos_generate_invoice"
+                app:icon="@drawable/ic_card_membership"
+                app:iconGravity="start"
+                app:iconPadding="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadProof"
+                style="?attr/materialButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload proof"
+                app:icon="@drawable/ic_camera"
+                app:iconGravity="start"
+                app:iconPadding="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRemoveProof"
+                style="?attr/materialIconButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/pos_remove_payment_proof"
+                android:visibility="gone"
+                app:iconSize="18dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
