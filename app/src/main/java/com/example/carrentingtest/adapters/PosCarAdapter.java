@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.Car;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -169,6 +171,12 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
             private final MaterialButton btnInvoice;
             private final MaterialButton btnUploadProof;
             private final MaterialButton btnRemoveProof;
+            private final MaterialCardView cardPaymentProof;
+            private final LinearLayout layoutNoProof;
+            private final TextView tvUploadedDate;
+            private final TextView tvUploadedBy;
+            private final MaterialButton btnViewFullscreen;
+            private final ImageView ivVerifiedBadge;
 
             RentalViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -183,6 +191,12 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
                 btnInvoice = itemView.findViewById(R.id.btnInvoice);
                 btnUploadProof = itemView.findViewById(R.id.btnUploadProof);
                 btnRemoveProof = itemView.findViewById(R.id.btnRemoveProof);
+                cardPaymentProof = itemView.findViewById(R.id.cardPaymentProof);
+                layoutNoProof = itemView.findViewById(R.id.layoutNoProof);
+                tvUploadedDate = itemView.findViewById(R.id.tvUploadedDate);
+                tvUploadedBy = itemView.findViewById(R.id.tvUploadedBy);
+                btnViewFullscreen = itemView.findViewById(R.id.btnViewFullscreen);
+                ivVerifiedBadge = itemView.findViewById(R.id.ivVerifiedBadge);
             }
 
             void bind(PosRentalDisplay rental) {
@@ -219,14 +233,26 @@ public class PosCarAdapter extends RecyclerView.Adapter<PosCarAdapter.CarViewHol
                         itemView.getContext().getString(R.string.pos_payment_proof_missing));
 
                 if (hasProof && hasProofUrl) {
+                    cardPaymentProof.setVisibility(View.VISIBLE);
                     ivPaymentProof.setVisibility(View.VISIBLE);
+                    layoutNoProof.setVisibility(View.GONE);
+                    btnViewFullscreen.setVisibility(View.GONE);
+                    ivVerifiedBadge.setVisibility(View.GONE);
+                    tvUploadedDate.setVisibility(View.GONE);
+                    tvUploadedBy.setVisibility(View.GONE);
                     Glide.with(itemView.getContext())
                             .load(rental.getPaymentProofUrl())
                             .placeholder(R.drawable.car_placeholder)
                             .error(R.drawable.car_placeholder)
                             .into(ivPaymentProof);
                 } else {
+                    cardPaymentProof.setVisibility(View.GONE);
                     ivPaymentProof.setVisibility(View.GONE);
+                    layoutNoProof.setVisibility(View.VISIBLE);
+                    btnViewFullscreen.setVisibility(View.GONE);
+                    ivVerifiedBadge.setVisibility(View.GONE);
+                    tvUploadedDate.setVisibility(View.GONE);
+                    tvUploadedBy.setVisibility(View.GONE);
                 }
 
                 btnInvoice.setOnClickListener(v -> {
