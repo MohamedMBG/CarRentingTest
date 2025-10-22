@@ -23,6 +23,7 @@
             android:orientation="vertical"
             android:paddingBottom="12dp"
             android:background="@drawable/bg_badge_soft"
+            android:backgroundTint="#F1F3FF"
             android:padding="12dp">
 
             <TextView
