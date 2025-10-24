@@ -1,10 +1,12 @@
 package com.example.carrentingtest.utils;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 
 import org.tensorflow.lite.Interpreter;
 
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,20 +14,28 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class FaceNetUtil {
+public class FaceNetUtil implements Closeable {
     private static final int INPUT_SIZE = 160;
     private static final int EMBEDDING_SIZE = 128;
     private final Interpreter tfLite;
+    private final ByteBuffer inputBuffer;
+    private final int[] pixelBuffer;
+    private final Object inferenceLock = new Object();
 
     private FaceNetUtil(Interpreter t) {
         tfLite = t;
+        inputBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4)
+                .order(ByteOrder.nativeOrder());
+        pixelBuffer = new int[INPUT_SIZE * INPUT_SIZE];
     }
 
     public static FaceNetUtil create(Context ctx) {
         try {
             MappedByteBuffer model = loadModelFile(ctx, "facenet.tflite");
             Interpreter.Options opts = new Interpreter.Options();
-            opts.setNumThreads(4);
+            int availableCores = Runtime.getRuntime().availableProcessors();
+            int threads = Math.max(1, Math.min(availableCores, 4));
+            opts.setNumThreads(threads);
             return new FaceNetUtil(new Interpreter(model, opts));
         } catch (IOException e) {
             throw new RuntimeException("Load model failed", e);
@@ -33,11 +43,11 @@ public class FaceNetUtil {
     }
 
     private static MappedByteBuffer loadModelFile(Context ctx, String fn) throws IOException {
-        FileInputStream fis = new FileInputStream(ctx.getAssets().openFd(fn).getFileDescriptor());
-        FileChannel fc = fis.getChannel();
-        long start = ctx.getAssets().openFd(fn).getStartOffset();
-        long len = ctx.getAssets().openFd(fn).getDeclaredLength();
-        return fc.map(FileChannel.MapMode.READ_ONLY, start, len);
+        try (AssetFileDescriptor afd = ctx.getAssets().openFd(fn);
+             FileInputStream fis = new FileInputStream(afd.getFileDescriptor());
+             FileChannel fc = fis.getChannel()) {
+            return fc.map(FileChannel.MapMode.READ_ONLY, afd.getStartOffset(), afd.getDeclaredLength());
+        }
     }
 
     public float[] getEmbedding(Bitmap bm) {
@@ -48,20 +58,27 @@ public class FaceNetUtil {
         if (bm == null) throw new IllegalArgumentException("Bitmap is null");
         Bitmap scaled = Bitmap.createScaledBitmap(bm, INPUT_SIZE, INPUT_SIZE, true);
 
-        ByteBuffer input = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4)
-                .order(ByteOrder.nativeOrder());
-        int[] pix = new int[INPUT_SIZE * INPUT_SIZE];
-        scaled.getPixels(pix, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
-
-        for (int p : pix) {
-            input.putFloat((((p >> 16) & 0xFF) - 127.5f) / 128f); // R
-            input.putFloat((((p >> 8) & 0xFF) - 127.5f) / 128f);  // G
-            input.putFloat(((p & 0xFF) - 127.5f) / 128f);         // B
-        }
-
-
         float[][] out = new float[1][EMBEDDING_SIZE];
-        tfLite.run(input, out);
+
+        try {
+            synchronized (inferenceLock) {
+                inputBuffer.clear();
+                scaled.getPixels(pixelBuffer, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+                for (int p : pixelBuffer) {
+                    inputBuffer.putFloat((((p >> 16) & 0xFF) - 127.5f) / 128f); // R
+                    inputBuffer.putFloat((((p >> 8) & 0xFF) - 127.5f) / 128f);  // G
+                    inputBuffer.putFloat(((p & 0xFF) - 127.5f) / 128f);         // B
+                }
+
+                inputBuffer.rewind();
+                tfLite.run(inputBuffer, out);
+            }
+        } finally {
+            if (scaled != bm && !scaled.isRecycled()) {
+                scaled.recycle();
+            }
+        }
 
         return normalizeEmbedding(out[0]);
     }
@@ -96,5 +113,10 @@ public class FaceNetUtil {
     // Kept for backward compatibility
     public static float calcDistance(float[] a, float[] b) {
         return 1 - cosineSimilarity(a, b);
+    }
+
+    @Override
+    public void close() {
+        tfLite.close();
     }
 }

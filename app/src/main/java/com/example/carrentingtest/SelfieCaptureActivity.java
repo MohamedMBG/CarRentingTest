@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -17,17 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.example.carrentingtest.utils.FaceNetUtil;
-
-import java.io.IOException;
 
 public class SelfieCaptureActivity extends AppCompatActivity {
-    private static final int REQ_SELFIE = 101;
-    private static final float MATCH_THRESHOLD = 0.7f;
 
     private ImageView ivPreview;
     private Bitmap selfieBitmap;
-    private FaceNetUtil faceNetUtil;
 
     private final ActivityResultLauncher<Intent> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -53,7 +46,6 @@ public class SelfieCaptureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selfie_capture);
 
-        faceNetUtil = FaceNetUtil.create(this);
         ivPreview = findViewById(R.id.ivSelfiePreview);
         Button btnCapture = findViewById(R.id.btnCaptureSelfie);
         Button btnNext = findViewById(R.id.btnSelfieNext);

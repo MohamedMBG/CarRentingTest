@@ -19,6 +19,7 @@ import com.example.carrentingtest.utils.FaceNetUtil;
 import com.example.carrentingtest.utils.MoroccanLicenseValidator;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class LicenseCaptureActivity extends AppCompatActivity {
@@ -35,6 +36,7 @@ public class LicenseCaptureActivity extends AppCompatActivity {
     private Bitmap selfieBitmap, frontLicenseBitmap, backLicenseBitmap;
     private FaceNetUtil faceNetUtil;
     private String driverLicenseNumber;
+    private final ExecutorService verificationExecutor = Executors.newSingleThreadExecutor();
 
     private final ActivityResultLauncher<Intent> pickImageLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -119,7 +121,7 @@ public class LicenseCaptureActivity extends AppCompatActivity {
         tvResult.setText("Verifying license and face...");
         btnVerify.setEnabled(false);
 
-        Executors.newSingleThreadExecutor().execute(() -> {
+        verificationExecutor.execute(() -> {
             try {
                 // Verify face against front license (which typically has photo)
                 float[] embSelfie = faceNetUtil.getEmbedding(selfieBitmap);
@@ -162,6 +164,10 @@ public class LicenseCaptureActivity extends AppCompatActivity {
         }
         if (selfieBitmap != null && !selfieBitmap.isRecycled()) {
             selfieBitmap.recycle();
+        }
+        verificationExecutor.shutdownNow();
+        if (faceNetUtil != null) {
+            faceNetUtil.close();
         }
     }
 }
