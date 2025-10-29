@@ -61,6 +61,7 @@
     <string name="profile_identity_title">Identité &amp; Sécurité</string>
     <string name="profile_identity_description">Maintenez votre compte vérifié pour des réservations fluides.</string>
     <string name="car_available">Disponible</string>
+    <string name="car_unavailable">Non disponible</string>
     <string name="home_available_cars">Véhicules disponibles</string>
     <string name="price_per_day_format">%.2f dhs / jour</string>
     <string name="car_price_label">Prix</string>

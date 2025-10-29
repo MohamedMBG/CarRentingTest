@@ -135,6 +135,7 @@
     <string name="profile_identity_title">Identity &amp; Safety</string>
     <string name="profile_identity_description">Keep your account verified for seamless bookings.</string>
     <string name="car_available">Available</string>
+    <string name="car_unavailable">Not available</string>
     <string name="price_per_day_format">%.0f dhs / day</string>
     <string name="hint_car_model">Model</string>
     <string name="hint_car_type">Type</string>

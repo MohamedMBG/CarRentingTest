@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -95,11 +96,18 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
             if (car.isAvailable()) {
                 carAvailability.setText(itemView.getContext().getString(R.string.car_available));
                 carAvailability.setVisibility(View.VISIBLE);
+                carAvailability.setBackgroundResource(R.drawable.bg_badge_luxury);
+                carAvailability.setTextColor(
+                        ContextCompat.getColor(itemView.getContext(), R.color.homeHighlightTitle));
                 rentButton.setEnabled(true);
                 rentButton.setAlpha(1f);
             } else {
-                carAvailability.setVisibility(View.GONE);
-                rentButton.setEnabled(false);
+                carAvailability.setText(itemView.getContext().getString(R.string.car_unavailable));
+                carAvailability.setVisibility(View.VISIBLE);
+                carAvailability.setBackgroundResource(R.drawable.bg_badge_unavailable);
+                carAvailability.setTextColor(
+                        ContextCompat.getColor(itemView.getContext(), R.color.colorOnPrimary));
+                rentButton.setEnabled(true);
                 rentButton.setAlpha(0.6f);
             }
 
