@@ -61,6 +61,7 @@
     <string name="profile_identity_title">الهوية والسلامة</string>
     <string name="profile_identity_description">حافظ على توثيق حسابك لضمان حجوزات سلسة.</string>
     <string name="car_available">متاح</string>
+    <string name="car_unavailable">غير متاح</string>
     <string name="home_available_cars">المركبات المتاحة</string>
     <string name="price_per_day_format">%.2f درهم / اليوم</string>
     <string name="car_price_label">السعر</string>
