@@ -110,4 +110,12 @@
         android:text="@string/available_for_rent"
         android:visibility="gone"/>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swMaintenance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="In Maintenance"
+        android:visibility="gone"/>
+
 </LinearLayout>

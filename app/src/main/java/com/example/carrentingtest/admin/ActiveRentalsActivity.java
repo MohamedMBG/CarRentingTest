@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -64,6 +65,7 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_rentals);
+        FullscreenUiHelper.apply(this, R.id.active_rentals_root);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());

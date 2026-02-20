@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+    android:background="@color/colorBackground"
     tools:context=".MainActivity">
 
-    <!-- FrameLayout to hold the fragments -->
     <FrameLayout
         android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-2dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Elevated Bottom Navigation -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/bottom_nav_container"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_nav_container"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/colorSurface"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="10dp"
+        app:strokeColor="@color/homeCardStroke"
+        app:strokeWidth="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            style="@style/Widget.CarRentingTest.BottomNavigation"
             android:layout_width="match_parent"
-            android:layout_height="85dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            android:clipToPadding="false"
-            app:cardBackgroundColor="@color/colorSurface"
-            app:cardCornerRadius="28dp"
-            android:layout_gravity="bottom"
-            app:cardElevation="12dp"
-            app:cardUseCompatPadding="false"
-            app:strokeColor="@android:color/transparent">
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:itemIconTint="@color/bottom_nav_item_color_selector"
+            app:itemTextAppearanceActive="@style/TextAppearance.CarRentingTest.BottomNav.Active"
+            app:itemTextAppearanceInactive="@style/TextAppearance.CarRentingTest.BottomNav.Inactive"
+            app:itemTextColor="@color/bottom_nav_item_color_selector"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu" />
 
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottom_navigation"
-                style="@style/Widget.CarRentingTest.BottomNavigation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:itemIconTint="@color/bottom_nav_item_color_selector"
-                app:itemTextAppearanceActive="@style/TextAppearance.CarRentingTest.BottomNav.Active"
-                app:itemTextAppearanceInactive="@style/TextAppearance.CarRentingTest.BottomNav.Inactive"
-                app:itemTextColor="@color/bottom_nav_item_color_selector"
-                app:labelVisibilityMode="labeled"
-                app:menu="@menu/bottom_nav_menu" />
+    </com.google.android.material.card.MaterialCardView>
 
-        </com.google.android.material.card.MaterialCardView>
-    </FrameLayout>
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

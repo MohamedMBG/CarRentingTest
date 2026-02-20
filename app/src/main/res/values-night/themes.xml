@@ -1,14 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.CarRentingTest" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/homeHeroStart</item>
-        <item name="colorPrimaryVariant">@color/homeHeroStart</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
-        <item name="colorSecondary">@color/bottomNavItemInactive</item>
-        <item name="colorSecondaryVariant">@color/colorOnSurface</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
-        <item name="android:statusBarColor">@color/textColorPrimary</item>
-        <item name="android:navigationBarColor">@color/colorSurface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="bottomNavigationStyle">@style/Widget.CarRentingTest.BottomNavigation</item>
+        <item name="materialCardViewStyle">@style/Widget.CarRentingTest.Card</item>
+        <item name="materialButtonStyle">@style/Widget.CarRentingTest.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.CarRentingTest.Button.Outlined</item>
+        <item name="textInputStyle">@style/Widget.CarRentingTest.TextInputLayout</item>
+        <item name="editTextStyle">@style/Widget.CarRentingTest.EditText</item>
+        <item name="checkboxStyle">@style/Widget.CarRentingTest.CheckBox</item>
+        <item name="floatingActionButtonStyle">@style/Widget.CarRentingTest.Fab</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CarRentingTest.AlertDialog</item>
     </style>
+
+    <style name="Theme.CarRentingTest" parent="Base.Theme.CarRentingTest" />
 </resources>

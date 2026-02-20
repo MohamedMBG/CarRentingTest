@@ -32,6 +32,7 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.PosCarAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -84,6 +85,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_pos);
+        FullscreenUiHelper.apply(this, R.id.admin_pos_root);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());

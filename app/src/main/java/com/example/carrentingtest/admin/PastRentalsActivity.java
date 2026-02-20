@@ -24,6 +24,7 @@ import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.PastRentalAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -67,6 +68,7 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_past_rentals);
+        FullscreenUiHelper.apply(this, R.id.past_rentals_root);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());

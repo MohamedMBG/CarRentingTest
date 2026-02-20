@@ -4,7 +4,7 @@
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="@color/homeHeroStart"
-                android:centerColor="#111D34"
+                android:centerColor="@color/homeHeroStart"
                 android:endColor="@color/homeHeroEnd"
                 android:angle="135" />
             <corners
@@ -22,7 +22,7 @@
         android:right="-32dp">
         <shape android:shape="oval">
             <gradient
-                android:startColor="#33D4AF37"
+                android:startColor="@color/homeFilterRipple"
                 android:endColor="#11FFFFFF"
                 android:angle="45" />
         </shape>
@@ -36,7 +36,7 @@
         <shape android:shape="oval">
             <gradient
                 android:startColor="#19FFFFFF"
-                android:endColor="#1AD4AF37"
+                android:endColor="@color/homeFilterRipple"
                 android:angle="90" />
         </shape>
     </item>

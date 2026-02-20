@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -18,129 +19,151 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    // UI Components to display statistics
-    private TextView tvPending;    // Displays count of pending rental requests
-    private TextView tvAvailable;  // Displays count of available cars
-    private TextView tvTotal;      // Displays total count of all cars
+        // UI Components for Analytics
+        private TextView tvTotalRevenue;
+        private TextView tvPendingCount;
+        private TextView tvActiveRentals;
+        private TextView tvMaintenanceCount;
 
-    // Firebase services instances
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();  // Cloud Firestore database
-    private FirebaseAuth auth = FirebaseAuth.getInstance();          // Authentication service
-    private String companyId;
+        // Firebase services instances
+        private FirebaseFirestore db = FirebaseFirestore.getInstance(); // Cloud Firestore database
+        private FirebaseAuth auth = FirebaseAuth.getInstance(); // Authentication service
+        private String companyId;
 
+        /**
+         * Called when the activity is first created.
+         * Sets up the UI components and initializes data loading.
+         * 
+         * @param b Saved instance state bundle (not used in this case)
+         */
+        @Override
+        protected void onCreate(Bundle b) {
+                super.onCreate(b); // Call parent class onCreate
+                setContentView(R.layout.activity_admin_dashboard); // Set the layout file
+                FullscreenUiHelper.apply(this, R.id.admin_dashboard_root);
 
-    /**
-     * Called when the activity is first created.
-     * Sets up the UI components and initializes data loading.
-     * @param b Saved instance state bundle (not used in this case)
-     */
-    @Override
-    protected void onCreate(Bundle b) {
-        super.onCreate(b);  // Call parent class onCreate
-        setContentView(R.layout.activity_admin_dashboard);  // Set the layout file
+                // Initialize TextView references from layout
+                tvTotalRevenue = findViewById(R.id.tvTotalRevenue);
+                tvPendingCount = findViewById(R.id.tvPendingCount);
+                tvActiveRentals = findViewById(R.id.tvActiveRentals);
+                tvMaintenanceCount = findViewById(R.id.tvMaintenanceCount);
 
-        // Initialize TextView references from layout
-        tvPending = findViewById(R.id.tvPendingCount);     // Find pending requests count view
-        tvAvailable = findViewById(R.id.tvAvailableCount); // Find available cars count view
-        tvTotal = findViewById(R.id.tvTotalCars);          // Find total cars count view
+                // Set click listeners for dashboard cards/buttons:
 
-        // Set click listeners for dashboard cards/buttons:
+                // 1. Manage Cars card - opens car management activity
+                findViewById(R.id.cardManageCars)
+                                .setOnClickListener(v -> startActivity(new Intent(this, ManageCarsActivity.class)));
 
-        // 1. Manage Cars card - opens car management activity
-        findViewById(R.id.cardManageCars).setOnClickListener(v ->
-                startActivity(new Intent(this, ManageCarsActivity.class)));
+                // 2. View Requests card - opens requests management activity
+                findViewById(R.id.cardViewRequests)
+                                .setOnClickListener(v -> startActivity(new Intent(this, ViewRequestsActivity.class)));
 
-        // 2. View Requests card - opens requests management activity
-        findViewById(R.id.cardViewRequests).setOnClickListener(v ->
-                startActivity(new Intent(this, ViewRequestsActivity.class)));
+                findViewById(R.id.cardActiveRentals)
+                                .setOnClickListener(v -> startActivity(new Intent(this, ActiveRentalsActivity.class)));
 
-        findViewById(R.id.cardActiveRentals).setOnClickListener(v ->
-                startActivity(new Intent(this, ActiveRentalsActivity.class)));
+                findViewById(R.id.cardPastRentals)
+                                .setOnClickListener(v -> startActivity(new Intent(this, PastRentalsActivity.class)));
 
-        findViewById(R.id.cardPastRentals).setOnClickListener(v ->
-                startActivity(new Intent(this, PastRentalsActivity.class)));
+                findViewById(R.id.cardClientReports)
+                                .setOnClickListener(v -> startActivity(new Intent(this, ClientReportsActivity.class)));
 
-        findViewById(R.id.cardClientReports).setOnClickListener(v ->
-                startActivity(new Intent(this, ClientReportsActivity.class)));
+                // 3. Reports card - opens business reports
+                findViewById(R.id.cardViewReports)
+                                .setOnClickListener(v -> startActivity(new Intent(this, AdminReportsActivity.class)));
 
-        // 3. Reports card - opens business reports
-        findViewById(R.id.cardViewReports).setOnClickListener(v ->
-                startActivity(new Intent(this, AdminReportsActivity.class)));
+                findViewById(R.id.cardPos)
+                                .setOnClickListener(v -> startActivity(new Intent(this, AdminPosActivity.class)));
 
-        findViewById(R.id.cardPos).setOnClickListener(v ->
-                startActivity(new Intent(this, AdminPosActivity.class)));
+                // 4. Logout button - triggers logout process
+                findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
 
-        // 4. Logout button - triggers logout process
-        findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
+                if (auth.getCurrentUser() != null) {
+                        db.collection("users")
+                                        .document(auth.getCurrentUser().getUid())
+                                        .get()
+                                        .addOnSuccessListener(doc -> {
+                                                companyId = doc.getString("companyId");
+                                                fetchStats();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(this,
+                                                        "Failed to load company", Toast.LENGTH_SHORT).show());
+                } else {
+                        Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+                        finish();
+                }
 
-        if (auth.getCurrentUser() != null) {
-            db.collection("users")
-                    .document(auth.getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        fetchStats();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this,
-                            "Failed to load company", Toast.LENGTH_SHORT).show());
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-            finish();
         }
 
-    }
+        /**
+         * Fetches statistics from Firestore and updates the UI real-time.
+         */
+        private void fetchStats() {
+                if (companyId == null)
+                        return;
 
-    /**
-     * Fetches statistics from Firestore and updates the UI.
-     * Gets three key metrics: pending requests, available cars, and total cars.
-     */
-    private void fetchStats() {
-        if (companyId == null) return;
+                // 1. Pending Requests Count
+                db.collection("rental_requests")
+                                .whereEqualTo("companyId", companyId)
+                                .whereEqualTo("status", "pending")
+                                .addSnapshotListener((snap, e) -> {
+                                        if (snap != null) {
+                                                tvPendingCount.setText(String.valueOf(snap.size()));
+                                        } else {
+                                                tvPendingCount.setText("-");
+                                        }
+                                });
 
-        // 1. Get count of pending rental requests:
-        db.collection("rental_requests")          // Access rental_requests collection
-                .whereEqualTo("status", "pending")      // Filter for pending status
-                .whereEqualTo("companyId", companyId)
-                .get()                                  // Execute query
-                .addOnSuccessListener(snap ->           // On success:
-                        tvPending.setText(String.valueOf(snap.size())))  // Update pending count
-                .addOnFailureListener(e ->              // On failure:
-                        tvPending.setText("?"));            // Show "?" on error
+                // 2. Active Rentals & Projected Revenue
+                db.collection("rental_requests")
+                                .whereEqualTo("companyId", companyId)
+                                .addSnapshotListener((snap, e) -> {
+                                        if (snap != null) {
+                                                int activeCount = 0;
+                                                double totalRevenue = 0.0;
+                                                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : snap) {
+                                                        String status = doc.getString("status");
+                                                        if ("approved".equals(status)) {
+                                                                activeCount++;
+                                                        }
+                                                        if ("approved".equals(status) || "completed".equals(status)) {
+                                                                Double price = doc.getDouble("totalPrice");
+                                                                if (price != null) {
+                                                                        totalRevenue += price;
+                                                                }
+                                                        }
+                                                }
+                                                tvActiveRentals.setText(String.valueOf(activeCount));
+                                                tvTotalRevenue.setText(String.format("$%.2f", totalRevenue));
+                                        }
+                                });
 
-        // 2. Get count of available cars:
-        db.collection("cars")                     // Access cars collection
-                .whereEqualTo("available", true)        // Filter for available cars
-                .whereEqualTo("companyId", companyId)
-                .get()
-                .addOnSuccessListener(snap ->
-                        tvAvailable.setText(String.valueOf(snap.size())))
-                .addOnFailureListener(e ->
-                        tvAvailable.setText("?"));
+                // 3. Maintenance Fleet Count
+                db.collection("cars")
+                                .whereEqualTo("companyId", companyId)
+                                .whereEqualTo("maintenance", true)
+                                .addSnapshotListener((snap, e) -> {
+                                        if (snap != null) {
+                                                tvMaintenanceCount.setText(String.valueOf(snap.size()));
+                                        } else {
+                                                tvMaintenanceCount.setText("0");
+                                        }
+                                });
+        }
 
-        // 3. Get total count of all cars:
-        db.collection("cars")                     // Access cars collection
-                .whereEqualTo("companyId", companyId)
-                .get()                                  // Get all documents
-                .addOnSuccessListener(snap ->
-                        tvTotal.setText(String.valueOf(snap.size())))
-                .addOnFailureListener(e ->
-                        tvTotal.setText("?"));
-    }
+        /**
+         * Handles admin logout process:
+         * 1. Signs out from Firebase Auth
+         * 2. Redirects to sign-in screen
+         * 3. Clears activity stack
+         */
+        private void logout() {
+                auth.signOut(); // Sign out current admin user
 
-    /**
-     * Handles admin logout process:
-     * 1. Signs out from Firebase Auth
-     * 2. Redirects to sign-in screen
-     * 3. Clears activity stack
-     */
-    private void logout() {
-        auth.signOut();  // Sign out current admin user
+                // Create intent for SignInActivity with cleared back stack
+                startActivity(new Intent(this, SignInActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | // Clear all previous activities
+                                                Intent.FLAG_ACTIVITY_NEW_TASK)); // Start new task
 
-        // Create intent for SignInActivity with cleared back stack
-        startActivity(new Intent(this, SignInActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |  // Clear all previous activities
-                        Intent.FLAG_ACTIVITY_NEW_TASK));     // Start new task
-
-        finish();  // Close current activity
-    }
+                finish(); // Close current activity
+        }
 }

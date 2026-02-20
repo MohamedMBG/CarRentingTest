@@ -71,7 +71,6 @@ public class RentalFormActivity extends AppCompatActivity {
     private String companyAddress;
     private String companyDisplayName;
 
-
     // Date formatter for displaying dates
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
@@ -140,6 +139,11 @@ public class RentalFormActivity extends AppCompatActivity {
         if (btnOpenMaps != null) {
             btnOpenMaps.setEnabled(false);
             btnOpenMaps.setAlpha(0.6f);
+        }
+
+        // Set transition name for shared element animation
+        if (selectedCar != null) {
+            androidx.core.view.ViewCompat.setTransitionName(vpCarImages, "car_image_" + selectedCar.getDocumentId());
         }
     }
 
@@ -218,7 +222,8 @@ public class RentalFormActivity extends AppCompatActivity {
                             btnCallAdmin.setOnClickListener(v -> openDialer(adminPhoneNumber));
                         } else {
                             tvAdminPhone.setText(getString(R.string.no_phone_available));
-                            btnCallAdmin.setOnClickListener(v -> Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show());
+                            btnCallAdmin.setOnClickListener(
+                                    v -> Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show());
                         }
 
                         adminContactCard.setVisibility(View.VISIBLE);
@@ -422,7 +427,8 @@ public class RentalFormActivity extends AppCompatActivity {
     private long toUtcMidnight(Calendar localCalendar) {
         Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         utcCalendar.clear();
-        utcCalendar.set(localCalendar.get(Calendar.YEAR), localCalendar.get(Calendar.MONTH), localCalendar.get(Calendar.DAY_OF_MONTH));
+        utcCalendar.set(localCalendar.get(Calendar.YEAR), localCalendar.get(Calendar.MONTH),
+                localCalendar.get(Calendar.DAY_OF_MONTH));
         return utcCalendar.getTimeInMillis();
     }
 
@@ -432,7 +438,8 @@ public class RentalFormActivity extends AppCompatActivity {
 
         Calendar localCalendar = Calendar.getInstance();
         localCalendar.clear();
-        localCalendar.set(utcCalendar.get(Calendar.YEAR), utcCalendar.get(Calendar.MONTH), utcCalendar.get(Calendar.DAY_OF_MONTH));
+        localCalendar.set(utcCalendar.get(Calendar.YEAR), utcCalendar.get(Calendar.MONTH),
+                utcCalendar.get(Calendar.DAY_OF_MONTH));
         return localCalendar;
     }
 
@@ -485,7 +492,7 @@ public class RentalFormActivity extends AppCompatActivity {
 
     // Method to fetch user data from Firestore
     private void fetchUserDataAndSubmit(FirebaseUser user, Calendar startCal, Calendar endCal) {
-        //db.collection("clients").document(user.getUid()).get()
+        // db.collection("clients").document(user.getUid()).get()
         db.collection("users").document(user.getUid()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -511,7 +518,8 @@ public class RentalFormActivity extends AppCompatActivity {
                         boolean canBook = VerificationGuard.canBook(verificationStatus);
                         if (!canBook) {
                             findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                            com.google.firebase.analytics.FirebaseAnalytics.getInstance(this).logEvent("booking_blocked_unverified", new android.os.Bundle());
+                            com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
+                                    .logEvent("booking_blocked_unverified", new android.os.Bundle());
                             showVerificationRequiredDialog();
                             return;
                         }
@@ -540,7 +548,8 @@ public class RentalFormActivity extends AppCompatActivity {
     }
 
     // Method to submit the rental request to Firestore
-    private void submitRequest(String userId, String userName, String userDriverLicense, String userPhone, Calendar startCal, Calendar endCal) {
+    private void submitRequest(String userId, String userName, String userDriverLicense, String userPhone,
+            Calendar startCal, Calendar endCal) {
         // Create new rental request object
         RentalRequest request = new RentalRequest();
         // Set all request properties
@@ -564,15 +573,15 @@ public class RentalFormActivity extends AppCompatActivity {
                     db.collection("rental_requests").document(documentReference.getId())
                             .update("requestId", documentReference.getId())
                             .addOnSuccessListener(aVoid -> {
-                                // Show success message and close activity
-                                Toast.makeText(this, "Rental request submitted successfully!", Toast.LENGTH_LONG).show();
-                                finish();
+                                // Show success dialog
+                                showSuccessDialog();
                             })
                             .addOnFailureListener(e -> {
                                 // Handle update failure
                                 findViewById(R.id.btnSubmitRequest).setEnabled(true);
                                 Log.e(TAG, "Error updating request ID: ", e);
-                                Toast.makeText(this, "Failed to finalize request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Failed to finalize request: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -581,6 +590,31 @@ public class RentalFormActivity extends AppCompatActivity {
                     Log.e(TAG, "Error submitting request: ", e);
                     Toast.makeText(this, "Failed to submit request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void showSuccessDialog() {
+        if (isFinishing())
+            return;
+
+        android.view.View dialogView = android.view.LayoutInflater.from(this).inflate(R.layout.dialog_payment_success,
+                null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // Set transparent background for rounded corners
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        dialogView.findViewById(R.id.btnDone).setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        dialog.show();
     }
 
     @Override

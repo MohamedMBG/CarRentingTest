@@ -1,62 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark theme palette -->
-    <color name="palette_dark_blue">#0B1424</color>
-    <color name="palette_deep_blue">#101A33</color>
-    <color name="palette_teal">#D4AF37</color>
-    <color name="palette_light_blue">#1F2A44</color>
-    <color name="palette_very_light_blue">#0F192E</color>
-    <color name="palette_white">#F5F7FF</color>
+    <color name="palette_dark_blue">#020817</color>
+    <color name="palette_deep_blue">#0F172A</color>
+    <color name="palette_teal">#60A5FA</color>
+    <color name="palette_light_blue">#1E293B</color>
+    <color name="palette_very_light_blue">#0B1220</color>
+    <color name="palette_white">#E2E8F0</color>
 
-    <!-- Theme colors -->
     <color name="colorPrimary">@color/palette_teal</color>
-    <color name="colorPrimaryVariant">#B9932D</color>
-    <color name="colorOnPrimary">#0B1424</color>
+    <color name="colorPrimaryVariant">#3B82F6</color>
+    <color name="colorOnPrimary">#0B1220</color>
 
-    <color name="colorSecondary">@color/palette_teal</color>
-    <color name="colorSecondaryVariant">#B9932D</color>
-    <color name="colorOnSecondary">#07111F</color>
+    <color name="colorSecondary">#2DD4BF</color>
+    <color name="colorSecondaryVariant">#14B8A6</color>
+    <color name="colorOnSecondary">#042F2E</color>
 
-    <color name="colorBackground">#050A16</color>
-    <color name="colorOnBackground">#E6EAF7</color>
+    <color name="colorBackground">@color/palette_very_light_blue</color>
+    <color name="colorOnBackground">#E2E8F0</color>
 
-    <color name="colorSurface">#111B2E</color>
-    <color name="colorOnSurface">#E6EAF7</color>
+    <color name="colorSurface">#111827</color>
+    <color name="colorOnSurface">#E2E8F0</color>
 
-    <color name="colorError">#F77A8E</color>
-    <color name="colorOnError">#0B1424</color>
+    <color name="colorError">#F87171</color>
+    <color name="colorOnError">#450A0A</color>
 
-    <color name="homeBackground">#080F1E</color>
-    <color name="homeHeroStart">#101B33</color>
-    <color name="homeHeroEnd">#050A16</color>
-    <color name="homeCardStroke">#27324B</color>
-    <color name="homeChipBackground">#152038</color>
-    <color name="homeChipStroke">#24304A</color>
-    <color name="homeSearchBackground">#0F172A</color>
-    <color name="homeSearchStroke">#27324B</color>
-    <color name="homeFilterDefaultBackground">#141F34</color>
-    <color name="homeFilterStroke">#27324B</color>
-    <color name="homeFilterRipple">#66D4AF37</color>
-    <color name="homeHighlightStroke">#33FFFFFF</color>
-    <color name="homeHighlightTitle">#F6E7C3</color>
-    <color name="homeHighlightSubtitle">#D9BA7D</color>
+    <color name="homeBackground">#0A1323</color>
+    <color name="homeHeroStart">#111827</color>
+    <color name="homeHeroEnd">#1E293B</color>
+    <color name="homeCardStroke">#334155</color>
+    <color name="homeChipBackground">#1E293B</color>
+    <color name="homeChipStroke">#334155</color>
+    <color name="homeSearchBackground">#111827</color>
+    <color name="homeSearchStroke">#334155</color>
+    <color name="homeFilterDefaultBackground">#1E293B</color>
+    <color name="homeFilterStroke">#334155</color>
+    <color name="homeFilterRipple">#4460A5FA</color>
+    <color name="homeHighlightStroke">#335A8DEE</color>
+    <color name="homeHighlightTitle">#E2E8F0</color>
+    <color name="homeHighlightSubtitle">#BFDBFE</color>
 
-    <!-- UI element colors -->
-    <color name="textColorPrimary">#E6EAF7</color>
-    <color name="textColorSecondary">#A5B1D6</color>
-    <color name="iconTint">#E6EAF7</color>
-    <color name="bottomNavBackground">#0B1424</color>
-    <color name="bottomNavItemActive">@color/palette_teal</color>
-    <color name="bottomNavItemInactive">#93A1C8</color>
-    <color name="primary_blue">@color/palette_dark_blue</color>
-    <color name="colorSuccess">#64E884</color>
-    <color name="colorWarning">#F6705F</color>
+    <color name="textColorPrimary">#E2E8F0</color>
+    <color name="textColorSecondary">#94A3B8</color>
+    <color name="iconTint">#CBD5E1</color>
+    <color name="bottomNavBackground">#111827</color>
+    <color name="bottomNavItemActive">@color/colorPrimary</color>
+    <color name="bottomNavItemInactive">#94A3B8</color>
+    <color name="primary_blue">@color/colorPrimary</color>
+    <color name="colorSuccess">#4ADE80</color>
+    <color name="colorWarning">#FB923C</color>
 
-    <!-- Legacy colors -->
-    <color name="black">#E6EAF7</color>
-    <color name="colorText">#E6EAF7</color>
+    <color name="chatBubbleAi">#1E293B</color>
+    <color name="inputSurface">#0F172A</color>
+    <color name="inputStroke">#334155</color>
+    <color name="badgeSoftBackground">#1E293B</color>
+    <color name="badgeRoundedBackground">#3B82F6</color>
+    <color name="badgeLuxuryStart">#3B82F6</color>
+    <color name="badgeLuxuryEnd">#1D4ED8</color>
+    <color name="badgeUnavailableStart">#F87171</color>
+    <color name="badgeUnavailableEnd">#DC2626</color>
+    <color name="statusPendingBackground">#338A5C00</color>
+    <color name="carCardGradientStart">#111827</color>
+    <color name="carCardGradientCenter">#17243A</color>
+    <color name="carCardGradientEnd">#1E293B</color>
+    <color name="homeBackgroundGradientStart">#0B1220</color>
+    <color name="homeBackgroundGradientCenter">#0F172A</color>
+    <color name="homeBackgroundGradientEnd">#1E293B</color>
+    <color name="homeHighlightGradientStart">#1E293B</color>
+    <color name="homeHighlightGradientCenter">#1D4ED8</color>
+    <color name="homeHighlightGradientEnd">#2563EB</color>
+    <color name="carImageAccentStart">#1E293B</color>
+    <color name="carImageAccentEnd">#334155</color>
+
+    <color name="black">#E2E8F0</color>
+    <color name="colorText">@color/textColorPrimary</color>
     <color name="white">#FFFFFF</color>
-    <color name="light_gray">#141F34</color>
-    <color name="dark_gray">#A5B1D6</color>
-    <color name="green">#64E884</color>
+    <color name="light_gray">#1E293B</color>
+    <color name="dark_gray">#94A3B8</color>
+    <color name="green">#4ADE80</color>
 </resources>

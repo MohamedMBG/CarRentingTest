@@ -276,6 +276,8 @@
     <string name="business_overview">Business Overview</string>
     <string name="most_rented_cars">Most Rented Cars</string>
     <string name="total_rentals">Total Rentals: %1$d</string>
+    <string name="admin_top_rented_car">Top model: %1$s (%2$d rentals)</string>
+    <string name="admin_reports_empty_chart">No completed or approved rentals yet.</string>
     <string name="admin_contact_title">Need assistance?</string>
     <string name="admin_contact_subtitle">Contact the rental admin directly.</string>
     <string name="admin_contact_email_label">Email:</string>
@@ -347,4 +349,16 @@
     <string name="favorite" tools:ignore="MissingTranslation">favorite</string>
     <string name="edit">Edit</string>
     <string name="image_indicator_format" tools:ignore="MissingTranslation">%1$d / %2$d</string>
+    <string name="nav_map">Map</string>
+
+    <!-- AI Concierge -->
+    <string name="ai_concierge_title">AI Concierge</string>
+    <string name="ai_welcome_message">Hello! I\'m your personal car concierge. Where are you planning to go, and who are you travelling with?</string>
+    <string name="ai_hint">Ask for a car recommendation...</string>
+
+    <!-- Payment Success -->
+    <string name="booking_confirmed_title">Booking Confirmed!</string>
+    <string name="booking_confirmed_message">Your car is reserved. Have a safe trip!</string>
+    <string name="done">Done</string>
+    <string name="btn_back">Back</string>
 </resources>

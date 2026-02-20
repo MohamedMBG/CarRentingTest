@@ -2,6 +2,8 @@ package com.example.carrentingtest;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -11,6 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 
 import com.example.carrentingtest.fragments.HomeFragment;
@@ -27,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         mAuth = FirebaseAuth.getInstance();
@@ -40,7 +48,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setOnItemSelectedListener(this);
+        enableFullscreenMode();
+        applyEdgeToEdgeInsets();
 
         // Load the default fragment (HomeFragment) or route to Profile for verification
         if (savedInstanceState == null) {
@@ -66,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             fragment = new RequestsHistoryFragment();
         } else if (itemId == R.id.navigation_profile) {
             fragment = new ProfileFragment();
+        } else if (itemId == R.id.navigation_map) {
+            fragment = new com.example.carrentingtest.fragments.AgencyMapFragment();
         }
 
         if (fragment != null) {
@@ -89,6 +101,44 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, SignInActivity.class));
         finishAffinity(); // Close all activities in the task
+    }
+
+    private void enableFullscreenMode() {
+        WindowInsetsControllerCompat insetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (insetsController == null) {
+            return;
+        }
+        insetsController.setSystemBarsBehavior(
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
+        insetsController.hide(WindowInsetsCompat.Type.systemBars());
+    }
+
+    private void applyEdgeToEdgeInsets() {
+        View root = findViewById(R.id.main_root);
+        View fragmentContainer = findViewById(R.id.fragment_container);
+        View navContainer = findViewById(R.id.bottom_nav_container);
+        ViewGroup.MarginLayoutParams navLp = (ViewGroup.MarginLayoutParams) navContainer.getLayoutParams();
+        final int initialNavBottomMargin = navLp.bottomMargin;
+        final int fallbackNavClearance = (int) (88 * getResources().getDisplayMetrics().density);
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int navHeight = navContainer.getHeight();
+            if (navHeight <= 0 && navContainer.getLayoutParams() != null && navContainer.getLayoutParams().height > 0) {
+                navHeight = navContainer.getLayoutParams().height;
+            }
+            int navClearance = navHeight > 0
+                    ? navHeight + initialNavBottomMargin + systemBars.bottom
+                    : fallbackNavClearance + systemBars.bottom;
+            fragmentContainer.setPadding(0, systemBars.top, 0, navClearance);
+            navLp.bottomMargin = initialNavBottomMargin + systemBars.bottom;
+            navContainer.setLayoutParams(navLp);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(root);
+        navContainer.post(() -> ViewCompat.requestApplyInsets(root));
     }
 }
 

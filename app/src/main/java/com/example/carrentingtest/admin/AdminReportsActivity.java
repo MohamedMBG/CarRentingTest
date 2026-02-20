@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 
 /**
  * Activity host for admin business reports.
@@ -15,6 +16,7 @@ public class AdminReportsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_reports);
+        FullscreenUiHelper.apply(this, R.id.reports_container);
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

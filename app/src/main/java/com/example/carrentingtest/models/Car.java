@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Car implements Serializable {
-    private String documentId;  // Add this field
+    private String documentId; // Add this field
     private String model;
     private String type;
     private double pricePerDay;
@@ -16,23 +16,45 @@ public class Car implements Serializable {
     private int seats;
     private String transmissionType;
     private int rentalCount;
+    private boolean maintenance;
 
     // Empty constructor for Firestore
-    public Car() {}
+    public Car() {
+    }
 
     // Add document ID getter/setter
-    public String getDocumentId() { return documentId; }
-    public void setDocumentId(String documentId) { this.documentId = documentId; }
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 
     // Getters and setters
-    public String getModel() { return model; }
-    public void setModel(String model) { this.model = model; }
+    public String getModel() {
+        return model;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setModel(String model) {
+        this.model = model;
+    }
 
-    public double getPricePerDay() { return pricePerDay; }
-    public void setPricePerDay(double pricePerDay) { this.pricePerDay = pricePerDay; }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getPricePerDay() {
+        return pricePerDay;
+    }
+
+    public void setPricePerDay(double pricePerDay) {
+        this.pricePerDay = pricePerDay;
+    }
 
     public String getImageUrl() {
         List<String> urls = getImageUrls();
@@ -81,19 +103,51 @@ public class Car implements Serializable {
         }
     }
 
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+    public boolean isAvailable() {
+        return available;
+    }
 
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 
-    public String getCompanyId() { return companyId; }
-    public void setCompanyId(String companyId) { this.companyId = companyId; }
+    public String getCompanyId() {
+        return companyId;
+    }
 
-    public int getSeats() { return seats; }
-    public void setSeats(int seats) { this.seats = seats; }
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
 
-    public String getTransmissionType() { return transmissionType; }
-    public void setTransmissionType(String transmissionType) { this.transmissionType = transmissionType; }
+    public int getSeats() {
+        return seats;
+    }
 
-    public int getRentalCount() { return rentalCount; }
-    public void setRentalCount(int rentalCount) { this.rentalCount = rentalCount; }
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public String getTransmissionType() {
+        return transmissionType;
+    }
+
+    public void setTransmissionType(String transmissionType) {
+        this.transmissionType = transmissionType;
+    }
+
+    public int getRentalCount() {
+        return rentalCount;
+    }
+
+    public void setRentalCount(int rentalCount) {
+        this.rentalCount = rentalCount;
+    }
+
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
 }

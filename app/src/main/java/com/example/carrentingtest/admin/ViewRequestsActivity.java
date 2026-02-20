@@ -3,19 +3,18 @@ package com.example.carrentingtest.admin;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.EmailSender;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -25,6 +24,7 @@ import java.util.List;
 
 public class ViewRequestsActivity extends AppCompatActivity {
     private RecyclerView requestsRecyclerView;
+    private View emptyStateView;
     private RentalRequestAdapter adapter;
     private List<RentalRequest> requestList = new ArrayList<>();
     private String companyId;
@@ -32,11 +32,13 @@ public class ViewRequestsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_view_requests);
+        FullscreenUiHelper.apply(this, R.id.view_requests_root);
 
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         requestsRecyclerView = findViewById(R.id.requestsRecyclerView);
+        emptyStateView = findViewById(R.id.emptyStateView);
         requestsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RentalRequestAdapter(requestList, this::handleRequestDecision);
         requestsRecyclerView.setAdapter(adapter);
@@ -53,11 +55,15 @@ public class ViewRequestsActivity extends AppCompatActivity {
     }
 
     private void loadRequests() {
-        if (companyId == null) return;
+        if (companyId == null)
+            return;
         FirebaseFirestore.getInstance().collection("rental_requests")
                 .whereEqualTo("companyId", companyId)
                 .addSnapshotListener((value, error) -> {
-                    if (error != null) return;
+                    if (error != null || value == null) {
+                        updateEmptyState();
+                        return;
+                    }
 
                     requestList.clear();
                     for (QueryDocumentSnapshot doc : value) {
@@ -66,7 +72,15 @@ public class ViewRequestsActivity extends AppCompatActivity {
                         requestList.add(request);
                     }
                     adapter.notifyDataSetChanged();
+                    updateEmptyState();
                 });
+    }
+
+    private void updateEmptyState() {
+        boolean empty = requestList.isEmpty();
+        if (emptyStateView != null) {
+            emptyStateView.setVisibility(empty ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void handleRequestDecision(RentalRequest request, boolean approved) {
@@ -115,7 +129,8 @@ public class ViewRequestsActivity extends AppCompatActivity {
                                 body += "Congratulations! Your rental request has been approved.\n" +
                                         "Please visit our office to complete the paperwork and pick up your vehicle.\n\n";
                             } else {
-                                body += "We regret to inform you that your rental request could not be approved at this time.\n" +
+                                body += "We regret to inform you that your rental request could not be approved at this time.\n"
+                                        +
                                         "Please feel free to contact us if you have any questions.\n\n";
                             }
 

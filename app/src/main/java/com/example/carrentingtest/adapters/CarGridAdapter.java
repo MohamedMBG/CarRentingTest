@@ -21,7 +21,7 @@ import java.util.List;
 public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewHolder> {
 
     public interface OnCarClickListener {
-        void onCarClicked(Car car);
+        void onCarClicked(Car car, ImageView sharedImageView);
     }
 
     private final List<Car> cars;
@@ -91,7 +91,8 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
                     : itemView.getContext().getString(R.string.seats_unknown);
             carSeats.setText(seatsText);
 
-            carPrice.setText(String.format(itemView.getContext().getString(R.string.price_per_day_format), car.getPricePerDay()));
+            carPrice.setText(String.format(itemView.getContext().getString(R.string.price_per_day_format),
+                    car.getPricePerDay()));
 
             if (car.isAvailable()) {
                 carAvailability.setText(itemView.getContext().getString(R.string.car_available));
@@ -111,6 +112,9 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
                 rentButton.setAlpha(0.6f);
             }
 
+            // Set unique transition name
+            androidx.core.view.ViewCompat.setTransitionName(carImage, "car_image_" + car.getDocumentId());
+
             Glide.with(itemView.getContext())
                     .load(car.getImageUrl())
                     .placeholder(R.drawable.ic_app_logo)
@@ -120,7 +124,7 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
 
             View.OnClickListener clickListener = v -> {
                 if (listener != null) {
-                    listener.onCarClicked(car);
+                    listener.onCarClicked(car, carImage);
                 }
             };
 

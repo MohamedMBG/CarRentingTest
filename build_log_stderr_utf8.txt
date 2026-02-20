@@ -1,0 +1,145 @@
+﻿> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:processDebugResources FAILED
+cmd : 
+At line:1 char:1
++ cmd /c gradlew.bat 
+assembleDebug > 
+build_log_stderr.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (:Stri  
+  ng) [], RemoteException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+FAILURE: Build failed with 
+an exception.
+
+* What went wrong:
+Execution failed for task ':
+app:processDebugResources'.
+> A failure occurred while 
+executing com.android.build.
+gradle.internal.res.LinkAppl
+icationAndroidResourcesTask$
+TaskAction
+   > Android resource 
+linking failed
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_agency_map.xml:29:
+ AAPT: error: resource 
+string/btn_back (aka com.exa
+mple.carrentingtest:string/b
+tn_back) not found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_agency_map.xml:29:
+ AAPT: error: resource 
+drawable/ic_arrow_back (aka 
+com.example.carrentingtest:d
+rawable/ic_arrow_back) not 
+found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_concierge.xml:28: 
+AAPT: error: resource 
+drawable/ic_arrow_back (aka 
+com.example.carrentingtest:d
+rawable/ic_arrow_back) not 
+found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_concierge.xml:70: 
+AAPT: error: resource 
+drawable/bg_chat_bubble_ai 
+(aka com.example.carrentingt
+est:drawable/bg_chat_bubble_
+ai) not found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_concierge.xml:84: 
+AAPT: error: resource drawab
+le/bg_chat_bubble_user (aka 
+com.example.carrentingtest:d
+rawable/bg_chat_bubble_user)
+ not found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_concierge.xml:96: 
+AAPT: error: resource 
+drawable/bg_chat_bubble_ai 
+(aka com.example.carrentingt
+est:drawable/bg_chat_bubble_
+ai) not found.
+         
+     ERROR: C:\Users\pc\Andr
+oidStudioProjects\CarRenting
+Test\app\src\main\res\layout
+\activity_concierge.xml:121:
+ AAPT: error: resource 
+drawable/bg_input_field 
+(aka com.example.carrentingt
+est:drawable/bg_input_field)
+ not found.
+         
+
+* Try:
+> Run with --stacktrace 
+option to get the stack 
+trace.
+> Run with --info or 
+--debug option to get more 
+log output.
+> Run with --scan to get 
+full insights.
+> Get more help at 
+https://help.gradle.org.
+
+BUILD FAILED in 10s
+29 actionable tasks: 2 executed, 27 up-to-date

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
@@ -42,6 +43,7 @@ public class AdminAgencyLocationActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_agency_location);
+        FullscreenUiHelper.apply(this, R.id.admin_agency_location_root);
 
         tilAddress = findViewById(R.id.tilAgencyAddress);
         tilLatitude = findViewById(R.id.tilAgencyLatitude);

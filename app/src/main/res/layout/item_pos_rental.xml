@@ -23,7 +23,7 @@
             android:orientation="vertical"
             android:paddingBottom="12dp"
             android:background="@drawable/bg_badge_soft"
-            android:backgroundTint="#F1F3FF"
+            android:backgroundTint="@color/badgeSoftBackground"
             android:padding="12dp">
 
             <TextView
@@ -258,7 +258,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@android:color/white"
                                 android:drawablePadding="4dp"
-                                android:shadowColor="#000000"
+                                android:shadowColor="@android:color/black"
                                 android:shadowDx="1"
                                 android:shadowDy="1"
                                 android:shadowRadius="2"
@@ -273,7 +273,7 @@
                                 android:layout_marginTop="2dp"
                                 android:textColor="@android:color/white"
                                 android:drawablePadding="4dp"
-                                android:shadowColor="#000000"
+                                android:shadowColor="@android:color/black"
                                 android:shadowDx="1"
                                 android:shadowDy="1"
                                 android:shadowRadius="2"

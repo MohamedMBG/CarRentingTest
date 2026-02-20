@@ -16,6 +16,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.CarAdapter;
 import com.example.carrentingtest.models.Car;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import java.util.*;
@@ -41,7 +42,8 @@ public class ManageCarsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_cars);  // Set the layout for this activity
+        setContentView(R.layout.activity_manage_cars); // Set the layout for this activity
+        FullscreenUiHelper.apply(this, R.id.manage_cars_root);
 
         // Initialize ListView and its adapter
         carsListView = findViewById(R.id.carsListView);
@@ -53,6 +55,7 @@ public class ManageCarsActivity extends AppCompatActivity {
             public void onEdit(Car car) {
                 showCarDialog(car);
             }
+
             @Override
             public void onDelete(Car car) {
                 deleteCar(car);
@@ -61,10 +64,10 @@ public class ManageCarsActivity extends AppCompatActivity {
 
         // Set click listener for "Add Car" button
         findViewById(R.id.btnAddCar).setOnClickListener(v -> showCarDialog(null));
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         // Set click listener for ListView items (for edit/delete)
         carsListView.setOnItemClickListener((p, v, pos, id) -> showOptionsDialog(carList.get(pos)));
-
 
         if (auth.getCurrentUser() != null) {
             db.collection("users")
@@ -82,37 +85,36 @@ public class ManageCarsActivity extends AppCompatActivity {
             finish();
         }
 
-
-
     }
 
     /**
-     Loads car data from Firestore database
-     - Clears existing list
-     - Fetches all documents from 'cars' collection
-     - Updates adapter when data is loaded
-    */
+     * Loads car data from Firestore database
+     * - Clears existing list
+     * - Fetches all documents from 'cars' collection
+     * - Updates adapter when data is loaded
+     */
     private void loadCars() {
-        if (companyId == null) return;
+        if (companyId == null)
+            return;
         db.collection("cars")
                 .whereEqualTo("companyId", companyId)
                 .get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                carList.clear();  // Clear existing data
-                // Process each document in the query result
-                for (QueryDocumentSnapshot doc : task.getResult()) {
-                    Car car = doc.toObject(Car.class);  // Convert document to Car object
-                    car.setDocumentId(doc.getId());  // Store document ID for future reference
-                    car.setRentalCount(0);
-                    carList.add(car);  // Add to local list
-                }
-                carAdapter.notifyDataSetChanged();  // Refresh ListView
-                loadRentalCounts();
-            } else {
-                // Show error message if loading fails
-                Toast.makeText(this, "Failed to load cars", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    if (task.isSuccessful()) {
+                        carList.clear(); // Clear existing data
+                        // Process each document in the query result
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            Car car = doc.toObject(Car.class); // Convert document to Car object
+                            car.setDocumentId(doc.getId()); // Store document ID for future reference
+                            car.setRentalCount(0);
+                            carList.add(car); // Add to local list
+                        }
+                        carAdapter.notifyDataSetChanged(); // Refresh ListView
+                        loadRentalCounts();
+                    } else {
+                        // Show error message if loading fails
+                        Toast.makeText(this, "Failed to load cars", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadRentalCounts() {
@@ -127,10 +129,13 @@ public class ManageCarsActivity extends AppCompatActivity {
                     Map<String, Integer> counts = new HashMap<>();
                     for (QueryDocumentSnapshot doc : snapshot) {
                         String status = doc.getString("status");
-                        if (status == null) continue;
-                        if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status)) continue;
+                        if (status == null)
+                            continue;
+                        if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status))
+                            continue;
                         String carId = doc.getString("carId");
-                        if (TextUtils.isEmpty(carId)) continue;
+                        if (TextUtils.isEmpty(carId))
+                            continue;
                         counts.put(carId, counts.getOrDefault(carId, 0) + 1);
                     }
 
@@ -167,9 +172,11 @@ public class ManageCarsActivity extends AppCompatActivity {
         RadioButton rbAutomatic = view.findViewById(R.id.rbAutomatic);
         RadioButton rbManual = view.findViewById(R.id.rbManual);
         SwitchCompat swAvailable = view.findViewById(R.id.swAvailable);
+        SwitchCompat swMaintenance = view.findViewById(R.id.swMaintenance);
 
-        boolean isEdit = car != null;  // Determine if we're editing or adding
-        swAvailable.setVisibility(isEdit ? View.VISIBLE : View.GONE);  // Only show availability switch when editing
+        boolean isEdit = car != null; // Determine if we're editing or adding
+        swAvailable.setVisibility(isEdit ? View.VISIBLE : View.GONE); // Only show availability switch when editing
+        swMaintenance.setVisibility(isEdit ? View.VISIBLE : View.GONE);
 
         // If editing, pre-fill the form with existing values
         if (isEdit) {
@@ -184,6 +191,7 @@ public class ManageCarsActivity extends AppCompatActivity {
                 etImageUrl.setText(TextUtils.join("\n", existingUrls));
             }
             swAvailable.setChecked(car.isAvailable());
+            swMaintenance.setChecked(car.isMaintenance());
 
             String transmission = car.getTransmissionType();
             if (!TextUtils.isEmpty(transmission)) {
@@ -197,7 +205,7 @@ public class ManageCarsActivity extends AppCompatActivity {
 
         // Configure dialog buttons and behavior
         builder.setView(view)
-                .setTitle(isEdit ? "Edit Car" : "Add New Car")  // Dynamic title
+                .setTitle(isEdit ? "Edit Car" : "Add New Car") // Dynamic title
                 .setPositiveButton(isEdit ? "Update" : "Save", (d, w) -> {
                     // Create or get the car object to save
                     Car c = isEdit ? car : new Car();
@@ -220,16 +228,22 @@ public class ManageCarsActivity extends AppCompatActivity {
                             : getString(R.string.transmission_automatic);
                     c.setTransmissionType(transmissionValue);
                     // Set availability (only for edits, new cars are available by default)
-                    if (isEdit) c.setAvailable(swAvailable.isChecked());
-                    else c.setAvailable(true);
+                    if (isEdit) {
+                        c.setAvailable(swAvailable.isChecked());
+                        c.setMaintenance(swMaintenance.isChecked());
+                    } else {
+                        c.setAvailable(true);
+                        c.setMaintenance(false);
+                    }
                     c.setCompanyId(companyId);
 
-
                     // Call appropriate save method
-                    if (isEdit) updateCar(c);
-                    else addCar(c);
+                    if (isEdit)
+                        updateCar(c);
+                    else
+                        addCar(c);
                 })
-                .setNegativeButton("Cancel", null)  // Cancel button does nothing
+                .setNegativeButton("Cancel", null) // Cancel button does nothing
                 .show();
     }
 
@@ -258,13 +272,13 @@ public class ManageCarsActivity extends AppCompatActivity {
         car.setCompanyId(companyId);
         db.collection("cars").add(car).addOnSuccessListener(doc -> {
             // On success: update local data and show confirmation
-            car.setDocumentId(doc.getId());  // Store the auto-generated document ID
-            carList.add(car);  // Add to local list
-            carAdapter.notifyDataSetChanged();  // Refresh ListView
+            car.setDocumentId(doc.getId()); // Store the auto-generated document ID
+            carList.add(car); // Add to local list
+            carAdapter.notifyDataSetChanged(); // Refresh ListView
             Toast.makeText(this, "Car added", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e ->
-                // Show error message if operation fails
-                Toast.makeText(this, "Failed to add car", Toast.LENGTH_SHORT).show());
+        // Show error message if operation fails
+        Toast.makeText(this, "Failed to add car", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -278,8 +292,8 @@ public class ManageCarsActivity extends AppCompatActivity {
                     carAdapter.notifyDataSetChanged();
                     Toast.makeText(this, "Car updated", Toast.LENGTH_SHORT).show();
                 }).addOnFailureListener(e ->
-                        // Show error message if operation fails
-                        Toast.makeText(this, "Failed to update car", Toast.LENGTH_SHORT).show());
+                // Show error message if operation fails
+                Toast.makeText(this, "Failed to update car", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -289,10 +303,12 @@ public class ManageCarsActivity extends AppCompatActivity {
     private void showOptionsDialog(Car car) {
         new AlertDialog.Builder(this)
                 .setTitle("Car Options")
-                .setItems(new String[]{"Edit", "Delete", "Cancel"}, (d, which) -> {
+                .setItems(new String[] { "Edit", "Delete", "Cancel" }, (d, which) -> {
                     // Handle option selection
-                    if (which == 0) showCarDialog(car);  // Edit
-                    else if (which == 1) deleteCar(car);  // Delete
+                    if (which == 0)
+                        showCarDialog(car); // Edit
+                    else if (which == 1)
+                        deleteCar(car); // Delete
                     // Cancel (which == 2) does nothing
                 }).show();
     }
@@ -306,19 +322,19 @@ public class ManageCarsActivity extends AppCompatActivity {
                 .setTitle("Confirm Delete")
                 .setMessage("Delete this car?")
                 .setPositiveButton("Delete", (d, w) ->
-                        // On confirm: delete from Firestore
-                        db.collection("cars")
-                                .document(car.getDocumentId())
-                                .delete()
-                                .addOnSuccessListener(v -> {
-                                    // On success: update local data and show confirmation
-                                    carList.remove(car);
-                                    carAdapter.notifyDataSetChanged();
-                                    Toast.makeText(this, "Car deleted", Toast.LENGTH_SHORT).show();
-                                }).addOnFailureListener(e ->
-                                        // Show error message if operation fails
-                                        Toast.makeText(this, "Failed to delete car", Toast.LENGTH_SHORT).show()))
-                .setNegativeButton("Cancel", null)  // Cancel button does nothing
+                // On confirm: delete from Firestore
+                db.collection("cars")
+                        .document(car.getDocumentId())
+                        .delete()
+                        .addOnSuccessListener(v -> {
+                            // On success: update local data and show confirmation
+                            carList.remove(car);
+                            carAdapter.notifyDataSetChanged();
+                            Toast.makeText(this, "Car deleted", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e ->
+                        // Show error message if operation fails
+                        Toast.makeText(this, "Failed to delete car", Toast.LENGTH_SHORT).show()))
+                .setNegativeButton("Cancel", null) // Cancel button does nothing
                 .show();
     }
 }

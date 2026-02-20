@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -46,6 +47,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_company);
+        FullscreenUiHelper.apply(this, R.id.register_company_root);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();

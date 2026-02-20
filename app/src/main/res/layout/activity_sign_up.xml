@@ -125,7 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/next"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimary"
         android:backgroundTint="@color/colorPrimary"
         android:padding="12dp"
         app:cornerRadius="8dp"

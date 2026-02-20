@@ -154,5 +154,9 @@ public class SignUpActivity extends AppCompatActivity {
     public void openSignIn() {
         startActivity(new Intent(this, SignInActivity.class));
     }
+
+    public void openSignIn(View view) {
+        openSignIn();
+    }
 }
 

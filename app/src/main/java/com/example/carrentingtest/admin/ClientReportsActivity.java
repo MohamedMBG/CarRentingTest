@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.models.RentalReport;
+import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,6 +41,7 @@ public class ClientReportsActivity extends AppCompatActivity implements ClientRe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_reports);
+        FullscreenUiHelper.apply(this, R.id.client_reports_root);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());

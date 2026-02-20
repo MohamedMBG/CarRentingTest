@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -17,6 +18,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,8 +32,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     packagingOptions {
@@ -39,6 +48,10 @@ android {
                 "META-INF/INDEX.LIST"
             )
         }
+    }
+
+    lint {
+        disable += "MissingTranslation"
     }
 
 }
@@ -81,12 +94,23 @@ dependencies {
     implementation(libs.camera.camera2)
     implementation(libs.camera.lifecycle)
     implementation(libs.androidx.camera.view)
-    implementation(libs.material) // or newer
-
-
     // Concurrent futures used by some camera utils
     implementation(libs.concurrent.futures)
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
+
+    // Google Maps & Location
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // Google AI (Gemini)
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation("com.google.guava:guava:31.1-android")
+    implementation("org.reactivestreams:reactive-streams:1.0.4")
+
+    // UI Animations
+    implementation("com.airbnb.android:lottie:6.0.0")
+
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

@@ -43,12 +43,12 @@ public class HomeFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -73,11 +73,19 @@ public class HomeFragment extends Fragment {
         // Initialize car lists
         carList = new ArrayList<>();
         filteredCarList = new ArrayList<>();
-        carAdapter = new CarGridAdapter(filteredCarList, selectedCar -> {
+        carAdapter = new CarGridAdapter(filteredCarList, (selectedCar, sharedImageView) -> {
             if (selectedCar.isAvailable()) {
                 Intent intent = new Intent(getActivity(), RentalFormActivity.class);
                 intent.putExtra("selectedCar", selectedCar);
-                startActivity(intent);
+
+                String transitionName = androidx.core.view.ViewCompat.getTransitionName(sharedImageView);
+                androidx.core.app.ActivityOptionsCompat options = androidx.core.app.ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(
+                                getActivity(),
+                                sharedImageView,
+                                transitionName);
+
+                startActivity(intent, options.toBundle());
             } else {
                 Toast.makeText(getContext(), "This car is currently unavailable.", Toast.LENGTH_SHORT).show();
             }
@@ -93,6 +101,11 @@ public class HomeFragment extends Fragment {
 
         // Setup filter functionality
         setupFilters(view);
+
+        // Setup AI Concierge FAB
+        view.findViewById(R.id.fab_concierge).setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), com.example.carrentingtest.ui.ai.ConciergeActivity.class));
+        });
     }
 
     private void fetchCars() {
@@ -114,7 +127,8 @@ public class HomeFragment extends Fragment {
                         applyFilters();
                     } else {
                         Log.e(TAG, "Error getting documents: ", task.getException());
-                        Toast.makeText(getContext(), "Error fetching cars: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error fetching cars: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -181,23 +195,29 @@ public class HomeFragment extends Fragment {
             boolean searchMatch = lowerCaseQuery.isEmpty() ||
                     (car.getModel() != null && car.getModel().toLowerCase().contains(lowerCaseQuery));
             // Add other search fields if needed
-            // || (car.getType() != null && car.getType().toLowerCase().contains(lowerCaseQuery))
+            // || (car.getType() != null &&
+            // car.getType().toLowerCase().contains(lowerCaseQuery))
 
             if (typeMatch && searchMatch) {
                 filteredCarList.add(car);
             }
         }
         carAdapter.notifyDataSetChanged(); // Update the RecyclerView grid
-        Log.d(TAG, "Applied filters. Type: " + currentFilterType + ", Query: '" + currentSearchQuery + "'. Filtered list size: " + filteredCarList.size());
+        Log.d(TAG, "Applied filters. Type: " + currentFilterType + ", Query: '" + currentSearchQuery
+                + "'. Filtered list size: " + filteredCarList.size());
     }
 
     private void updateButtonStyles() {
         int selectedColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary);
-        ColorStateList selectedTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorOnPrimary));
+        ColorStateList selectedTextColor = ColorStateList
+                .valueOf(ContextCompat.getColor(requireContext(), R.color.colorOnPrimary));
         int defaultColor = ContextCompat.getColor(requireContext(), R.color.homeFilterDefaultBackground);
-        ColorStateList defaultTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
-        ColorStateList defaultStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterStroke));
-        ColorStateList rippleColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterRipple));
+        ColorStateList defaultTextColor = ColorStateList
+                .valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        ColorStateList defaultStrokeColor = ColorStateList
+                .valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterStroke));
+        ColorStateList rippleColor = ColorStateList
+                .valueOf(ContextCompat.getColor(requireContext(), R.color.homeFilterRipple));
         int strokeWidth = getResources().getDimensionPixelSize(R.dimen.home_filter_chip_stroke_width);
 
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
