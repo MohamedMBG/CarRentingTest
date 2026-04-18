@@ -94,6 +94,8 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.fab_concierge).setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), com.example.carrentingtest.ui.ai.ConciergeActivity.class));
         });
+
+        fetchCars();
     }
 
     private void fetchCars() {

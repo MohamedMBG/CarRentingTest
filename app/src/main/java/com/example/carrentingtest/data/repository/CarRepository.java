@@ -33,7 +33,15 @@ public class CarRepository {
         return firestore.collection("cars")
                 .whereEqualTo("companyId", companyId)
                 .get()
-                .continueWith(task -> mapCars(task.getResult()));
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to load cars."));
+                    }
+                    return Tasks.forResult(mapCars(task.getResult()));
+                });
     }
 
     public Task<List<Car>> getAvailableCarsForCompany(@Nullable String companyId) {
@@ -45,7 +53,15 @@ public class CarRepository {
                 .whereEqualTo("available", true)
                 .whereEqualTo("maintenance", false)
                 .get()
-                .continueWith(task -> mapCars(task.getResult()));
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to load cars."));
+                    }
+                    return Tasks.forResult(mapCars(task.getResult()));
+                });
     }
 
     public Task<Car> getById(@Nullable String carId) {
@@ -55,7 +71,15 @@ public class CarRepository {
         return firestore.collection("cars")
                 .document(carId)
                 .get()
-                .continueWith(task -> mapCar(task.getResult()));
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to load car."));
+                    }
+                    return Tasks.forResult(mapCar(task.getResult()));
+                });
     }
 
     @NonNull

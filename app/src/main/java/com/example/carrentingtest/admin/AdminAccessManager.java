@@ -60,7 +60,8 @@ public final class AdminAccessManager {
         new TenantSessionProvider()
                 .requireTenantContext(firebaseUser)
                 .addOnSuccessListener(context -> verifyCompany(context, callback))
-                .addOnFailureListener(e -> callback.onDenied("Failed to load admin account."));
+                .addOnFailureListener(e -> callback.onDenied(
+                        e != null && e.getMessage() != null ? e.getMessage() : "Failed to load admin account."));
     }
 
     public static void guardOperationalAccess(@NonNull AppCompatActivity activity,

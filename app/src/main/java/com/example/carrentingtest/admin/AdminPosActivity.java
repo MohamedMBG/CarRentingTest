@@ -34,18 +34,21 @@ import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
 import com.example.carrentingtest.pricing.PricingService;
+import com.example.carrentingtest.storage.StoragePaths;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageException;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -55,8 +58,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter.PosActionListener {
@@ -72,6 +73,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+    private FirebaseStorage storage;
 
     private String companyId;
 
@@ -80,8 +82,6 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
     private ActivityResultLauncher<String> paymentProofPicker;
     private PosCarAdapter.PosRentalDisplay pendingPaymentProofRental;
-
-    private final ExecutorService ioExecutor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +105,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         initInvoiceLauncher();
         initPaymentProofPicker();
@@ -304,63 +305,95 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                 .show();
     }
 
-    /** NEW: actually handles saving proof locally + updating Firestore */
     private void uploadPaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental, @NonNull Uri uri) {
         showLoading(true);
-        final String previousProofUrl = rental.getPaymentProofUrl();
+        String storagePath = StoragePaths.paymentProofPath(rental.getRequestId());
+        StorageReference proofReference = storage.getReference().child(storagePath);
+        String mimeType = getContentResolver().getType(uri);
+        StorageMetadata.Builder metadataBuilder = new StorageMetadata.Builder();
+        if (!TextUtils.isEmpty(mimeType)) {
+            metadataBuilder.setContentType(mimeType);
+        }
 
-        ioExecutor.execute(() -> {
-            Uri localUri;
-            try {
-                localUri = savePaymentProofLocally(rental.getRequestId(), uri);
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to store payment proof locally", e);
-                runOnUiThread(() -> {
+        proofReference.putFile(uri, metadataBuilder.build())
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException() != null ? task.getException()
+                                : new IllegalStateException("Payment proof upload failed.");
+                    }
+                    return proofReference.getDownloadUrl();
+                })
+                .addOnSuccessListener(downloadUri -> savePaymentProofMetadata(
+                        rental,
+                        true,
+                        downloadUri.toString(),
+                        storagePath,
+                        R.string.pos_payment_proof_upload_success,
+                        R.string.pos_payment_proof_upload_failed))
+                .addOnFailureListener(e -> {
                     if (isFinishing() || isDestroyed()) return;
                     showLoading(false);
+                    Log.e(TAG, "Failed to upload payment proof to shared storage", e);
                     Toast.makeText(this, R.string.pos_payment_proof_upload_failed, Toast.LENGTH_SHORT).show();
                 });
-                return;
-            }
-
-            runOnUiThread(() -> savePaymentProofMetadata(
-                    rental,
-                    true,
-                    (localUri != null ? localUri.toString() : null),
-                    previousProofUrl,
-                    R.string.pos_payment_proof_upload_success,
-                    R.string.pos_payment_proof_upload_failed
-            ));
-        });
     }
 
     private void removePaymentProof(@NonNull PosCarAdapter.PosRentalDisplay rental) {
         showLoading(true);
-        ioExecutor.execute(() -> {
-            boolean deleted = deleteLocalPaymentProofFile(rental.getPaymentProofUrl());
-            if (!deleted && !TextUtils.isEmpty(rental.getPaymentProofUrl())) {
-                Log.w(TAG, "Failed to delete local payment proof for request " + rental.getRequestId());
-            }
-            runOnUiThread(() -> savePaymentProofMetadata(
+        String storagePath = resolvePaymentProofStoragePath(rental);
+        if (TextUtils.isEmpty(storagePath)) {
+            savePaymentProofMetadata(
                     rental,
                     false,
                     null,
                     null,
                     R.string.pos_payment_proof_remove_success,
-                    R.string.pos_payment_proof_remove_failed
-            ));
-        });
+                    R.string.pos_payment_proof_remove_failed);
+            return;
+        }
+
+        storage.getReference().child(storagePath)
+                .delete()
+                .addOnSuccessListener(unused -> savePaymentProofMetadata(
+                        rental,
+                        false,
+                        null,
+                        null,
+                        R.string.pos_payment_proof_remove_success,
+                        R.string.pos_payment_proof_remove_failed))
+                .addOnFailureListener(e -> {
+                    if (e instanceof StorageException
+                            && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                        savePaymentProofMetadata(
+                                rental,
+                                false,
+                                null,
+                                null,
+                                R.string.pos_payment_proof_remove_success,
+                                R.string.pos_payment_proof_remove_failed);
+                        return;
+                    }
+                    if (isFinishing() || isDestroyed()) return;
+                    showLoading(false);
+                    Log.w(TAG, "Failed to delete remote payment proof for request " + rental.getRequestId(), e);
+                    Toast.makeText(this, R.string.pos_payment_proof_remove_failed, Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void savePaymentProofMetadata(@NonNull PosCarAdapter.PosRentalDisplay rental,
                                           boolean hasProof,
                                           @Nullable String proofUrl,
-                                          @Nullable String previousProofUrl,
+                                          @Nullable String storagePath,
                                           @StringRes int successMessage,
                                           @StringRes int failureMessage) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("paymentProofProvided", hasProof);
         updates.put("paymentProofUrl", proofUrl);
+        updates.put("paymentProofStoragePath", storagePath);
+        updates.put("paymentProofUploadedAt", hasProof ? FieldValue.serverTimestamp() : null);
+        updates.put("paymentProofUploadedBy", hasProof && auth.getCurrentUser() != null
+                ? auth.getCurrentUser().getUid()
+                : null);
 
         db.collection("rental_requests")
                 .document(rental.getRequestId())
@@ -368,10 +401,6 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                 .addOnSuccessListener(unused -> {
                     if (isFinishing() || isDestroyed()) return;
                     showLoading(false);
-
-                    if (!TextUtils.isEmpty(previousProofUrl) && !TextUtils.equals(previousProofUrl, proofUrl)) {
-                        ioExecutor.execute(() -> deleteLocalPaymentProofFile(previousProofUrl));
-                    }
 
                     rental.setPaymentProofProvided(hasProof);
                     rental.setPaymentProofUrl(proofUrl);
@@ -381,10 +410,8 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                 .addOnFailureListener(e -> {
                     if (isFinishing() || isDestroyed()) return;
                     showLoading(false);
-
-                    // Roll back local file if Firestore update failed after saving locally
-                    if (hasProof && !TextUtils.isEmpty(proofUrl)) {
-                        ioExecutor.execute(() -> deleteLocalPaymentProofFile(proofUrl));
+                    if (hasProof && !TextUtils.isEmpty(storagePath)) {
+                        storage.getReference().child(storagePath).delete();
                     }
                     Toast.makeText(this, failureMessage, Toast.LENGTH_SHORT).show();
                 });
@@ -453,105 +480,11 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ioExecutor.shutdownNow();
-    }
-
-    private Uri savePaymentProofLocally(@Nullable String requestId, @NonNull Uri sourceUri) throws IOException {
-        ContentResolver resolver = getContentResolver();
-        if (resolver == null) {
-            throw new IOException("ContentResolver not available");
-        }
-
-        String extension = resolveFileExtension(resolver, sourceUri);
-        if (TextUtils.isEmpty(extension)) {
-            extension = "jpg";
-        }
-
-        String sanitizedId = sanitizeFileName(requestId);
-        if (TextUtils.isEmpty(sanitizedId)) {
-            sanitizedId = "rental";
-        }
-
-        File proofsDir = new File(getFilesDir(), "payment_proofs");
-        if (!proofsDir.exists() && !proofsDir.mkdirs()) {
-            throw new IOException("Failed to create payment proofs directory");
-        }
-
-        File destination = new File(proofsDir, sanitizedId + "_" + System.currentTimeMillis() + "." + extension);
-
-        try (InputStream inputStream = resolver.openInputStream(sourceUri);
-             OutputStream outputStream = new FileOutputStream(destination)) {
-            if (inputStream == null) {
-                throw new IOException("Unable to open input stream for payment proof");
-            }
-
-            byte[] buffer = new byte[8 * 1024];
-            int read;
-            while ((read = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, read);
-            }
-            outputStream.flush();
-        }
-
-        return Uri.fromFile(destination);
-    }
-
-    private String resolveFileExtension(@NonNull ContentResolver resolver, @NonNull Uri uri) {
-        String extension = null;
-
-        String mimeType = resolver.getType(uri);
-        if (!TextUtils.isEmpty(mimeType)) {
-            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-        }
-
-        if (TextUtils.isEmpty(extension)) {
-            extension = extractExtensionFromName(resolver, uri);
-        }
-
-        if (TextUtils.isEmpty(extension) && uri.getPath() != null) {
-            String path = uri.getPath();
-            int dotIndex = path.lastIndexOf('.');
-            if (dotIndex >= 0 && dotIndex < path.length() - 1) {
-                extension = path.substring(dotIndex + 1);
-            }
-        }
-
-        return extension;
-    }
-
-    @Nullable
-    private String extractExtensionFromName(@NonNull ContentResolver resolver, @NonNull Uri uri) {
-        Cursor cursor = null;
-        try {
-            cursor = resolver.query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String name = cursor.getString(0);
-                if (!TextUtils.isEmpty(name)) {
-                    int dotIndex = name.lastIndexOf('.');
-                    if (dotIndex >= 0 && dotIndex < name.length() - 1) {
-                        return name.substring(dotIndex + 1);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Failed to resolve file extension from cursor", e);
-        } finally {
-            if (cursor != null) cursor.close();
+    private String resolvePaymentProofStoragePath(@NonNull PosCarAdapter.PosRentalDisplay rental) {
+        if (!TextUtils.isEmpty(rental.getRequestId())) {
+            return StoragePaths.paymentProofPath(rental.getRequestId());
         }
         return null;
-    }
-
-    private boolean deleteLocalPaymentProofFile(@Nullable String proofUrl) {
-        if (TextUtils.isEmpty(proofUrl)) return true;
-        Uri uri = Uri.parse(proofUrl);
-        if (uri == null || uri.getPath() == null) return true;
-        if (!"file".equalsIgnoreCase(uri.getScheme())) return true;
-        File file = new File(uri.getPath());
-        if (!file.exists()) return true;
-        return file.delete();
     }
 
     private String safeText(String value) {

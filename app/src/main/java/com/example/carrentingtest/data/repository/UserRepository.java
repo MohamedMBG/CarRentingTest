@@ -45,7 +45,15 @@ public class UserRepository {
                 .whereEqualTo("role", "admin")
                 .limit(1)
                 .get()
-                .continueWith(task -> firstDocument(task.getResult()));
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to load admin user."));
+                    }
+                    return Tasks.forResult(firstDocument(task.getResult()));
+                });
     }
 
     @Nullable

@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+
+    function userCompanyId() {
+      return userDoc().data.companyId;
+    }
+
+    function userRole() {
+      return userDoc().data.role;
+    }
+
+    function rentalRequestDoc(requestId) {
+      return firestore.get(/databases/(default)/documents/rental_requests/$(requestId));
+    }
+
+    function sameCompanyRental(requestId) {
+      return rentalRequestDoc(requestId).data.companyId == userCompanyId();
+    }
+
+    match /verifications/{uid}/{fileName} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /rental_payments/{requestId}/{fileName} {
+      allow read: if isSignedIn() && sameCompanyRental(requestId);
+      allow write, delete: if isSignedIn()
+        && sameCompanyRental(requestId)
+        && userRole() == "admin";
+    }
+  }
+}

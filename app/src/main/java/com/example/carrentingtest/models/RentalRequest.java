@@ -20,6 +20,9 @@ public class RentalRequest {
     private PricingBreakdown pricingBreakdown;
     private boolean paymentProofProvided;
     private String paymentProofUrl;
+    private String paymentProofStoragePath;
+    private Date paymentProofUploadedAt;
+    private String paymentProofUploadedBy;
 
 
     public RentalRequest() {
@@ -160,5 +163,29 @@ public class RentalRequest {
 
     public void setPaymentProofUrl(String paymentProofUrl) {
         this.paymentProofUrl = paymentProofUrl;
+    }
+
+    public String getPaymentProofStoragePath() {
+        return paymentProofStoragePath;
+    }
+
+    public void setPaymentProofStoragePath(String paymentProofStoragePath) {
+        this.paymentProofStoragePath = paymentProofStoragePath;
+    }
+
+    public Date getPaymentProofUploadedAt() {
+        return paymentProofUploadedAt;
+    }
+
+    public void setPaymentProofUploadedAt(Date paymentProofUploadedAt) {
+        this.paymentProofUploadedAt = paymentProofUploadedAt;
+    }
+
+    public String getPaymentProofUploadedBy() {
+        return paymentProofUploadedBy;
+    }
+
+    public void setPaymentProofUploadedBy(String paymentProofUploadedBy) {
+        this.paymentProofUploadedBy = paymentProofUploadedBy;
     }
 }

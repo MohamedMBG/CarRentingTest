@@ -52,14 +52,22 @@ public class SubmitRentalRequestUseCase {
         }
 
         return userRepository.getById(currentUser.getUid())
-                .continueWithTask(task -> buildAndPersistRequest(
-                        currentUser,
-                        task.getResult(),
-                        selectedCar,
-                        companyId,
-                        additionalRequests,
-                        startDate,
-                        endDate));
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to retrieve user data."));
+                    }
+                    return buildAndPersistRequest(
+                            currentUser,
+                            task.getResult(),
+                            selectedCar,
+                            companyId,
+                            additionalRequests,
+                            startDate,
+                            endDate);
+                });
     }
 
     public static boolean isVerificationRequired(@NonNull Throwable throwable) {
@@ -95,7 +103,16 @@ public class SubmitRentalRequestUseCase {
         request.setEndDate(endDate);
         PricingService.applyPricing(request, PricingService.quote(selectedCar, startDate, endDate));
 
-        return rentalRequestRepository.create(request).continueWith(task -> request);
+        return rentalRequestRepository.create(request)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to persist rental request."));
+                    }
+                    return Tasks.forResult(request);
+                });
     }
 
     private String resolveUserName(@NonNull FirebaseUser firebaseUser, @NonNull DocumentSnapshot userDocument) {

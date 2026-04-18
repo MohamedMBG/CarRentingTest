@@ -478,7 +478,7 @@ public class RentalFormActivity extends AppCompatActivity {
             Toast.makeText(this, "Submitting request...", Toast.LENGTH_SHORT).show();
 
             // Fetch user data before submitting request
-            fetchUserDataAndSubmit(currentUser, startCal, endCal);
+            fetchUserDataAndSubmit(startCal, endCal);
 
         } catch (Exception e) {
             // Handle date parsing errors
@@ -489,7 +489,7 @@ public class RentalFormActivity extends AppCompatActivity {
     }
 
     // Method to fetch user data from shared data/domain layers
-    private void fetchUserDataAndSubmit(FirebaseUser user, Calendar startCal, Calendar endCal) {
+    private void fetchUserDataAndSubmit(Calendar startCal, Calendar endCal) {
         submitRentalRequestUseCase.execute(
                         selectedCar,
                         companyId,

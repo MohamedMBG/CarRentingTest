@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -22,7 +23,7 @@ public class RentalReportRepository {
         this.firestore = firestore;
     }
 
-    public Task<?> submitIssueReport(@NonNull RentalRequest request, @NonNull String description) {
+    public Task<DocumentReference> submitIssueReport(@NonNull RentalRequest request, @NonNull String description) {
         Map<String, Object> report = new HashMap<>();
         report.put("requestId", request.getRequestId());
         report.put("carId", request.getCarId());

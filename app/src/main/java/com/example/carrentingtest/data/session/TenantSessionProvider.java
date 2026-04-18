@@ -40,6 +40,12 @@ public class TenantSessionProvider {
 
         return userRepository.getById(firebaseUser.getUid())
                 .continueWithTask(userTask -> {
+                    if (!userTask.isSuccessful()) {
+                        return Tasks.forException(
+                                userTask.getException() != null
+                                        ? userTask.getException()
+                                        : new IllegalStateException("User session could not be loaded."));
+                    }
                     DocumentSnapshot userDocument = userTask.getResult();
                     if (userDocument == null || !userDocument.exists()) {
                         return Tasks.forException(new IllegalStateException("User session could not be loaded."));
@@ -51,8 +57,16 @@ public class TenantSessionProvider {
                     }
 
                     return companyRepository.getById(companyId)
-                            .continueWith(companyTask ->
-                                    TenantContext.from(firebaseUser, userDocument, companyTask.getResult()));
+                            .continueWithTask(companyTask -> {
+                                if (!companyTask.isSuccessful()) {
+                                    return Tasks.forException(
+                                            companyTask.getException() != null
+                                                    ? companyTask.getException()
+                                                    : new IllegalStateException("Tenant company could not be loaded."));
+                                }
+                                return Tasks.forResult(
+                                        TenantContext.from(firebaseUser, userDocument, companyTask.getResult()));
+                            });
                 });
     }
 }
