@@ -30,8 +30,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.PosCarAdapter;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -107,34 +109,12 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
         initInvoiceLauncher();
         initPaymentProofPicker();
 
-        if (auth.getCurrentUser() == null) {
-            Toast.makeText(this, R.string.error_not_authenticated, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         showLoading(true);
-        String uid = auth.getCurrentUser().getUid();
-        db.collection("users")
-                .document(uid)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (isFinishing() || isDestroyed()) return;
-                    companyId = doc != null ? doc.getString("companyId") : null;
-                    if (TextUtils.isEmpty(companyId)) {
-                        showLoading(false);
-                        Toast.makeText(this, R.string.error_company_not_found, Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        loadCars();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (isFinishing() || isDestroyed()) return;
-                    showLoading(false);
-                    Toast.makeText(this, R.string.error_company_not_found, Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            if (isFinishing() || isDestroyed()) return;
+            companyId = access.getCompanyId();
+            loadCars();
+        });
     }
 
     private void initPaymentProofPicker() {
@@ -203,9 +183,8 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                             if (request == null) continue;
                             request.setRequestId(doc.getId());
 
-                            String status = request.getStatus();
-                            if (TextUtils.isEmpty(status)) continue;
-                            if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status)) continue;
+                            RentalRequestStatus status = RentalRequestStatus.from(request.getStatus());
+                            if (!status.isRevenueRecognized()) continue;
 
                             String carId = request.getCarId();
                             if (TextUtils.isEmpty(carId)) continue;
@@ -215,12 +194,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
 
                             int rentalDays = computeRentalDays(request.getStartDate(), request.getEndDate(), now);
 
-                            double price = request.getTotalPrice();
-                            if (price <= 0) {
-                                double ppd = car.getPricePerDay(); // assume primitive
-                                price = ppd * Math.max(1, rentalDays);
-                            }
-                            if (Double.isNaN(price) || Double.isInfinite(price)) price = 0d;
+                            double price = PricingService.getStoredTotal(request);
 
                             totalRevenue += price;
 
@@ -232,7 +206,7 @@ public class AdminPosActivity extends AppCompatActivity implements PosCarAdapter
                             rentalDisplay.setUserPhone(request.getUserPhone());
                             rentalDisplay.setStartDate(request.getStartDate());
                             rentalDisplay.setEndDate(request.getEndDate());
-                            rentalDisplay.setStatus(status);
+                            rentalDisplay.setStatus(status.getStorageValue());
                             rentalDisplay.setRentalDays(Math.max(1, rentalDays));
                             rentalDisplay.setTotalPrice(price);
                             rentalDisplay.setPaymentProofProvided(request.isPaymentProofProvided());

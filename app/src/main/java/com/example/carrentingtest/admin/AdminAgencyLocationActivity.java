@@ -63,31 +63,11 @@ public class AdminAgencyLocationActivity extends AppCompatActivity {
     }
 
     private void loadCompanyData() {
-        if (auth.getCurrentUser() == null) {
-            Toast.makeText(this, R.string.error_not_authenticated, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         toggleLoading(true);
-        db.collection("users")
-                .document(auth.getCurrentUser().getUid())
-                .get()
-                .addOnSuccessListener(userSnapshot -> {
-                    companyId = userSnapshot != null ? userSnapshot.getString("companyId") : null;
-                    if (TextUtils.isEmpty(companyId)) {
-                        toggleLoading(false);
-                        Toast.makeText(this, R.string.error_company_not_found, Toast.LENGTH_SHORT).show();
-                        finish();
-                        return;
-                    }
-                    fetchCompany();
-                })
-                .addOnFailureListener(e -> {
-                    toggleLoading(false);
-                    Toast.makeText(this, R.string.error_company_not_found, Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            companyId = access.getCompanyId();
+            fetchCompany();
+        });
     }
 
     private void fetchCompany() {

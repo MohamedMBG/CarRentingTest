@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.UserRole;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,13 +51,25 @@ public class AdminLoginActivity extends AppCompatActivity {
                 if (user != null) {
                     db.collection("users").document(user.getUid()).get()
                             .addOnSuccessListener(doc -> {
-                                String role = doc.getString("role");
-                                if ("admin".equals(role)) {
-                                    startActivity(new Intent(this, AdminDashboardActivity.class));
-                                    finish();
-                                } else {
+                                UserRole role = UserRole.from(doc.getString("role"));
+                                if (role != UserRole.ADMIN) {
                                     Toast.makeText(this, "Not an admin account", Toast.LENGTH_SHORT).show();
+                                    mAuth.signOut();
+                                    return;
                                 }
+                                AdminAccessManager.verifyOperationalAccess(db, user, new AdminAccessManager.AccessCallback() {
+                                    @Override
+                                    public void onGranted(@androidx.annotation.NonNull AdminAccessManager.AdminAccess access) {
+                                        startActivity(new Intent(AdminLoginActivity.this, AdminDashboardActivity.class));
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onDenied(@androidx.annotation.NonNull String message) {
+                                        mAuth.signOut();
+                                        Toast.makeText(AdminLoginActivity.this, message, Toast.LENGTH_LONG).show();
+                                    }
+                                });
                             })
                             .addOnFailureListener(e -> Toast.makeText(this, "Failed to load user", Toast.LENGTH_SHORT).show());
                 }

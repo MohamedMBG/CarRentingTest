@@ -6,7 +6,7 @@ public final class VerificationGuard {
     private VerificationGuard() {}
 
     public static boolean canBook(@Nullable String verificationStatus) {
-        return "VERIFIED".equals(verificationStatus);
+        return VerificationStatus.from(verificationStatus).allowsBooking();
     }
 }
 

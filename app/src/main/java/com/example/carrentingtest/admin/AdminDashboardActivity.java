@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
+import com.example.carrentingtest.domain.RentalRequestStatus;
+import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -77,20 +80,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 // 4. Logout button - triggers logout process
                 findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
 
-                if (auth.getCurrentUser() != null) {
-                        db.collection("users")
-                                        .document(auth.getCurrentUser().getUid())
-                                        .get()
-                                        .addOnSuccessListener(doc -> {
-                                                companyId = doc.getString("companyId");
-                                                fetchStats();
-                                        })
-                                        .addOnFailureListener(e -> Toast.makeText(this,
-                                                        "Failed to load company", Toast.LENGTH_SHORT).show());
-                } else {
-                        Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-                        finish();
-                }
+                AdminAccessManager.guardOperationalAccess(this, db, access -> {
+                        companyId = access.getCompanyId();
+                        fetchStats();
+                });
 
         }
 
@@ -104,7 +97,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 // 1. Pending Requests Count
                 db.collection("rental_requests")
                                 .whereEqualTo("companyId", companyId)
-                                .whereEqualTo("status", "pending")
+                                .whereEqualTo("status", RentalRequestStatus.PENDING.getStorageValue())
                                 .addSnapshotListener((snap, e) -> {
                                         if (snap != null) {
                                                 tvPendingCount.setText(String.valueOf(snap.size()));
@@ -121,15 +114,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
                                                 int activeCount = 0;
                                                 double totalRevenue = 0.0;
                                                 for (com.google.firebase.firestore.QueryDocumentSnapshot doc : snap) {
-                                                        String status = doc.getString("status");
-                                                        if ("approved".equals(status)) {
+                                                        RentalRequest request = doc.toObject(RentalRequest.class);
+                                                        RentalRequestStatus status = RentalRequestStatus.from(doc.getString("status"));
+                                                        if (status == RentalRequestStatus.APPROVED) {
                                                                 activeCount++;
                                                         }
-                                                        if ("approved".equals(status) || "completed".equals(status)) {
-                                                                Double price = doc.getDouble("totalPrice");
-                                                                if (price != null) {
-                                                                        totalRevenue += price;
-                                                                }
+                                                        if (status.isRevenueRecognized()) {
+                                                                totalRevenue += PricingService.getStoredTotal(request);
                                                         }
                                                 }
                                                 tvActiveRentals.setText(String.valueOf(activeCount));

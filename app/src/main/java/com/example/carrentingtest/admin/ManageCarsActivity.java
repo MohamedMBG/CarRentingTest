@@ -15,6 +15,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.CarAdapter;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,21 +70,11 @@ public class ManageCarsActivity extends AppCompatActivity {
         // Set click listener for ListView items (for edit/delete)
         carsListView.setOnItemClickListener((p, v, pos, id) -> showOptionsDialog(carList.get(pos)));
 
-        if (auth.getCurrentUser() != null) {
-            db.collection("users")
-                    .document(auth.getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        carAdapter.setClientOrAdmin(true);
-                        loadCars();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this,
-                            "Failed to load company", Toast.LENGTH_SHORT).show());
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            companyId = access.getCompanyId();
+            carAdapter.setClientOrAdmin(true);
+            loadCars();
+        });
 
     }
 
@@ -128,10 +119,8 @@ public class ManageCarsActivity extends AppCompatActivity {
                 .addOnSuccessListener(snapshot -> {
                     Map<String, Integer> counts = new HashMap<>();
                     for (QueryDocumentSnapshot doc : snapshot) {
-                        String status = doc.getString("status");
-                        if (status == null)
-                            continue;
-                        if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status))
+                        RentalRequestStatus status = RentalRequestStatus.from(doc.getString("status"));
+                        if (!status.isRevenueRecognized())
                             continue;
                         String carId = doc.getString("carId");
                         if (TextUtils.isEmpty(carId))

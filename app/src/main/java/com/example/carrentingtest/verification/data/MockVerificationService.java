@@ -19,8 +19,11 @@ public class MockVerificationService implements VerificationService {
     @Override
     public LiveData<VerificationResult> submit(@NonNull Uri selfie, @NonNull Uri licenseFront) {
         MutableLiveData<VerificationResult> live = new MutableLiveData<>();
+        live.setValue(new VerificationResult(VerificationResult.Status.SUBMITTED));
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            VerificationResult.Status status = isDebug ? VerificationResult.Status.VERIFIED : VerificationResult.Status.PENDING;
+            VerificationResult.Status status = isDebug
+                    ? VerificationResult.Status.APPROVED
+                    : VerificationResult.Status.UNDER_REVIEW;
             live.setValue(new VerificationResult(status));
         }, 1500);
         return live;

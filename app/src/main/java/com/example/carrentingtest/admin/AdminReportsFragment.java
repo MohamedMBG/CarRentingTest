@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -94,8 +95,8 @@ public class AdminReportsFragment extends Fragment {
                     int total = 0;
 
                     for (QueryDocumentSnapshot doc : snap) {
-                        String status = doc.getString("status");
-                        if (!"approved".equalsIgnoreCase(status) && !"completed".equalsIgnoreCase(status)) {
+                        RentalRequestStatus status = RentalRequestStatus.from(doc.getString("status"));
+                        if (!status.isRevenueRecognized()) {
                             continue;
                         }
                         total++;

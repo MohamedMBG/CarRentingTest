@@ -12,12 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.EmailSender;
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
+import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +47,10 @@ public class ViewRequestsActivity extends AppCompatActivity {
         adapter = new RentalRequestAdapter(requestList, this::handleRequestDecision);
         requestsRecyclerView.setAdapter(adapter);
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            FirebaseFirestore.getInstance().collection("users")
-                    .document(auth.getCurrentUser().getUid()).get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        loadRequests();
-                    });
-        }
+        AdminAccessManager.guardOperationalAccess(this, FirebaseFirestore.getInstance(), access -> {
+            companyId = access.getCompanyId();
+            loadRequests();
+        });
     }
 
     private void loadRequests() {
@@ -84,28 +83,63 @@ public class ViewRequestsActivity extends AppCompatActivity {
     }
 
     private void handleRequestDecision(RentalRequest request, boolean approved) {
-        String newStatus = approved ? "approved" : "rejected";
+        if (approved) {
+            approveRequest(request);
+            return;
+        }
 
+        String newStatus = RentalRequestStatus.REJECTED.getStorageValue();
         FirebaseFirestore.getInstance()
                 .collection("rental_requests")
                 .document(request.getRequestId())
                 .update("status", newStatus)
                 .addOnSuccessListener(aVoid -> {
-                    if (approved) {
-                        // Mark car as unavailable if approved
-                        FirebaseFirestore.getInstance()
-                                .collection("cars")
-                                .document(request.getCarId())
-                                .update("available", false);
-                    }
-
-                    // Send email notification with proper callback
                     sendEmailNotification(request, newStatus);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to update request: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void approveRequest(RentalRequest request) {
+        FirebaseFirestore.getInstance()
+                .collection("cars")
+                .document(request.getCarId())
+                .get()
+                .addOnSuccessListener(carDoc -> {
+                    Car car = carDoc.toObject(Car.class);
+                    if (car == null) {
+                        Toast.makeText(this, "Failed to load car pricing.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    PricingService.applyPricing(
+                            request,
+                            PricingService.quote(car, request.getStartDate(), request.getEndDate()));
+
+                    WriteBatch batch = FirebaseFirestore.getInstance().batch();
+                    batch.update(
+                            FirebaseFirestore.getInstance().collection("rental_requests").document(request.getRequestId()),
+                            "status", RentalRequestStatus.APPROVED.getStorageValue(),
+                            "totalPrice", request.getTotalPrice(),
+                            "pricingBreakdown", request.getPricingBreakdown());
+                    batch.update(
+                            FirebaseFirestore.getInstance().collection("cars").document(request.getCarId()),
+                            "available", false);
+                    batch.commit()
+                            .addOnSuccessListener(unused -> sendEmailNotification(
+                                    request,
+                                    RentalRequestStatus.APPROVED.getStorageValue()))
+                            .addOnFailureListener(e -> Toast.makeText(
+                                    this,
+                                    "Failed to update request: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e -> Toast.makeText(
+                        this,
+                        "Failed to load car pricing: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
     }
 
     private void sendEmailNotification(RentalRequest request, String status) {

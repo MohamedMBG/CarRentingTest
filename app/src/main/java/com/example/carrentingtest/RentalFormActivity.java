@@ -17,8 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.carrentingtest.adapters.CarImagePagerAdapter;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.NavUtils;
 import com.example.carrentingtest.verification.VerificationGuard;
 import com.google.android.material.button.MaterialButton;
@@ -550,6 +552,12 @@ public class RentalFormActivity extends AppCompatActivity {
     // Method to submit the rental request to Firestore
     private void submitRequest(String userId, String userName, String userDriverLicense, String userPhone,
             Calendar startCal, Calendar endCal) {
+        if (PricingService.quote(selectedCar, startCal.getTime(), endCal.getTime()) == null) {
+            findViewById(R.id.btnSubmitRequest).setEnabled(true);
+            Toast.makeText(this, "Unable to calculate pricing for this rental period.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Create new rental request object
         RentalRequest request = new RentalRequest();
         // Set all request properties
@@ -560,10 +568,11 @@ public class RentalFormActivity extends AppCompatActivity {
         request.setUserDriverLicense(userDriverLicense);
         request.setUserPhone(userPhone);
         request.setAdditionalRequests(etAdditionalRequests.getText().toString().trim());
-        request.setStatus("pending");
+        request.setStatus(RentalRequestStatus.PENDING.getStorageValue());
         request.setCompanyId(companyId);
         request.setStartDate(startCal.getTime());
         request.setEndDate(endCal.getTime());
+        PricingService.applyPricing(request, PricingService.quote(selectedCar, startCal.getTime(), endCal.getTime()));
 
         // Add request to Firestore
         db.collection("rental_requests")

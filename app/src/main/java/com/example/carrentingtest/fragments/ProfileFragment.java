@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.MainActivity;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
+import com.example.carrentingtest.verification.VerificationStatus;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -97,9 +98,8 @@ public class ProfileFragment extends Fragment {
                         tvProfilePhone.setText(document.getString("phone"));
                         tvProfileLicense.setText(document.getString("driverLicense"));
 
-                        String status = document.getString("verification_status");
-                        if (status == null) status = "UNVERIFIED";
-                        boolean isVerified = "VERIFIED".equals(status);
+                        VerificationStatus status = VerificationStatus.from(document.getString("verification_status"));
+                        boolean isVerified = status.allowsBooking();
                         if (btnVerifyLicense != null) {
                             btnVerifyLicense.setVisibility(isVerified ? View.GONE : View.VISIBLE);
                             if (!isVerified) {

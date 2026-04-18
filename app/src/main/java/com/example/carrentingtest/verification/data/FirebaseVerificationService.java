@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.carrentingtest.storage.StoragePaths;
+import com.example.carrentingtest.verification.VerificationStatus;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,7 +50,7 @@ public class FirebaseVerificationService implements VerificationService {
         MutableLiveData<VerificationResult> liveData = new MutableLiveData<>();
         String uid = auth.getUid();
         if (uid == null) {
-            liveData.setValue(new VerificationResult(VerificationResult.Status.FAILED));
+            liveData.setValue(new VerificationResult(VerificationResult.Status.REJECTED));
             return liveData;
         }
 
@@ -70,32 +71,38 @@ public class FirebaseVerificationService implements VerificationService {
                                         @NonNull UploadTask selfieTask,
                                         @NonNull UploadTask licenseTask) {
         if (!selfieTask.isSuccessful() || !licenseTask.isSuccessful()) {
-            liveData.setValue(new VerificationResult(VerificationResult.Status.FAILED));
+            liveData.setValue(new VerificationResult(VerificationResult.Status.REJECTED));
             return;
         }
 
         DocumentReference requestRef = firestore.collection("verification_requests").document(uid);
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", uid);
-        payload.put("status", "PENDING");
+        payload.put("status", VerificationStatus.UNDER_REVIEW.getStorageValue());
         payload.put("selfiePath", StoragePaths.selfiePath(uid));
         payload.put("licenseFrontPath", StoragePaths.licenseFrontPath(uid));
         payload.put("submittedAt", FieldValue.serverTimestamp());
         payload.put("updatedAt", FieldValue.serverTimestamp());
 
-        requestRef.set(payload, SetOptions.merge())
+        Map<String, Object> userUpdate = new HashMap<>();
+        userUpdate.put("verification_status", VerificationStatus.SUBMITTED.getStorageValue());
+        userUpdate.put("verification_updated_at", FieldValue.serverTimestamp());
+
+        Tasks.whenAll(
+                        requestRef.set(payload, SetOptions.merge()),
+                        firestore.collection("users").document(uid).set(userUpdate, SetOptions.merge()))
                 .addOnSuccessListener(unused -> attachListener(requestRef, liveData))
-                .addOnFailureListener(e -> liveData.setValue(new VerificationResult(VerificationResult.Status.FAILED)));
+                .addOnFailureListener(e -> liveData.setValue(new VerificationResult(VerificationResult.Status.REJECTED)));
     }
 
     private void attachListener(@NonNull DocumentReference requestRef,
                                 @NonNull MutableLiveData<VerificationResult> liveData) {
-        liveData.postValue(new VerificationResult(VerificationResult.Status.PENDING));
+        liveData.postValue(new VerificationResult(VerificationResult.Status.SUBMITTED));
 
         AtomicReference<ListenerRegistration> registrationRef = new AtomicReference<>();
         ListenerRegistration registration = requestRef.addSnapshotListener((snapshot, error) -> {
             if (error != null) {
-                liveData.postValue(new VerificationResult(VerificationResult.Status.FAILED));
+                liveData.postValue(new VerificationResult(VerificationResult.Status.REJECTED));
                 ListenerRegistration current = registrationRef.getAndSet(null);
                 if (current != null) current.remove();
                 return;
@@ -108,7 +115,7 @@ public class FirebaseVerificationService implements VerificationService {
             VerificationResult.Status status = mapStatus(snapshot.getString("status"));
             liveData.postValue(new VerificationResult(status));
 
-            if (status == VerificationResult.Status.VERIFIED || status == VerificationResult.Status.FAILED) {
+            if (status == VerificationResult.Status.APPROVED || status == VerificationResult.Status.REJECTED) {
                 ListenerRegistration current = registrationRef.getAndSet(null);
                 if (current != null) current.remove();
             }
@@ -118,17 +125,18 @@ public class FirebaseVerificationService implements VerificationService {
     }
 
     private VerificationResult.Status mapStatus(String statusValue) {
-        if (statusValue == null) {
-            return VerificationResult.Status.PENDING;
+        switch (VerificationStatus.from(statusValue)) {
+            case APPROVED:
+                return VerificationResult.Status.APPROVED;
+            case REJECTED:
+                return VerificationResult.Status.REJECTED;
+            case UNDER_REVIEW:
+                return VerificationResult.Status.UNDER_REVIEW;
+            case SUBMITTED:
+            case NOT_STARTED:
+            default:
+                return VerificationResult.Status.SUBMITTED;
         }
-
-        if ("VERIFIED".equalsIgnoreCase(statusValue) || "APPROVED".equalsIgnoreCase(statusValue)) {
-            return VerificationResult.Status.VERIFIED;
-        }
-        if ("FAILED".equalsIgnoreCase(statusValue) || "REJECTED".equalsIgnoreCase(statusValue)) {
-            return VerificationResult.Status.FAILED;
-        }
-        return VerificationResult.Status.PENDING;
     }
 }
 

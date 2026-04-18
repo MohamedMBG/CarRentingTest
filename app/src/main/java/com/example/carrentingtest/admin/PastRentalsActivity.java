@@ -21,9 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.adapters.PastRentalAdapter;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,7 +84,6 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
 
         amountFormat.setMinimumFractionDigits(2);
         amountFormat.setMaximumFractionDigits(2);
@@ -98,23 +99,11 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
             pendingInvoice = null;
         });
 
-        if (auth.getCurrentUser() != null) {
-            showLoading(true);
-            db.collection("users")
-                    .document(auth.getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        loadCarsThenRentals();
-                    })
-                    .addOnFailureListener(e -> {
-                        showLoading(false);
-                        Toast.makeText(this, R.string.error_loading_rentals, Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-        } else {
-            finish();
-        }
+        showLoading(true);
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            companyId = access.getCompanyId();
+            loadCarsThenRentals();
+        });
     }
 
     private void loadCarsThenRentals() {
@@ -154,7 +143,7 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
         showLoading(true);
         pastRentalsRegistration = db.collection("rental_requests")
                 .whereEqualTo("companyId", companyId)
-                .whereEqualTo("status", "completed")
+                .whereEqualTo("status", RentalRequestStatus.COMPLETED.getStorageValue())
                 .addSnapshotListener((snapshot, error) -> {
                     showLoading(false);
                     if (error != null || snapshot == null) {
@@ -250,13 +239,7 @@ public class PastRentalsActivity extends AppCompatActivity implements PastRental
             if (TextUtils.isEmpty(request.getCarModel())) {
                 request.setCarModel(car.getModel());
             }
-            if (request.getTotalPrice() <= 0 && car.getPricePerDay() > 0) {
-                int days = computeRentalDays(request.getStartDate(), request.getEndDate());
-                double total = car.getPricePerDay() * Math.max(1, days);
-                if (!Double.isNaN(total) && !Double.isInfinite(total)) {
-                    request.setTotalPrice(total);
-                }
-            }
+            request.setTotalPrice(PricingService.getStoredTotal(request));
             return;
         }
 

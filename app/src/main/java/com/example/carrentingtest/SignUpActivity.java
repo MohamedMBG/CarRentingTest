@@ -133,7 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
         client.put("role", "client");
         client.put("createdAt", FieldValue.serverTimestamp());
         // Verification defaults
-        client.put("verification_status", "UNVERIFIED");
+        client.put("verification_status", com.example.carrentingtest.verification.VerificationStatus.NOT_STARTED.getStorageValue());
         client.put("verification_updated_at", null);
 
         db.collection("users").document(userId)

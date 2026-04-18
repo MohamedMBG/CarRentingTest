@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -91,22 +92,10 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
         btnExport.setOnClickListener(v -> promptExport());
 
         db = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            db.collection("users")
-                    .document(auth.getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        loadActiveRentals();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, R.string.error_registration_failed, Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-        } else {
-            finish();
-        }
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            companyId = access.getCompanyId();
+            loadActiveRentals();
+        });
     }
 
     private void loadActiveRentals() {
@@ -122,7 +111,7 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
 
         activeRentalsRegistration = db.collection("rental_requests")
                 .whereEqualTo("companyId", companyId)
-                .whereEqualTo("status", "approved")
+                .whereEqualTo("status", RentalRequestStatus.APPROVED.getStorageValue())
                 .addSnapshotListener((snapshot, error) -> {
                     progressBar.setVisibility(View.GONE);
                     if (error != null || snapshot == null) {
@@ -310,7 +299,7 @@ public class ActiveRentalsActivity extends AppCompatActivity implements ActiveRe
         WriteBatch batch = db.batch();
         DocumentReference rentalRef = db.collection("rental_requests").document(request.getRequestId());
         batch.update(rentalRef,
-                "status", "completed",
+                "status", RentalRequestStatus.COMPLETED.getStorageValue(),
                 "completedAt", FieldValue.serverTimestamp());
 
         if (!TextUtils.isEmpty(request.getCarId())) {

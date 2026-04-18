@@ -8,6 +8,7 @@ public class Company {
     private String phone;
     private String address;
     private GeoPoint location;
+    private String status;
 
     public Company() {}
 
@@ -25,4 +26,7 @@ public class Company {
 
     public GeoPoint getLocation() { return location; }
     public void setLocation(GeoPoint location) { this.location = location; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

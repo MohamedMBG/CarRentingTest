@@ -55,22 +55,10 @@ public class ClientReportsActivity extends AppCompatActivity implements ClientRe
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            db.collection("users")
-                    .document(auth.getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        loadReports();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, R.string.error_registration_failed, Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-        } else {
-            finish();
-        }
+        AdminAccessManager.guardOperationalAccess(this, db, access -> {
+            companyId = access.getCompanyId();
+            loadReports();
+        });
     }
 
     private void loadReports() {

@@ -9,8 +9,10 @@ import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.carrentingtest.admin.AdminAccessManager;
 import com.example.carrentingtest.admin.AdminDashboardActivity;
 import com.example.carrentingtest.admin.AdminLoginActivity;
+import com.example.carrentingtest.domain.UserRole;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -83,15 +85,25 @@ public class SignInActivity extends AppCompatActivity {
                         if (user != null) {
                             db.collection("users").document(user.getUid()).get()
                                     .addOnSuccessListener(doc -> {
-                                        String role = doc.getString("role");
-                                         Intent intent;
-                                         if ("admin".equals(role)) {
-                                             intent = new Intent(SignInActivity.this, AdminDashboardActivity.class);
-                                         } else {
-                                             intent = new Intent(SignInActivity.this, MainActivity.class);
-                                         }
-                                        startActivity(intent);
-                                        finish();
+                                        UserRole role = UserRole.from(doc.getString("role"));
+                                        if (role == UserRole.ADMIN) {
+                                            AdminAccessManager.verifyOperationalAccess(db, user, new AdminAccessManager.AccessCallback() {
+                                                @Override
+                                                public void onGranted(@androidx.annotation.NonNull AdminAccessManager.AdminAccess access) {
+                                                    startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                                                    finish();
+                                                }
+
+                                                @Override
+                                                public void onDenied(@androidx.annotation.NonNull String message) {
+                                                    mAuth.signOut();
+                                                    Toast.makeText(SignInActivity.this, message, Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        } else {
+                                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                                            finish();
+                                        }
                                     })
                                     .addOnFailureListener(e -> Toast.makeText(SignInActivity.this, "Failed to load user", Toast.LENGTH_SHORT).show());
                         }

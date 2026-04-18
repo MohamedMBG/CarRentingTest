@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.material.button.MaterialButton;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,8 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         h.tvStatus.setTextColor(getStatusColor(r.getStatus()));
 
         Date completedAt = r.getCompletedAt();
-        boolean showCompletion = completedAt != null && r.getStatus() != null && "completed".equalsIgnoreCase(r.getStatus());
+        boolean showCompletion = completedAt != null
+                && RentalRequestStatus.from(r.getStatus()) == RentalRequestStatus.COMPLETED;
         h.tvCompletedAt.setVisibility(showCompletion ? View.VISIBLE : View.GONE);
         if (showCompletion) {
             h.tvCompletedAt.setText(context.getString(R.string.completed_on_format, completedFormat.format(completedAt)));
@@ -71,7 +73,8 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
             h.tvRequests.setText(null);
         }
 
-        boolean canReport = r.getStatus() != null && ("approved".equalsIgnoreCase(r.getStatus()) || "ongoing".equalsIgnoreCase(r.getStatus()));
+        RentalRequestStatus status = RentalRequestStatus.from(r.getStatus());
+        boolean canReport = status == RentalRequestStatus.APPROVED;
         if (canReport && reportClickListener != null) {
             h.btnReportIssue.setVisibility(View.VISIBLE);
             h.btnReportIssue.setOnClickListener(v -> reportClickListener.onReport(r));

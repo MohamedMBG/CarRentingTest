@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.CompanyLifecycleStatus;
+import com.example.carrentingtest.domain.UserLifecycleStatus;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -98,7 +100,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
                 company.put("primaryContactName", adminName);
                 company.put("primaryContactEmail", email);
                 company.put("primaryContactPhone", adminPhone);
-                company.put("status", "pending_review");
+                company.put("status", CompanyLifecycleStatus.PENDING_REVIEW.getStorageValue());
                 company.put("createdAt", FieldValue.serverTimestamp());
                 db.collection("companies").document(companyId).set(company)
                         .addOnSuccessListener(aVoid -> saveAdminUser(companyId, email))
@@ -123,7 +125,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         user.put("companyId", companyId);
         user.put("displayName", adminName);
         user.put("phone", adminPhone);
-        user.put("status", "active");
+        user.put("status", UserLifecycleStatus.PENDING_COMPANY_APPROVAL.getStorageValue());
         user.put("createdAt", FieldValue.serverTimestamp());
 
         db.collection("users").document(uid).set(user)

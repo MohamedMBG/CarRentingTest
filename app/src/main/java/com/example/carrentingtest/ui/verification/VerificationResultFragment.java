@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.verification.VerificationStatus;
 import com.example.carrentingtest.verification.data.FirebaseVerificationService;
 import com.example.carrentingtest.verification.data.VerificationResult;
 import com.example.carrentingtest.verification.data.VerificationService;
@@ -58,8 +59,8 @@ public class VerificationResultFragment extends Fragment {
             android.os.Bundle params = new android.os.Bundle();
             params.putString("status", result.getStatus().name());
             com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verification_result", params);
-            if (result.getStatus() == VerificationResult.Status.VERIFIED) {
-                updateUserAsVerified();
+            updateUserVerificationStatus(result.getStatus());
+            if (result.getStatus() == VerificationResult.Status.APPROVED) {
                 requireActivity().setResult(android.app.Activity.RESULT_OK);
                 requireActivity().finish();
             }
@@ -68,19 +69,39 @@ public class VerificationResultFragment extends Fragment {
 
     private CharSequence mapStatusMessage(VerificationResult.Status status) {
         switch (status) {
-            case VERIFIED: return getString(R.string.verification_success);
-            case PENDING: return getString(R.string.verification_pending);
-            case FAILED:
-            default: return getString(R.string.verification_failed);
+            case APPROVED:
+                return getString(R.string.verification_success);
+            case SUBMITTED:
+            case UNDER_REVIEW:
+                return getString(R.string.verification_pending);
+            case REJECTED:
+            default:
+                return getString(R.string.verification_failed);
         }
     }
 
-    private void updateUserAsVerified() {
+    private void updateUserVerificationStatus(VerificationResult.Status status) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        VerificationStatus verificationStatus;
+        switch (status) {
+            case APPROVED:
+                verificationStatus = VerificationStatus.APPROVED;
+                break;
+            case REJECTED:
+                verificationStatus = VerificationStatus.REJECTED;
+                break;
+            case UNDER_REVIEW:
+                verificationStatus = VerificationStatus.UNDER_REVIEW;
+                break;
+            case SUBMITTED:
+            default:
+                verificationStatus = VerificationStatus.SUBMITTED;
+                break;
+        }
         FirebaseFirestore.getInstance().collection("users").document(uid)
                 .update(
-                        "verification_status", "VERIFIED",
+                        "verification_status", verificationStatus.getStorageValue(),
                         "verification_updated_at", FieldValue.serverTimestamp()
                 );
     }

@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Activity host for admin business reports.
@@ -18,10 +19,12 @@ public class AdminReportsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_reports);
         FullscreenUiHelper.apply(this, R.id.reports_container);
 
-        if (savedInstanceState == null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.reports_container, new AdminReportsFragment());
-            ft.commit();
-        }
+        AdminAccessManager.guardOperationalAccess(this, FirebaseFirestore.getInstance(), access -> {
+            if (savedInstanceState == null) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.reports_container, new AdminReportsFragment());
+                ft.commit();
+            }
+        });
     }
 }

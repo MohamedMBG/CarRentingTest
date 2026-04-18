@@ -17,6 +17,7 @@ public class RentalRequest {
     private String companyId;
     private Date completedAt;
     private double totalPrice;
+    private PricingBreakdown pricingBreakdown;
     private boolean paymentProofProvided;
     private String paymentProofUrl;
 
@@ -135,6 +136,14 @@ public class RentalRequest {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public PricingBreakdown getPricingBreakdown() {
+        return pricingBreakdown;
+    }
+
+    public void setPricingBreakdown(PricingBreakdown pricingBreakdown) {
+        this.pricingBreakdown = pricingBreakdown;
     }
 
     public boolean isPaymentProofProvided() {
