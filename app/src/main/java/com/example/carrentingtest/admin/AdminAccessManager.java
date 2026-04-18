@@ -9,12 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.SignInActivity;
+import com.example.carrentingtest.data.session.TenantContext;
+import com.example.carrentingtest.data.session.TenantSessionProvider;
 import com.example.carrentingtest.domain.CompanyLifecycleStatus;
 import com.example.carrentingtest.domain.UserLifecycleStatus;
 import com.example.carrentingtest.domain.UserRole;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public final class AdminAccessManager {
@@ -56,15 +57,9 @@ public final class AdminAccessManager {
     public static void verifyOperationalAccess(@NonNull FirebaseFirestore db,
                                                @Nullable FirebaseUser firebaseUser,
                                                @NonNull AccessCallback callback) {
-        if (firebaseUser == null) {
-            callback.onDenied("You need to sign in first.");
-            return;
-        }
-
-        db.collection("users")
-                .document(firebaseUser.getUid())
-                .get()
-                .addOnSuccessListener(userDoc -> verifyCompany(db, userDoc, callback))
+        new TenantSessionProvider()
+                .requireTenantContext(firebaseUser)
+                .addOnSuccessListener(context -> verifyCompany(context, callback))
                 .addOnFailureListener(e -> callback.onDenied("Failed to load admin account."));
     }
 
@@ -99,39 +94,32 @@ public final class AdminAccessManager {
         }
     }
 
-    private static void verifyCompany(@NonNull FirebaseFirestore db,
-                                      @NonNull DocumentSnapshot userDoc,
+    private static void verifyCompany(@NonNull TenantContext context,
                                       @NonNull AccessCallback callback) {
-        UserRole role = UserRole.from(userDoc.getString("role"));
+        UserRole role = context.getRole();
         if (role != UserRole.ADMIN) {
             callback.onDenied("This account does not have admin access.");
             return;
         }
 
-        UserLifecycleStatus userStatus = UserLifecycleStatus.from(userDoc.getString("status"), role);
+        UserLifecycleStatus userStatus = context.getUserStatus();
         if (userStatus != UserLifecycleStatus.ACTIVE) {
             callback.onDenied("Your company account is still waiting for approval.");
             return;
         }
 
-        String companyId = userDoc.getString("companyId");
+        String companyId = context.getCompanyId();
         if (companyId == null || companyId.trim().isEmpty()) {
             callback.onDenied("No company is linked to this admin account.");
             return;
         }
 
-        db.collection("companies")
-                .document(companyId)
-                .get()
-                .addOnSuccessListener(companyDoc -> {
-                    CompanyLifecycleStatus companyStatus = CompanyLifecycleStatus.from(companyDoc.getString("status"));
-                    if (companyStatus != CompanyLifecycleStatus.APPROVED) {
-                        callback.onDenied("Your company account is not approved for operations yet.");
-                        return;
-                    }
-                    callback.onGranted(new AdminAccess(companyId, userStatus, companyStatus));
-                })
-                .addOnFailureListener(e -> callback.onDenied("Failed to load company status."));
+        CompanyLifecycleStatus companyStatus = context.getCompanyStatus();
+        if (companyStatus != CompanyLifecycleStatus.APPROVED) {
+            callback.onDenied("Your company account is not approved for operations yet.");
+            return;
+        }
+        callback.onGranted(new AdminAccess(companyId, userStatus, companyStatus));
     }
 
     public interface GrantedAction {

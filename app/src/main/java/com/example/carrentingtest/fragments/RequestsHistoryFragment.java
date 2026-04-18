@@ -14,21 +14,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.ClientRentalRequestAdapter;
+import com.example.carrentingtest.data.repository.RentalReportRepository;
+import com.example.carrentingtest.data.repository.RentalRequestRepository;
 import com.example.carrentingtest.models.RentalRequest;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Date;
 
 public class RequestsHistoryFragment extends Fragment {
@@ -38,9 +36,10 @@ public class RequestsHistoryFragment extends Fragment {
     private ClientRentalRequestAdapter adapter;
     private List<RentalRequest> requestList;
     private TextView tvNoRequests;
-    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private ListenerRegistration historyRegistration;
+    private RentalRequestRepository rentalRequestRepository;
+    private RentalReportRepository rentalReportRepository;
 
     @Nullable
     @Override
@@ -54,8 +53,9 @@ public class RequestsHistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Firebase
-        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        rentalRequestRepository = new RentalRequestRepository();
+        rentalReportRepository = new RentalReportRepository();
 
         // Initialize views
         requestsRecyclerView = view.findViewById(R.id.requestsRecyclerView);
@@ -83,9 +83,8 @@ public class RequestsHistoryFragment extends Fragment {
             historyRegistration.remove();
         }
 
-        historyRegistration = db.collection("rental_requests")
-                .whereEqualTo("userId", user.getUid())
-                .addSnapshotListener((snapshot, error) -> {
+        historyRegistration = rentalRequestRepository.listenForUserHistory(user.getUid(),
+                (snapshot, error) -> {
                     if (!isAdded()) {
                         return;
                     }
@@ -151,22 +150,7 @@ public class RequestsHistoryFragment extends Fragment {
     }
 
     private void submitReport(RentalRequest request, String description) {
-        Map<String, Object> report = new HashMap<>();
-        report.put("requestId", request.getRequestId());
-        report.put("carId", request.getCarId());
-        report.put("carModel", request.getCarModel());
-        report.put("userId", request.getUserId());
-        report.put("userName", request.getUserName());
-        report.put("userPhone", request.getUserPhone());
-        report.put("companyId", request.getCompanyId());
-        report.put("description", description);
-        report.put("status", "open");
-        report.put("startDate", request.getStartDate());
-        report.put("endDate", request.getEndDate());
-        report.put("createdAt", FieldValue.serverTimestamp());
-
-        db.collection("rental_reports")
-                .add(report)
+        rentalReportRepository.submitIssueReport(request, description)
                 .addOnSuccessListener(doc -> Toast.makeText(requireContext(), R.string.report_issue_success, Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(requireContext(), R.string.report_issue_error, Toast.LENGTH_SHORT).show());
     }

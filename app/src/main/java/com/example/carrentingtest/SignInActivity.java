@@ -12,18 +12,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.carrentingtest.admin.AdminAccessManager;
 import com.example.carrentingtest.admin.AdminDashboardActivity;
 import com.example.carrentingtest.admin.AdminLoginActivity;
+import com.example.carrentingtest.data.repository.UserRepository;
 import com.example.carrentingtest.domain.UserRole;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
     private android.widget.CheckBox cbRememberMe;
     private View progressBar;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private UserRepository userRepository;
     private SharedPreferences authPrefs;
 
 
@@ -34,7 +34,7 @@ public class SignInActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        userRepository = new UserRepository();
         authPrefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
 
         // Initialize views
@@ -83,11 +83,14 @@ public class SignInActivity extends AppCompatActivity {
                                 .apply();
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            db.collection("users").document(user.getUid()).get()
+                            userRepository.getById(user.getUid())
                                     .addOnSuccessListener(doc -> {
                                         UserRole role = UserRole.from(doc.getString("role"));
                                         if (role == UserRole.ADMIN) {
-                                            AdminAccessManager.verifyOperationalAccess(db, user, new AdminAccessManager.AccessCallback() {
+                                            AdminAccessManager.verifyOperationalAccess(
+                                                    com.google.firebase.firestore.FirebaseFirestore.getInstance(),
+                                                    user,
+                                                    new AdminAccessManager.AccessCallback() {
                                                 @Override
                                                 public void onGranted(@androidx.annotation.NonNull AdminAccessManager.AdminAccess access) {
                                                     startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));

@@ -10,12 +10,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.usecase.LoadTenantCarsUseCase;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.network.BackendClient;
 import com.example.carrentingtest.utils.GeminiHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,9 @@ public class ConciergeActivity extends AppCompatActivity {
     private TextView txtAiResponse;
     private FloatingActionButton btnSend;
 
-    private FirebaseFirestore db;
     private List<Car> availableCars = new ArrayList<>();
     private final GeminiHelper geminiHelper = new GeminiHelper();
+    private LoadTenantCarsUseCase loadTenantCarsUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class ConciergeActivity extends AppCompatActivity {
         txtAiResponse = findViewById(R.id.txtAiResponse);
         btnSend = findViewById(R.id.btnSend);
 
-        db = FirebaseFirestore.getInstance();
+        loadTenantCarsUseCase = new LoadTenantCarsUseCase();
         fetchInventory();
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
@@ -55,19 +54,13 @@ public class ConciergeActivity extends AppCompatActivity {
     }
 
     private void fetchInventory() {
-        db.collection("cars")
-                .whereEqualTo("available", true)
-                .whereEqualTo("maintenance", false)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+        loadTenantCarsUseCase.execute(true)
+                .addOnSuccessListener(cars -> {
                     availableCars.clear();
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Car car = doc.toObject(Car.class);
-                        availableCars.add(car);
-                    }
+                    availableCars.addAll(cars);
                 })
                 .addOnFailureListener(e -> {
-                    // Handle failure if needed
+                    availableCars.clear();
                 });
     }
 
