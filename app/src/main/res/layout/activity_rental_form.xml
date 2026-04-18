@@ -291,8 +291,284 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView2"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView3"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView4"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView5"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#F8F8F8"
+                        android:layout_margin="5dp"
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageView6"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app2:srcCompat="@drawable/seat_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capacity"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="10dp"
+                                android:textSize="18sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="5 Seats"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"/>
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- Date Selection Section -->
             <TextView
+                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/rental_period"

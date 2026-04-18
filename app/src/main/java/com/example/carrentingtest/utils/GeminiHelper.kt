@@ -1,38 +1,30 @@
 package com.example.carrentingtest.utils
 
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.carrentingtest.BuildConfig
+import com.example.carrentingtest.network.BackendCallback
+import com.example.carrentingtest.network.BackendClient
+import org.json.JSONObject
 
 class GeminiHelper {
-    private val apiKey = "AIzaSyC2IIXmAoUt511zuU7JaZkg18HdTyNG0bY" // Replace with actual key
-    private val model = GenerativeModel(
-        modelName = "gemini-1.5-flash",
-        apiKey = apiKey
-    )
+    fun generateRecommendation(userPrompt: String, inventoryContext: String, callback: RecommendationCallback) {
+        val payload = JSONObject()
+            .put("query", userPrompt)
+            .put("inventoryContext", inventoryContext)
 
-    fun generateRecommendation(userPrompt: String, callback: RecommendationCallback) {
-        val fullPrompt = "You are a helpful car rental concierge. " +
-                "Recommend a car from our inventory based on this request: $userPrompt. " +
-                "Keep your answer short and friendly."
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = model.generateContent(fullPrompt)
-                withContext(Dispatchers.Main) {
-                    response.text?.let {
-                        callback.onSuccess(it)
-                    } ?: callback.onFailure(Exception("Empty response"))
+        BackendClient.postJson(BuildConfig.CONCIERGE_ENDPOINT_PATH, payload, object : BackendCallback {
+            override fun onSuccess(response: JSONObject) {
+                val recommendation = response.optString("recommendation")
+                if (recommendation.isNullOrBlank()) {
+                    callback.onFailure(IllegalStateException("Empty concierge response"))
+                    return
                 }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    callback.onFailure(e)
-                }
+                callback.onSuccess(recommendation)
             }
-        }
+
+            override fun onError(errorMessage: String) {
+                callback.onFailure(IllegalStateException(errorMessage))
+            }
+        })
     }
 
     interface RecommendationCallback {

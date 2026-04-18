@@ -16,7 +16,6 @@ firebaseAnalytics = "22.1.2"
 firebaseStorage = "21.0.1"
 firebaseConfig = "22.0.0"
 picasso = "2.8"
-javamail = "1.6.7"
 glide = "4.14.2"
 mlkit_face_detection = "16.1.5"
 mpandroidchart = "3.1.0"
@@ -52,8 +51,6 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
-android-mail = { group = "com.sun.mail", name = "android-mail", version.ref = "javamail" }
-android-activation = { group = "com.sun.mail", name = "android-activation", version.ref = "javamail" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }

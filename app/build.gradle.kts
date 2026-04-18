@@ -1,8 +1,30 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlin.android)
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun readStringConfig(name: String): String {
+    return providers.gradleProperty(name).orNull
+        ?: System.getenv(name)
+        ?: localProperties.getProperty(name, "")
+}
+
+fun escapeForBuildConfig(value: String): String {
+    return value.replace("\\", "\\\\").replace("\"", "\\\"")
+}
+
+val backendBaseUrl = readStringConfig("BACKEND_BASE_URL").trim()
+val escapedBackendBaseUrl = escapeForBuildConfig(backendBaseUrl)
 
 android {
     namespace = "com.example.carrentingtest"
@@ -20,11 +42,31 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
-        release {
+        debug {
+            versionNameSuffix = "-debug"
             isMinifyEnabled = false
+            isShrinkResources = false
+            manifestPlaceholders["allowBackup"] = "true"
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
+            buildConfigField("String", "BACKEND_BASE_URL", "\"$escapedBackendBaseUrl\"")
+            buildConfigField("String", "CONCIERGE_ENDPOINT_PATH", "\"/v1/mobile/concierge\"")
+            buildConfigField("String", "NOTIFICATION_ENDPOINT_PATH", "\"/v1/mobile/notifications/email\"")
+            buildConfigField("boolean", "REQUIRE_HTTPS_BACKEND", "false")
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            manifestPlaceholders["allowBackup"] = "false"
+            manifestPlaceholders["usesCleartextTraffic"] = "false"
+            buildConfigField("String", "BACKEND_BASE_URL", "\"$escapedBackendBaseUrl\"")
+            buildConfigField("String", "CONCIERGE_ENDPOINT_PATH", "\"/v1/mobile/concierge\"")
+            buildConfigField("String", "NOTIFICATION_ENDPOINT_PATH", "\"/v1/mobile/notifications/email\"")
+            buildConfigField("boolean", "REQUIRE_HTTPS_BACKEND", "true")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -56,6 +98,21 @@ android {
 
 }
 
+afterEvaluate {
+    val runningReleaseTask = gradle.startParameter.taskNames.any { taskName ->
+        taskName.contains("release", ignoreCase = true)
+    }
+
+    if (runningReleaseTask) {
+        check(backendBaseUrl.isNotBlank()) {
+            "BACKEND_BASE_URL must be set for release builds."
+        }
+        check(backendBaseUrl.startsWith("https://")) {
+            "BACKEND_BASE_URL must use HTTPS for release builds."
+        }
+    }
+}
+
 dependencies {
 
     implementation(libs.appcompat)
@@ -71,10 +128,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(libs.picasso)  // Add this line for Picasso
-
-    implementation(libs.android.mail)
-    implementation(libs.android.activation)
+    implementation(libs.picasso)
 
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
@@ -103,14 +157,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    // Google AI (Gemini)
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation("com.google.guava:guava:31.1-android")
-    implementation("org.reactivestreams:reactive-streams:1.0.4")
 
     // UI Animations
     implementation("com.airbnb.android:lottie:6.0.0")
-
-    // Kotlin Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

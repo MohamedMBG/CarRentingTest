@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Firestore uses reflection for model serialization and deserialization.
+-keepclassmembers class com.example.carrentingtest.models.** {
+    <fields>;
+    <init>();
+}
+
+-keep class com.example.carrentingtest.models.** {
+    *;
+}
