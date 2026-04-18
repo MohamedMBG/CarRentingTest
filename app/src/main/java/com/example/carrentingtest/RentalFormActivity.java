@@ -17,17 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.carrentingtest.adapters.CarImagePagerAdapter;
-import com.example.carrentingtest.domain.RentalRequestStatus;
+import com.example.carrentingtest.data.repository.CompanyRepository;
+import com.example.carrentingtest.data.repository.UserRepository;
+import com.example.carrentingtest.domain.usecase.SubmitRentalRequestUseCase;
 import com.example.carrentingtest.models.Car;
-import com.example.carrentingtest.models.RentalRequest;
-import com.example.carrentingtest.pricing.PricingService;
 import com.example.carrentingtest.utils.NavUtils;
-import com.example.carrentingtest.verification.VerificationGuard;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,9 +74,11 @@ public class RentalFormActivity extends AppCompatActivity {
     // Date formatter for displaying dates
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
-    // Firebase instances
-    private FirebaseFirestore db;
+    // Shared services
     private FirebaseAuth mAuth;
+    private UserRepository userRepository;
+    private CompanyRepository companyRepository;
+    private SubmitRentalRequestUseCase submitRentalRequestUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +86,11 @@ public class RentalFormActivity extends AppCompatActivity {
         // Set the layout for this activity
         setContentView(R.layout.activity_rental_form);
 
-        // Initialize Firebase Firestore and Auth instances
-        db = FirebaseFirestore.getInstance();
+        // Initialize shared data/domain services
         mAuth = FirebaseAuth.getInstance();
+        userRepository = new UserRepository();
+        companyRepository = new CompanyRepository();
+        submitRentalRequestUseCase = new SubmitRentalRequestUseCase();
 
         // Get the selected car passed from previous activity
         selectedCar = (Car) getIntent().getSerializableExtra("selectedCar");
@@ -202,34 +204,30 @@ public class RentalFormActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("users")
-                .whereEqualTo("companyId", companyId)
-                .whereEqualTo("role", "admin")
-                .limit(1)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
-                        String adminName = doc.getString("displayName");
-                        String adminEmail = doc.getString("email");
-                        adminPhoneNumber = doc.getString("phone");
-
-                        tvAdminName.setText(!TextUtils.isEmpty(adminName) ? adminName : getString(R.string.admin));
-                        tvAdminEmail.setText(!TextUtils.isEmpty(adminEmail) ? adminEmail : "-");
-
-                        if (!TextUtils.isEmpty(adminPhoneNumber)) {
-                            tvAdminPhone.setText(adminPhoneNumber);
-                            btnCallAdmin.setEnabled(true);
-                            btnCallAdmin.setAlpha(1f);
-                            btnCallAdmin.setOnClickListener(v -> openDialer(adminPhoneNumber));
-                        } else {
-                            tvAdminPhone.setText(getString(R.string.no_phone_available));
-                            btnCallAdmin.setOnClickListener(
-                                    v -> Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show());
-                        }
-
-                        adminContactCard.setVisibility(View.VISIBLE);
+        userRepository.getPrimaryAdminForCompany(companyId)
+                .addOnSuccessListener(doc -> {
+                    if (doc == null || !doc.exists()) {
+                        return;
                     }
+                    String adminName = doc.getString("displayName");
+                    String adminEmail = doc.getString("email");
+                    adminPhoneNumber = doc.getString("phone");
+
+                    tvAdminName.setText(!TextUtils.isEmpty(adminName) ? adminName : getString(R.string.admin));
+                    tvAdminEmail.setText(!TextUtils.isEmpty(adminEmail) ? adminEmail : "-");
+
+                    if (!TextUtils.isEmpty(adminPhoneNumber)) {
+                        tvAdminPhone.setText(adminPhoneNumber);
+                        btnCallAdmin.setEnabled(true);
+                        btnCallAdmin.setAlpha(1f);
+                        btnCallAdmin.setOnClickListener(v -> openDialer(adminPhoneNumber));
+                    } else {
+                        tvAdminPhone.setText(getString(R.string.no_phone_available));
+                        btnCallAdmin.setOnClickListener(
+                                v -> Toast.makeText(this, R.string.no_phone_available, Toast.LENGTH_SHORT).show());
+                    }
+
+                    adminContactCard.setVisibility(View.VISIBLE);
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to load admin contact", e));
     }
@@ -241,9 +239,7 @@ public class RentalFormActivity extends AppCompatActivity {
 
         companyLocationCard.setVisibility(View.GONE);
 
-        db.collection("companies")
-                .document(companyId)
-                .get()
+        companyRepository.getById(companyId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot == null || !documentSnapshot.exists()) {
                         return;
@@ -492,49 +488,25 @@ public class RentalFormActivity extends AppCompatActivity {
         }
     }
 
-    // Method to fetch user data from Firestore
+    // Method to fetch user data from shared data/domain layers
     private void fetchUserDataAndSubmit(FirebaseUser user, Calendar startCal, Calendar endCal) {
-        // db.collection("clients").document(user.getUid()).get()
-        db.collection("users").document(user.getUid()).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        DocumentSnapshot document = task.getResult();
-                        // Get user name and driver license from document
-                        String userName = document.getString("name");
-                        String userDriverLicense = document.getString("driverLicense");
-                        String userPhone = document.getString("phone");
-
-                        // Use email as fallback if name is not available
-                        if (userName == null) {
-                            userName = user.getEmail();
-                        }
-
-                        if (TextUtils.isEmpty(userPhone)) {
-                            userPhone = user.getPhoneNumber();
-                        }
-
-                        // License number not required if verification is used; optional
-
-                        // Gate booking by verification status
-                        String verificationStatus = document.getString("verification_status");
-                        boolean canBook = VerificationGuard.canBook(verificationStatus);
-                        if (!canBook) {
-                            findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                            com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
-                                    .logEvent("booking_blocked_unverified", new android.os.Bundle());
-                            showVerificationRequiredDialog();
-                            return;
-                        }
-
-                        // Submit the rental request with all collected data
-                        submitRequest(user.getUid(), userName, userDriverLicense, userPhone, startCal, endCal);
-
-                    } else {
-                        // Handle Firestore fetch errors
-                        findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                        Log.w(TAG, "Error getting user document: ", task.getException());
-                        Toast.makeText(this, "Failed to retrieve user data.", Toast.LENGTH_SHORT).show();
+        submitRentalRequestUseCase.execute(
+                        selectedCar,
+                        companyId,
+                        etAdditionalRequests.getText().toString().trim(),
+                        startCal.getTime(),
+                        endCal.getTime())
+                .addOnSuccessListener(request -> showSuccessDialog())
+                .addOnFailureListener(e -> {
+                    findViewById(R.id.btnSubmitRequest).setEnabled(true);
+                    if (SubmitRentalRequestUseCase.isVerificationRequired(e)) {
+                        com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
+                                .logEvent("booking_blocked_unverified", new android.os.Bundle());
+                        showVerificationRequiredDialog();
+                        return;
                     }
+                    Log.w(TAG, "Failed to submit rental request", e);
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -547,58 +519,6 @@ public class RentalFormActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(getString(R.string.modal_button_cancel), (d, which) -> d.dismiss())
                 .show();
-    }
-
-    // Method to submit the rental request to Firestore
-    private void submitRequest(String userId, String userName, String userDriverLicense, String userPhone,
-            Calendar startCal, Calendar endCal) {
-        if (PricingService.quote(selectedCar, startCal.getTime(), endCal.getTime()) == null) {
-            findViewById(R.id.btnSubmitRequest).setEnabled(true);
-            Toast.makeText(this, "Unable to calculate pricing for this rental period.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create new rental request object
-        RentalRequest request = new RentalRequest();
-        // Set all request properties
-        request.setCarId(selectedCar.getDocumentId());
-        request.setCarModel(selectedCar.getModel());
-        request.setUserId(userId);
-        request.setUserName(userName);
-        request.setUserDriverLicense(userDriverLicense);
-        request.setUserPhone(userPhone);
-        request.setAdditionalRequests(etAdditionalRequests.getText().toString().trim());
-        request.setStatus(RentalRequestStatus.PENDING.getStorageValue());
-        request.setCompanyId(companyId);
-        request.setStartDate(startCal.getTime());
-        request.setEndDate(endCal.getTime());
-        PricingService.applyPricing(request, PricingService.quote(selectedCar, startCal.getTime(), endCal.getTime()));
-
-        // Add request to Firestore
-        db.collection("rental_requests")
-                .add(request)
-                .addOnSuccessListener(documentReference -> {
-                    // Update the request with its auto-generated ID
-                    db.collection("rental_requests").document(documentReference.getId())
-                            .update("requestId", documentReference.getId())
-                            .addOnSuccessListener(aVoid -> {
-                                // Show success dialog
-                                showSuccessDialog();
-                            })
-                            .addOnFailureListener(e -> {
-                                // Handle update failure
-                                findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                                Log.e(TAG, "Error updating request ID: ", e);
-                                Toast.makeText(this, "Failed to finalize request: " + e.getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    // Handle submission failure
-                    findViewById(R.id.btnSubmitRequest).setEnabled(true);
-                    Log.e(TAG, "Error submitting request: ", e);
-                    Toast.makeText(this, "Failed to submit request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void showSuccessDialog() {

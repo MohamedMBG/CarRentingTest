@@ -19,11 +19,9 @@ import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.RentalFormActivity;
 import com.example.carrentingtest.adapters.CarGridAdapter;
+import com.example.carrentingtest.domain.usecase.LoadTenantCarsUseCase;
 import com.example.carrentingtest.models.Car;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +32,11 @@ public class HomeFragment extends Fragment {
     private CarGridAdapter carAdapter;
     private List<Car> carList;
     private List<Car> filteredCarList; // For search/filter functionality
-    private FirebaseFirestore db;
-    private String companyId;
     private SearchView searchView;
     private LinearLayout filterContainer;
     private String currentFilterType = "All"; // Default filter
     private String currentSearchQuery = ""; // Default search query
+    private LoadTenantCarsUseCase loadTenantCarsUseCase;
 
     @Nullable
     @Override
@@ -54,16 +51,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            db.collection("users").document(auth.getCurrentUser().getUid()).get()
-                    .addOnSuccessListener(doc -> {
-                        companyId = doc.getString("companyId");
-                        fetchCars();
-                    });
-        }
+        loadTenantCarsUseCase = new LoadTenantCarsUseCase();
 
         // Initialize views
         carsRecyclerView = view.findViewById(R.id.carsRecyclerView);
@@ -109,27 +97,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchCars() {
-        com.google.firebase.firestore.Query query = db.collection("cars");
-        if (companyId != null && !companyId.isEmpty()) {
-            query = query.whereEqualTo("companyId", companyId);
-        }
-        query.get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        carList.clear(); // Clear previous data
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Car car = document.toObject(Car.class);
-                            car.setDocumentId(document.getId()); // Set the document ID
-                            carList.add(car);
-                        }
-                        Log.d(TAG, "Successfully fetched " + carList.size() + " cars.");
-                        // Apply initial filters (default: All, no search)
-                        applyFilters();
-                    } else {
-                        Log.e(TAG, "Error getting documents: ", task.getException());
-                        Toast.makeText(getContext(), "Error fetching cars: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
+        loadTenantCarsUseCase.execute(false)
+                .addOnSuccessListener(cars -> {
+                    carList.clear();
+                    carList.addAll(cars);
+                    Log.d(TAG, "Successfully fetched " + carList.size() + " cars.");
+                    applyFilters();
+                })
+                .addOnFailureListener(e -> {
+                    carList.clear();
+                    filteredCarList.clear();
+                    carAdapter.notifyDataSetChanged();
+                    Log.e(TAG, "Error getting tenant-scoped cars", e);
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
