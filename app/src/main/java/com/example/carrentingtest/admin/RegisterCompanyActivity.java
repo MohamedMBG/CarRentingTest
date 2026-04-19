@@ -1,5 +1,9 @@
 package com.example.carrentingtest.admin;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -13,6 +17,7 @@ import com.example.carrentingtest.domain.CompanyLifecycleStatus;
 import com.example.carrentingtest.domain.UserLifecycleStatus;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +45,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     private String companyAddress;
     private double companyLatitude;
     private double companyLongitude;
+    private boolean hasCompanyCoordinates;
     private String adminName;
     private String email;
     private String password;
@@ -96,7 +102,9 @@ public class RegisterCompanyActivity extends AppCompatActivity {
                 company.put("name", companyName);
                 company.put("phone", companyPhone);
                 company.put("address", companyAddress);
-                company.put("location", new GeoPoint(companyLatitude, companyLongitude));
+                if (hasCompanyCoordinates) {
+                    company.put("location", new GeoPoint(companyLatitude, companyLongitude));
+                }
                 company.put("primaryContactName", adminName);
                 company.put("primaryContactEmail", email);
                 company.put("primaryContactPhone", adminPhone);
@@ -131,8 +139,7 @@ public class RegisterCompanyActivity extends AppCompatActivity {
         db.collection("users").document(uid).set(user)
                 .addOnSuccessListener(aVoid -> {
                     toggleLoading(false);
-                    Toast.makeText(this, getString(R.string.business_signup_success), Toast.LENGTH_LONG).show();
-                    finish();
+                    showPendingApprovalDialog(companyId);
                 })
                 .addOnFailureListener(e -> showError(e != null && e.getMessage() != null
                         ? e.getMessage()
@@ -173,20 +180,29 @@ public class RegisterCompanyActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        Double parsedLatitude = parseCoordinate(latitudeText, -90d, 90d);
-        if (parsedLatitude == null) {
-            tilCompanyLatitude.setError(getString(R.string.error_company_latitude_invalid));
-            isValid = false;
-        } else {
-            companyLatitude = parsedLatitude;
-        }
+        hasCompanyCoordinates = !TextUtils.isEmpty(latitudeText) || !TextUtils.isEmpty(longitudeText);
+        if (hasCompanyCoordinates) {
+            if (TextUtils.isEmpty(latitudeText) || TextUtils.isEmpty(longitudeText)) {
+                tilCompanyLatitude.setError(getString(R.string.error_company_coordinates_pair));
+                tilCompanyLongitude.setError(getString(R.string.error_company_coordinates_pair));
+                isValid = false;
+            } else {
+                Double parsedLatitude = parseCoordinate(latitudeText, -90d, 90d);
+                if (parsedLatitude == null) {
+                    tilCompanyLatitude.setError(getString(R.string.error_company_latitude_invalid));
+                    isValid = false;
+                } else {
+                    companyLatitude = parsedLatitude;
+                }
 
-        Double parsedLongitude = parseCoordinate(longitudeText, -180d, 180d);
-        if (parsedLongitude == null) {
-            tilCompanyLongitude.setError(getString(R.string.error_company_longitude_invalid));
-            isValid = false;
-        } else {
-            companyLongitude = parsedLongitude;
+                Double parsedLongitude = parseCoordinate(longitudeText, -180d, 180d);
+                if (parsedLongitude == null) {
+                    tilCompanyLongitude.setError(getString(R.string.error_company_longitude_invalid));
+                    isValid = false;
+                } else {
+                    companyLongitude = parsedLongitude;
+                }
+            }
         }
 
         if (TextUtils.isEmpty(adminName)) {
@@ -268,5 +284,31 @@ public class RegisterCompanyActivity extends AppCompatActivity {
     private void toggleLoading(boolean loading) {
         progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         btnRegisterCompany.setEnabled(!loading);
+    }
+
+    private void showPendingApprovalDialog(String companyId) {
+        FirebaseAuth.getInstance().signOut();
+        new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_CarRentingTest_AlertDialog)
+                .setTitle(R.string.company_signup_complete_title)
+                .setMessage(getString(R.string.company_signup_complete_body, companyId))
+                .setCancelable(false)
+                .setNeutralButton(R.string.copy_company_code, (dialog, which) -> {
+                    ClipboardManager clipboard =
+                            (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(ClipData.newPlainText("company_code", companyId));
+                        Toast.makeText(this, R.string.company_code_copied, Toast.LENGTH_SHORT).show();
+                    }
+                    openAdminLogin();
+                })
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> openAdminLogin())
+                .show();
+    }
+
+    private void openAdminLogin() {
+        Intent intent = new Intent(this, AdminLoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finishAffinity();
     }
 }

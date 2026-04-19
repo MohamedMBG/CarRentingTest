@@ -153,10 +153,6 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
 
-    // Google Maps & Location
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
-
     implementation("com.google.guava:guava:31.1-android")
 
     // UI Animations

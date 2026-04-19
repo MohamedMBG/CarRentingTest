@@ -39,6 +39,7 @@ public class AdminReportsFragment extends Fragment {
 
     private BarChart barChart;
     private TextView tvTotal;
+    private TextView tvUniqueModels;
     private TextView tvTopCar;
     private TextView tvEmptyChart;
     private FirebaseFirestore db;
@@ -56,6 +57,7 @@ public class AdminReportsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         barChart = view.findViewById(R.id.barChart);
         tvTotal = view.findViewById(R.id.tvTotalRentals);
+        tvUniqueModels = view.findViewById(R.id.tvUniqueModels);
         tvTopCar = view.findViewById(R.id.tvTopCar);
         tvEmptyChart = view.findViewById(R.id.tvEmptyChart);
         db = FirebaseFirestore.getInstance();
@@ -99,6 +101,7 @@ public class AdminReportsFragment extends Fragment {
                         if (!status.isRevenueRecognized()) {
                             continue;
                         }
+
                         total++;
                         String carModel = doc.getString("carModel");
                         if (!TextUtils.isEmpty(carModel)) {
@@ -107,6 +110,7 @@ public class AdminReportsFragment extends Fragment {
                     }
 
                     tvTotal.setText(getString(R.string.total_rentals, total));
+                    tvUniqueModels.setText(String.valueOf(counts.size()));
                     populateChart(counts);
                 })
                 .addOnFailureListener(e -> showEmptyState());
@@ -120,7 +124,7 @@ public class AdminReportsFragment extends Fragment {
         barChart.setPinchZoom(false);
         barChart.setScaleEnabled(false);
         barChart.getDescription().setEnabled(false);
-        barChart.setExtraOffsets(8f, 6f, 8f, 10f);
+        barChart.setExtraOffsets(6f, 6f, 6f, 12f);
 
         Legend legend = barChart.getLegend();
         legend.setEnabled(false);
@@ -129,14 +133,17 @@ public class AdminReportsFragment extends Fragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f);
+        xAxis.setAxisLineColor(ContextCompat.getColor(requireContext(), R.color.homeCardStroke));
         xAxis.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColorSecondary));
         xAxis.setTextSize(11f);
-        xAxis.setLabelRotationAngle(-12f);
+        xAxis.setLabelRotationAngle(0f);
+        xAxis.setAvoidFirstLastClipping(true);
 
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGridColor(ContextCompat.getColor(requireContext(), R.color.homeCardStroke));
+        leftAxis.setAxisLineColor(ContextCompat.getColor(requireContext(), R.color.homeCardStroke));
         leftAxis.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColorSecondary));
         leftAxis.setGranularity(1f);
         leftAxis.setTextSize(11f);
@@ -154,7 +161,7 @@ public class AdminReportsFragment extends Fragment {
         List<Map.Entry<String, Integer>> sorted = new ArrayList<>(counts.entrySet());
         Collections.sort(sorted, Comparator.comparingInt(Map.Entry<String, Integer>::getValue).reversed());
 
-        int maxItems = Math.min(7, sorted.size());
+        int maxItems = Math.min(6, sorted.size());
         List<BarEntry> entries = new ArrayList<>(maxItems);
         List<String> labels = new ArrayList<>(maxItems);
         for (int i = 0; i < maxItems; i++) {
@@ -166,18 +173,18 @@ public class AdminReportsFragment extends Fragment {
         BarDataSet dataSet = new BarDataSet(entries, getString(R.string.most_rented_cars));
         dataSet.setColors(
                 ContextCompat.getColor(requireContext(), R.color.colorPrimary),
-                ContextCompat.getColor(requireContext(), R.color.colorSecondary),
                 ContextCompat.getColor(requireContext(), R.color.badgeRoundedBackground),
+                ContextCompat.getColor(requireContext(), R.color.colorSecondary),
                 ContextCompat.getColor(requireContext(), R.color.badgeLuxuryEnd),
                 ContextCompat.getColor(requireContext(), R.color.homeHighlightGradientEnd)
         );
-        dataSet.setValueTextSize(12f);
+        dataSet.setValueTextSize(11f);
         dataSet.setValueTextColor(ContextCompat.getColor(requireContext(), R.color.textColorPrimary));
         dataSet.setHighLightColor(ContextCompat.getColor(requireContext(), R.color.colorSecondary));
         dataSet.setDrawIcons(false);
 
         BarData data = new BarData(dataSet);
-        data.setBarWidth(0.62f);
+        data.setBarWidth(0.56f);
         data.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -189,7 +196,7 @@ public class AdminReportsFragment extends Fragment {
         barChart.getXAxis().setLabelCount(labels.size(), true);
         barChart.setData(data);
         barChart.setFitBars(true);
-        barChart.animateY(1100, Easing.EaseOutCubic);
+        barChart.animateY(1000, Easing.EaseOutCubic);
         barChart.invalidate();
 
         tvTopCar.setVisibility(View.VISIBLE);
@@ -200,6 +207,7 @@ public class AdminReportsFragment extends Fragment {
 
     private void showEmptyState() {
         tvTotal.setText(getString(R.string.total_rentals, 0));
+        tvUniqueModels.setText("0");
         tvTopCar.setVisibility(View.GONE);
         tvEmptyChart.setVisibility(View.VISIBLE);
         barChart.clear();
@@ -214,6 +222,6 @@ public class AdminReportsFragment extends Fragment {
         if (trimmed.length() <= 12) {
             return trimmed;
         }
-        return trimmed.substring(0, 11) + "…";
+        return trimmed.substring(0, 11) + "...";
     }
 }

@@ -51,6 +51,14 @@ public class SubmitRentalRequestUseCase {
             return Tasks.forException(new IllegalStateException("Unable to calculate pricing for this rental period."));
         }
 
+        if (!selectedCar.isAvailable()) {
+            return Tasks.forException(new IllegalStateException("This car is no longer available."));
+        }
+
+        if (selectedCar.isMaintenance()) {
+            return Tasks.forException(new IllegalStateException("This car is currently in maintenance."));
+        }
+
         return userRepository.getById(currentUser.getUid())
                 .continueWithTask(task -> {
                     if (!task.isSuccessful()) {

@@ -262,7 +262,7 @@ public class RentalFormActivity extends AppCompatActivity {
                     }
 
                     if (btnOpenMaps != null) {
-                        boolean hasLocation = companyLocation != null;
+                        boolean hasLocation = companyLocation != null || !TextUtils.isEmpty(companyAddress);
                         btnOpenMaps.setEnabled(hasLocation);
                         btnOpenMaps.setAlpha(hasLocation ? 1f : 0.6f);
                     }
@@ -287,13 +287,11 @@ public class RentalFormActivity extends AppCompatActivity {
     }
 
     private void openLocationInMaps() {
-        if (companyLocation == null) {
+        if (companyLocation == null && TextUtils.isEmpty(companyAddress)) {
             Toast.makeText(this, R.string.location_not_available, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        double latitude = companyLocation.getLatitude();
-        double longitude = companyLocation.getLongitude();
         String label = !TextUtils.isEmpty(companyDisplayName)
                 ? companyDisplayName
                 : companyAddress;
@@ -301,22 +299,38 @@ public class RentalFormActivity extends AppCompatActivity {
             label = getString(R.string.pickup_location_title);
         }
 
-        String geoUri = String.format(Locale.ENGLISH,
-                "geo:%f,%f?q=%f,%f(%s)",
-                latitude,
-                longitude,
-                latitude,
-                longitude,
-                Uri.encode(label));
+        String geoUri;
+        if (companyLocation != null) {
+            double latitude = companyLocation.getLatitude();
+            double longitude = companyLocation.getLongitude();
+            geoUri = String.format(Locale.ENGLISH,
+                    "geo:%f,%f?q=%f,%f(%s)",
+                    latitude,
+                    longitude,
+                    latitude,
+                    longitude,
+                    Uri.encode(label));
+        } else {
+            geoUri = "geo:0,0?q=" + Uri.encode(companyAddress);
+        }
 
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
         try {
             startActivity(mapIntent);
         } catch (ActivityNotFoundException e) {
-            String webUri = String.format(Locale.ENGLISH,
-                    "https://www.google.com/maps/search/?api=1&query=%f,%f",
-                    latitude,
-                    longitude);
+            String webUri;
+            if (companyLocation != null) {
+                double latitude = companyLocation.getLatitude();
+                double longitude = companyLocation.getLongitude();
+                webUri = String.format(Locale.ENGLISH,
+                        "https://www.openstreetmap.org/?mlat=%f&mlon=%f#map=16/%f/%f",
+                        latitude,
+                        longitude,
+                        latitude,
+                        longitude);
+            } else {
+                webUri = "https://www.openstreetmap.org/search?query=" + Uri.encode(companyAddress);
+            }
             Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webUri));
             try {
                 startActivity(webIntent);
@@ -448,7 +462,8 @@ public class RentalFormActivity extends AppCompatActivity {
         String endDateStr = tvEndDate.getText().toString();
 
         // Check if dates were selected
-        if (startDateStr.equals("Select start date") || endDateStr.equals("Select end date")) {
+        if (startDateStr.equals(getString(R.string.select_start_date))
+                || endDateStr.equals(getString(R.string.select_end_date))) {
             Toast.makeText(this, "Please select both start and end dates", Toast.LENGTH_SHORT).show();
             return;
         }

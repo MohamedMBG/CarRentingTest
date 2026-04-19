@@ -96,14 +96,35 @@ public class SignUpActivity extends AppCompatActivity {
             etDriverLicense.setError("Enter your driver license number");
             return;
         }
+        if (TextUtils.isEmpty(companyId)) {
+            etCompanyId.setError(getString(R.string.error_company_id_required));
+            return;
+        }
         if (password.length() < 6) {
             etPassword.setError("Password too short (min 6 characters)");
             return;
         }
 
         progressBar.setVisibility(View.VISIBLE);
+        validateCompanyAndCreateAccount();
+    }
 
-        createAccount();
+    private void validateCompanyAndCreateAccount() {
+        db.collection("companies")
+                .document(companyId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        createAccount();
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        etCompanyId.setError(getString(R.string.error_company_not_found_signup));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(this, getString(R.string.error_registration_failed), Toast.LENGTH_LONG).show();
+                });
     }
 
     private void createAccount() {

@@ -70,6 +70,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 findViewById(R.id.cardClientReports)
                                 .setOnClickListener(v -> startActivity(new Intent(this, ClientReportsActivity.class)));
 
+                findViewById(R.id.cardAgencyLocation)
+                                .setOnClickListener(v -> startActivity(new Intent(this, AdminAgencyLocationActivity.class)));
+
                 // 3. Reports card - opens business reports
                 findViewById(R.id.cardViewReports)
                                 .setOnClickListener(v -> startActivity(new Intent(this, AdminReportsActivity.class)));

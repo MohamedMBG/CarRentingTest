@@ -1,5 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="999dp"/>
-    <solid android:color="@color/statusPendingBackground"/>
+    <corners android:radius="999dp" />
+    <solid android:color="#DDF6E8" />
 </shape>

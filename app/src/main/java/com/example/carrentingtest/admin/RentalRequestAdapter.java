@@ -8,11 +8,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.RentalRequest;
+import com.example.carrentingtest.pricing.PricingService;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +26,7 @@ public class RentalRequestAdapter extends RecyclerView.Adapter<RentalRequestAdap
     private List<RentalRequest> requests;
     private BiConsumer<RentalRequest, Boolean> onDecision;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
 
     public RentalRequestAdapter(List<RentalRequest> requests, BiConsumer<RentalRequest, Boolean> onDecision) {
         this.requests = requests;
@@ -47,8 +52,14 @@ public class RentalRequestAdapter extends RecyclerView.Adapter<RentalRequestAdap
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        // Added tvDriverLicense
-        private final TextView tvCarModel, tvDates, tvUser, tvStatus, tvAdditionalRequests, tvDriverLicense;
+        private final TextView tvCarModel;
+        private final TextView tvDates;
+        private final TextView tvUser;
+        private final TextView tvStatus;
+        private final TextView tvAdditionalRequests;
+        private final TextView tvDriverLicense;
+        private final TextView tvTotal;
+        private final TextView tvDuration;
         private final LinearLayout layoutActions;
 
         public ViewHolder(@NonNull View itemView) {
@@ -58,40 +69,42 @@ public class RentalRequestAdapter extends RecyclerView.Adapter<RentalRequestAdap
             tvUser = itemView.findViewById(R.id.tvUser);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvAdditionalRequests = itemView.findViewById(R.id.tvAdditionalRequests);
-            tvDriverLicense = itemView.findViewById(R.id.tvDriverLicense); // Initialize tvDriverLicense
+            tvDriverLicense = itemView.findViewById(R.id.tvDriverLicense);
+            tvTotal = itemView.findViewById(R.id.tvTotalPrice);
+            tvDuration = itemView.findViewById(R.id.tvDuration);
             layoutActions = itemView.findViewById(R.id.layoutActions);
         }
 
         public void bind(RentalRequest request) {
-            tvCarModel.setText(request.getCarModel());
+            RentalRequestStatus status = RentalRequestStatus.from(request.getStatus());
             String startDateStr = request.getStartDate() != null ? dateFormat.format(request.getStartDate()) : "N/A";
             String endDateStr = request.getEndDate() != null ? dateFormat.format(request.getEndDate()) : "N/A";
-            tvDates.setText(String.format("Dates: %s to %s", startDateStr, endDateStr));
-            tvUser.setText(String.format("User: %s", request.getUserName() != null ? request.getUserName() : "N/A"));
-            tvStatus.setText(request.getStatus());
+            String customerName = request.getUserName() != null ? request.getUserName() : "N/A";
+            String license = request.getUserDriverLicense();
 
-            // Set Driver License
-            if (request.getUserDriverLicense() != null && !request.getUserDriverLicense().isEmpty()) {
-                tvDriverLicense.setText(String.format("License: %s", request.getUserDriverLicense()));
-                tvDriverLicense.setVisibility(View.VISIBLE);
-            } else {
-                tvDriverLicense.setText("License: Not Provided");
-                tvDriverLicense.setVisibility(View.VISIBLE); // Or GONE if you prefer to hide it
-            }
+            tvCarModel.setText(request.getCarModel());
+            tvDates.setText(itemView.getContext().getString(R.string.request_dates_format, startDateStr, endDateStr));
+            tvUser.setText(itemView.getContext().getString(R.string.request_customer_format, customerName));
+            tvDriverLicense.setText(license != null && !license.isEmpty()
+                    ? license
+                    : itemView.getContext().getString(R.string.request_license_missing));
+            tvTotal.setText(itemView.getContext().getString(
+                    R.string.request_total_format,
+                    currencyFormat.format(PricingService.getStoredTotal(request))));
+            tvDuration.setText(itemView.getContext().getString(
+                    R.string.request_duration_format,
+                    PricingService.computeRentalDays(request.getStartDate(), request.getEndDate())));
 
-            // Handle additional requests
             if (request.getAdditionalRequests() != null && !request.getAdditionalRequests().isEmpty()) {
-                tvAdditionalRequests.setText("Special Requests: " + request.getAdditionalRequests());
+                tvAdditionalRequests.setText(request.getAdditionalRequests());
                 tvAdditionalRequests.setVisibility(View.VISIBLE);
             } else {
                 tvAdditionalRequests.setVisibility(View.GONE);
             }
 
-            // Set status background (Optional: Add color logic if needed)
-            // Example: if ("approved".equals(request.getStatus())) { ... }
+            bindStatus(status);
 
-            // Only show buttons for pending requests
-            if ("pending".equalsIgnoreCase(request.getStatus())) { // Use equalsIgnoreCase for robustness
+            if (status == RentalRequestStatus.PENDING) {
                 layoutActions.setVisibility(View.VISIBLE);
                 itemView.findViewById(R.id.btnApprove).setOnClickListener(v -> {
                     Log.d("ADAPTER", "Approve clicked for: " + request.getRequestId());
@@ -104,6 +117,26 @@ public class RentalRequestAdapter extends RecyclerView.Adapter<RentalRequestAdap
             } else {
                 layoutActions.setVisibility(View.GONE);
             }
+        }
+
+        private void bindStatus(RentalRequestStatus status) {
+            int backgroundRes = R.drawable.bg_status_pending;
+            int textColor = ContextCompat.getColor(itemView.getContext(), R.color.colorWarning);
+            int labelRes = R.string.request_status_pending;
+
+            if (status == RentalRequestStatus.APPROVED || status == RentalRequestStatus.COMPLETED) {
+                backgroundRes = R.drawable.bg_status_approved;
+                textColor = ContextCompat.getColor(itemView.getContext(), R.color.colorSuccess);
+                labelRes = R.string.request_status_approved;
+            } else if (status == RentalRequestStatus.REJECTED) {
+                backgroundRes = R.drawable.bg_status_rejected;
+                textColor = ContextCompat.getColor(itemView.getContext(), R.color.colorError);
+                labelRes = R.string.request_status_rejected;
+            }
+
+            tvStatus.setBackgroundResource(backgroundRes);
+            tvStatus.setTextColor(textColor);
+            tvStatus.setText(labelRes);
         }
     }
 }

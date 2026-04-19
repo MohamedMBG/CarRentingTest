@@ -16,10 +16,6 @@
         tools:ignore="PermissionImpliesUnsupportedChromeOsHardware" /> <!-- For Android 13+ media access -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
-    <!-- Location Permissions for Maps -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <application
         android:allowBackup="${allowBackup}"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -50,11 +46,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <!-- Google Maps API Key -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY_HERE" />
 
         <activity
             android:name=".ui.ai.ConciergeActivity"

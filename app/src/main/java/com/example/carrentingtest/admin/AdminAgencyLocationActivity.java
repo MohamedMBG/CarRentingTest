@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -84,8 +85,9 @@ public class AdminAgencyLocationActivity extends AppCompatActivity {
     private void bindCompany(DocumentSnapshot snapshot) {
         if (snapshot != null && snapshot.exists()) {
             String address = snapshot.getString("address");
-            Double latitude = snapshot.getDouble("locationLat");
-            Double longitude = snapshot.getDouble("locationLng");
+            GeoPoint location = snapshot.getGeoPoint("location");
+            Double latitude = location != null ? location.getLatitude() : snapshot.getDouble("locationLat");
+            Double longitude = location != null ? location.getLongitude() : snapshot.getDouble("locationLng");
 
             if (!TextUtils.isEmpty(address)) {
                 etAddress.setText(address);
@@ -158,8 +160,15 @@ public class AdminAgencyLocationActivity extends AppCompatActivity {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("address", address);
-        updates.put("locationLat", latitude);
-        updates.put("locationLng", longitude);
+        if (latitude != null && longitude != null) {
+            updates.put("location", new GeoPoint(latitude, longitude));
+            updates.put("locationLat", latitude);
+            updates.put("locationLng", longitude);
+        } else {
+            updates.put("location", null);
+            updates.put("locationLat", null);
+            updates.put("locationLng", null);
+        }
 
         toggleLoading(true);
         db.collection("companies")

@@ -24,6 +24,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class ViewRequestsActivity extends AppCompatActivity {
@@ -70,6 +73,10 @@ public class ViewRequestsActivity extends AppCompatActivity {
                         request.setRequestId(doc.getId());
                         requestList.add(request);
                     }
+                    Collections.sort(requestList, Comparator.comparing(
+                            RentalRequest::getStartDate,
+                            Comparator.nullsLast(Date::compareTo)
+                    ));
                     adapter.notifyDataSetChanged();
                     updateEmptyState();
                 });
@@ -113,33 +120,85 @@ public class ViewRequestsActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed to load car pricing.", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    car.setDocumentId(carDoc.getId());
 
-                    PricingService.applyPricing(
-                            request,
-                            PricingService.quote(car, request.getStartDate(), request.getEndDate()));
+                    if (car.isMaintenance()) {
+                        Toast.makeText(this, R.string.request_car_maintenance, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                    WriteBatch batch = FirebaseFirestore.getInstance().batch();
-                    batch.update(
-                            FirebaseFirestore.getInstance().collection("rental_requests").document(request.getRequestId()),
-                            "status", RentalRequestStatus.APPROVED.getStorageValue(),
-                            "totalPrice", request.getTotalPrice(),
-                            "pricingBreakdown", request.getPricingBreakdown());
-                    batch.update(
-                            FirebaseFirestore.getInstance().collection("cars").document(request.getCarId()),
-                            "available", false);
-                    batch.commit()
-                            .addOnSuccessListener(unused -> sendEmailNotification(
-                                    request,
-                                    RentalRequestStatus.APPROVED.getStorageValue()))
-                            .addOnFailureListener(e -> Toast.makeText(
-                                    this,
-                                    "Failed to update request: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show());
+                    if (!car.isAvailable()) {
+                        Toast.makeText(this, R.string.request_car_unavailable, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    verifyNoConflictingApproval(request, car);
                 })
                 .addOnFailureListener(e -> Toast.makeText(
                         this,
                         "Failed to load car pricing: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show());
+    }
+
+    private void verifyNoConflictingApproval(RentalRequest request, Car car) {
+        FirebaseFirestore.getInstance()
+                .collection("rental_requests")
+                .whereEqualTo("companyId", companyId)
+                .whereEqualTo("carId", request.getCarId())
+                .whereEqualTo("status", RentalRequestStatus.APPROVED.getStorageValue())
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        if (doc.getId().equals(request.getRequestId())) {
+                            continue;
+                        }
+                        RentalRequest approvedRequest = doc.toObject(RentalRequest.class);
+                        if (approvedRequest != null && datesOverlap(
+                                request.getStartDate(),
+                                request.getEndDate(),
+                                approvedRequest.getStartDate(),
+                                approvedRequest.getEndDate())) {
+                            Toast.makeText(this, R.string.request_no_overlap, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    finalizeApproval(request, car);
+                })
+                .addOnFailureListener(e -> Toast.makeText(
+                        this,
+                        "Failed to review overlapping bookings: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
+    }
+
+    private void finalizeApproval(RentalRequest request, Car car) {
+        PricingService.applyPricing(
+                request,
+                PricingService.quote(car, request.getStartDate(), request.getEndDate()));
+
+        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        batch.update(
+                FirebaseFirestore.getInstance().collection("rental_requests").document(request.getRequestId()),
+                "status", RentalRequestStatus.APPROVED.getStorageValue(),
+                "totalPrice", request.getTotalPrice(),
+                "pricingBreakdown", request.getPricingBreakdown());
+        batch.update(
+                FirebaseFirestore.getInstance().collection("cars").document(request.getCarId()),
+                "available", false);
+        batch.commit()
+                .addOnSuccessListener(unused -> sendEmailNotification(
+                        request,
+                        RentalRequestStatus.APPROVED.getStorageValue()))
+                .addOnFailureListener(e -> Toast.makeText(
+                        this,
+                        "Failed to update request: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
+    }
+
+    private boolean datesOverlap(Date firstStart, Date firstEnd, Date secondStart, Date secondEnd) {
+        if (firstStart == null || firstEnd == null || secondStart == null || secondEnd == null) {
+            return false;
+        }
+        return firstStart.before(secondEnd) && secondStart.before(firstEnd);
     }
 
     private void sendEmailNotification(RentalRequest request, String status) {
