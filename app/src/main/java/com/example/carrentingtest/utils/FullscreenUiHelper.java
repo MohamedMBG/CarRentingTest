@@ -48,7 +48,9 @@ public final class FullscreenUiHelper {
 
         ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            view.setPaddingRelative(start, top + bars.top, end, bottom + bars.bottom);
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            int bottomInset = Math.max(bars.bottom, ime.bottom);
+            view.setPaddingRelative(start, top + bars.top, end, bottom + bottomInset);
             return insets;
         });
         ViewCompat.requestApplyInsets(root);

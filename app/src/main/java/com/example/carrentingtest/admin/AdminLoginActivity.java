@@ -2,6 +2,9 @@ package com.example.carrentingtest.admin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class AdminLoginActivity extends AppCompatActivity {
     private EditText etUsername, etPassword;
+    private View progressBar, btnLogin, btnRegisterCompany;
     private FirebaseAuth mAuth;
     private UserRepository userRepository;
 
@@ -30,29 +34,51 @@ public class AdminLoginActivity extends AppCompatActivity {
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
+        progressBar = findViewById(R.id.progressBar);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnRegisterCompany = findViewById(R.id.tvRegisterCompany);
 
-        findViewById(R.id.btnLogin).setOnClickListener(v -> loginAdmin());
-        findViewById(R.id.tvRegisterCompany).setOnClickListener(v ->
+        btnLogin.setOnClickListener(v -> loginAdmin());
+        btnRegisterCompany.setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterCompanyActivity.class)));
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                loginAdmin();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void loginAdmin() {
         String email = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Enter credentials", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etUsername.setError("Enter a valid email");
+            return;
+        }
+        if (password.length() < 6) {
+            etPassword.setError("Password must be at least 6 characters");
             return;
         }
 
+        setLoading(true);
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
                     userRepository.getById(user.getUid())
                             .addOnSuccessListener(doc -> {
+                                if (doc == null || !doc.exists()) {
+                                    setLoading(false);
+                                    mAuth.signOut();
+                                    Toast.makeText(this, "No admin profile found", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 UserRole role = UserRole.from(doc.getString("role"));
                                 if (role != UserRole.ADMIN) {
+                                    setLoading(false);
                                     Toast.makeText(this, "Not an admin account", Toast.LENGTH_SHORT).show();
                                     mAuth.signOut();
                                     return;
@@ -70,15 +96,31 @@ public class AdminLoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onDenied(@androidx.annotation.NonNull String message) {
                                         mAuth.signOut();
+                                        setLoading(false);
                                         Toast.makeText(AdminLoginActivity.this, message, Toast.LENGTH_LONG).show();
                                     }
                                 });
                             })
-                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to load user", Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> {
+                                setLoading(false);
+                                Toast.makeText(this, "Failed to load user", Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    setLoading(false);
+                    Toast.makeText(this, "Unable to load signed-in user", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                setLoading(false);
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setLoading(boolean loading) {
+        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        btnLogin.setEnabled(!loading);
+        btnRegisterCompany.setEnabled(!loading);
+        etUsername.setEnabled(!loading);
+        etPassword.setEnabled(!loading);
     }
 }

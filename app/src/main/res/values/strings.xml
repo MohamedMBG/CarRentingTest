@@ -143,6 +143,10 @@
     <string name="sign_up">Sign Up</string>
     <string name="already_have_account">Already have an account? Sign In</string>
     <string name="welcome_back">Welcome Back</string>
+    <string name="sign_in_subtitle" tools:ignore="MissingTranslation">Access your bookings, verification status and rental history.</string>
+    <string name="sign_up_title" tools:ignore="MissingTranslation">Create your renter account</string>
+    <string name="sign_up_subtitle" tools:ignore="MissingTranslation">Join your rental agency workspace and book verified vehicles faster.</string>
+    <string name="admin_login_subtitle" tools:ignore="MissingTranslation">Manage fleet requests, reports and company operations.</string>
     <string name="sign_in">Sign In</string>
     <string name="dont_have_account">Don\'t have an account? Sign Up</string>
     <string name="admin">Admin</string>

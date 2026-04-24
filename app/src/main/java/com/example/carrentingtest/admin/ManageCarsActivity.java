@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -193,7 +195,7 @@ public class ManageCarsActivity extends AppCompatActivity {
         }
 
         // Configure dialog buttons and behavior
-        builder.setView(view)
+        AlertDialog dialog = builder.setView(view)
                 .setTitle(isEdit ? "Edit Car" : "Add New Car") // Dynamic title
                 .setPositiveButton(isEdit ? "Update" : "Save", (d, w) -> {
                     // Create or get the car object to save
@@ -233,7 +235,14 @@ public class ManageCarsActivity extends AppCompatActivity {
                         addCar(c);
                 })
                 .setNegativeButton("Cancel", null) // Cancel button does nothing
-                .show();
+                .create();
+        dialog.setOnShowListener(d -> {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            }
+        });
+        dialog.show();
     }
 
     private List<String> parseImageUrls(String rawInput) {

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.inputmethod.EditorInfo;
 import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignInActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
     private android.widget.CheckBox cbRememberMe;
-    private View progressBar;
+    private View progressBar, btnSignIn;
     private FirebaseAuth mAuth;
     private UserRepository userRepository;
     private SharedPreferences authPrefs;
@@ -52,7 +53,15 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         // Set click listener for sign in button
-        findViewById(R.id.btnSignIn).setOnClickListener(v -> signInUser());
+        btnSignIn = findViewById(R.id.btnSignIn);
+        btnSignIn.setOnClickListener(v -> signInUser());
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                signInUser();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void signInUser() {
@@ -69,12 +78,11 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
+        setLoading(true);
 
         // Sign in with Firebase
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
                         // Save remember me preference
                         authPrefs.edit()
@@ -87,6 +95,7 @@ public class SignInActivity extends AppCompatActivity {
                                     .addOnSuccessListener(doc -> {
                                         if (doc == null || !doc.exists()) {
                                             mAuth.signOut();
+                                            setLoading(false);
                                             Toast.makeText(SignInActivity.this,
                                                     "No account found for this email. Please sign up first.",
                                                     Toast.LENGTH_LONG).show();
@@ -107,6 +116,7 @@ public class SignInActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDenied(@androidx.annotation.NonNull String message) {
                                                     mAuth.signOut();
+                                                    setLoading(false);
                                                     Toast.makeText(SignInActivity.this, message, Toast.LENGTH_LONG).show();
                                                 }
                                             });
@@ -115,15 +125,30 @@ public class SignInActivity extends AppCompatActivity {
                                             finish();
                                         }
                                     })
-                                    .addOnFailureListener(e -> Toast.makeText(SignInActivity.this, "Failed to load user", Toast.LENGTH_SHORT).show());
+                                    .addOnFailureListener(e -> {
+                                        setLoading(false);
+                                        Toast.makeText(SignInActivity.this, "Failed to load user", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            setLoading(false);
+                            Toast.makeText(SignInActivity.this, "Unable to load signed-in user", Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        setLoading(false);
                         // Sign in failed
                         Toast.makeText(SignInActivity.this,
                                 "Sign in failed: " + task.getException().getMessage(),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void setLoading(boolean loading) {
+        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        btnSignIn.setEnabled(!loading);
+        etEmail.setEnabled(!loading);
+        etPassword.setEnabled(!loading);
+        cbRememberMe.setEnabled(!loading);
     }
 
     // Open SignUp Activity

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.text.TextUtils;
@@ -143,7 +145,7 @@ public class RequestsHistoryFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_report_issue, null, false);
         TextInputEditText input = dialogView.findViewById(R.id.etReportDescription);
 
-        new MaterialAlertDialogBuilder(requireContext())
+        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.report_issue_title)
                 .setMessage(R.string.report_issue_message)
                 .setView(dialogView)
@@ -156,7 +158,14 @@ public class RequestsHistoryFragment extends Fragment {
                         submitReport(request, description);
                     }
                 })
-                .show();
+                .create();
+        dialog.setOnShowListener(d -> {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            }
+        });
+        dialog.show();
     }
 
     private void submitReport(RentalRequest request, String description) {

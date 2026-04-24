@@ -18,4 +18,10 @@
     <dimen name="verification_preview_min_height">220dp</dimen>
     <dimen name="verification_button_height">56dp</dimen>
     <dimen name="verification_result_icon_size">72dp</dimen>
+
+    <dimen name="auth_screen_padding">20dp</dimen>
+    <dimen name="auth_content_max_width">520dp</dimen>
+    <dimen name="auth_panel_padding">22dp</dimen>
+    <dimen name="auth_logo_size">96dp</dimen>
+    <dimen name="auth_button_height">56dp</dimen>
 </resources>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private View progressBar;
+    private View progressBar, btnSignUp;
 
     private String name;
     private String email;
@@ -63,8 +64,15 @@ public class SignUpActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
 
-        Button btnSignUp = findViewById(R.id.btnSignUp);
+        btnSignUp = findViewById(R.id.btnSignUp);
         btnSignUp.setOnClickListener(v -> registerUser());
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                registerUser();
+                return true;
+            }
+            return false;
+        });
 
         // Added onClick listener for Sign In text
         tvSignIn.setOnClickListener(v -> openSignIn());
@@ -105,7 +113,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
+        setLoading(true);
         validateCompanyAndCreateAccount();
     }
 
@@ -117,12 +125,12 @@ public class SignUpActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         createAccount();
                     } else {
-                        progressBar.setVisibility(View.GONE);
+                        setLoading(false);
                         etCompanyId.setError(getString(R.string.error_company_not_found_signup));
                     }
                 })
                 .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.GONE);
+                    setLoading(false);
                     Toast.makeText(this, getString(R.string.error_registration_failed), Toast.LENGTH_LONG).show();
                 });
     }
@@ -136,7 +144,7 @@ public class SignUpActivity extends AppCompatActivity {
                             saveClientData(user.getUid(), name, email, phone, driverLicense, companyId);
                         }
                     } else {
-                        progressBar.setVisibility(View.GONE);
+                        setLoading(false);
                         Toast.makeText(this, "Sign up failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -160,15 +168,26 @@ public class SignUpActivity extends AppCompatActivity {
         db.collection("users").document(userId)
                 .set(client)
                 .addOnCompleteListener(task -> {
-                    progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Sign up successful!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(this, MainActivity.class));
                         finishAffinity(); // Close all previous activities
                     } else {
+                        setLoading(false);
                         Toast.makeText(this, "Failed to save user data: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void setLoading(boolean loading) {
+        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        btnSignUp.setEnabled(!loading);
+        etName.setEnabled(!loading);
+        etEmail.setEnabled(!loading);
+        etPhone.setEnabled(!loading);
+        etDriverLicense.setEnabled(!loading);
+        etCompanyId.setEnabled(!loading);
+        etPassword.setEnabled(!loading);
     }
 
     // Method to handle Sign In click
