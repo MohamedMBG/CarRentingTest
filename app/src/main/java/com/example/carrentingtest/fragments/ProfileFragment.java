@@ -16,6 +16,7 @@ import com.example.carrentingtest.MainActivity;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
 import com.example.carrentingtest.verification.VerificationStatus;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +29,9 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
     private TextView tvProfileName, tvProfileEmail, tvProfilePhone, tvProfileLicense, txtVerifiedBadge;
+    private TextView tvVerificationPill, tvVerificationHeadline, tvVerificationDescription;
     private Button btnLogout, btnVerifyLicense;
+    private MaterialButton btnEditProfile;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -56,6 +59,10 @@ public class ProfileFragment extends Fragment {
         btnLogout = view.findViewById(R.id.btnLogout);
         btnVerifyLicense = view.findViewById(R.id.btnVerifyLicense);
         txtVerifiedBadge = view.findViewById(R.id.txtVerifiedBadge);
+        tvVerificationPill = view.findViewById(R.id.tvVerificationPill);
+        tvVerificationHeadline = view.findViewById(R.id.tvVerificationHeadline);
+        tvVerificationDescription = view.findViewById(R.id.tvVerificationDescription);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
 
         // Load user data
         loadUserProfile();
@@ -69,6 +76,11 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(requireContext(), com.example.carrentingtest.ui.verification.VerificationFlowActivity.class);
                 startActivity(intent);
             });
+        }
+
+        if (btnEditProfile != null) {
+            btnEditProfile.setOnClickListener(v ->
+                    Toast.makeText(requireContext(), R.string.profile_edit_unavailable, Toast.LENGTH_SHORT).show());
         }
 
         // Set logout button click listener
@@ -109,6 +121,7 @@ public class ProfileFragment extends Fragment {
                         if (txtVerifiedBadge != null) {
                             txtVerifiedBadge.setVisibility(isVerified ? View.VISIBLE : View.GONE);
                         }
+                        bindVerificationState(status);
                     } else {
                         Log.d(TAG, "No such user document");
                         Toast.makeText(getContext(), "User profile data not found.", Toast.LENGTH_SHORT).show();
@@ -117,6 +130,7 @@ public class ProfileFragment extends Fragment {
                         tvProfileEmail.setText(currentUser.getEmail()); // Use email from Auth if available
                         tvProfilePhone.setText("N/A");
                         tvProfileLicense.setText("N/A");
+                        bindVerificationState(VerificationStatus.NOT_STARTED);
                     }
                 } else {
                     Log.e(TAG, "Error getting user document: ", task.getException());
@@ -126,6 +140,7 @@ public class ProfileFragment extends Fragment {
                     tvProfileEmail.setText("Error");
                     tvProfilePhone.setText("Error");
                     tvProfileLicense.setText("Error");
+                    bindVerificationState(VerificationStatus.NOT_STARTED);
                 }
             });
         } else {
@@ -137,6 +152,63 @@ public class ProfileFragment extends Fragment {
                 ((MainActivity) getActivity()).logoutUser(); // Use existing logout logic
             }
         }
+    }
+
+    private void bindVerificationState(VerificationStatus status) {
+        if (!isAdded()) {
+            return;
+        }
+
+        int pillBackground;
+        int pillTextColor;
+        int headline;
+        int description;
+        int pillText;
+
+        switch (status) {
+            case APPROVED:
+                pillBackground = R.drawable.bg_status_approved;
+                pillTextColor = R.color.colorSuccess;
+                headline = R.string.profile_verification_approved;
+                description = R.string.profile_verification_approved_body;
+                pillText = R.string.profile_verification_status_ready;
+                break;
+            case SUBMITTED:
+                pillBackground = R.drawable.bg_status_pending;
+                pillTextColor = R.color.colorWarning;
+                headline = R.string.profile_verification_submitted;
+                description = R.string.profile_verification_submitted_body;
+                pillText = R.string.profile_verification_status_pending;
+                break;
+            case UNDER_REVIEW:
+                pillBackground = R.drawable.bg_status_pending;
+                pillTextColor = R.color.colorWarning;
+                headline = R.string.profile_verification_under_review;
+                description = R.string.profile_verification_under_review_body;
+                pillText = R.string.profile_verification_status_pending;
+                break;
+            case REJECTED:
+                pillBackground = R.drawable.bg_status_rejected;
+                pillTextColor = R.color.colorError;
+                headline = R.string.profile_verification_rejected;
+                description = R.string.profile_verification_rejected_body;
+                pillText = R.string.profile_verification_status_pending;
+                break;
+            case NOT_STARTED:
+            default:
+                pillBackground = R.drawable.bg_badge_soft;
+                pillTextColor = R.color.colorPrimary;
+                headline = R.string.profile_verification_not_started;
+                description = R.string.profile_verification_not_started_body;
+                pillText = R.string.profile_verification_status_pending;
+                break;
+        }
+
+        tvVerificationPill.setBackgroundResource(pillBackground);
+        tvVerificationPill.setText(pillText);
+        tvVerificationPill.setTextColor(requireContext().getColor(pillTextColor));
+        tvVerificationHeadline.setText(headline);
+        tvVerificationDescription.setText(description);
     }
 
     private void logout() {

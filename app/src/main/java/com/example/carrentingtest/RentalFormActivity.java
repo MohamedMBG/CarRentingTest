@@ -520,8 +520,9 @@ public class RentalFormActivity extends AppCompatActivity {
                         showVerificationRequiredDialog();
                         return;
                     }
-                    Log.w(TAG, "Failed to submit rental request", e);
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+Log.w(TAG, "Failed to submit rental request", e);
+                    String message = e.getMessage();
+                    Toast.makeText(this, message != null ? message : "Failed to submit request", Toast.LENGTH_SHORT).show();
                 });
     }
 

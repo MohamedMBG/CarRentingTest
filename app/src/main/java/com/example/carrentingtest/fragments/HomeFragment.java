@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,11 @@ public class HomeFragment extends Fragment {
     private List<Car> filteredCarList; // For search/filter functionality
     private SearchView searchView;
     private LinearLayout filterContainer;
+    private TextView tvHomeResultsCount;
+    private TextView tvHomeSelectedFilter;
+    private TextView tvHomeEmptyTitle;
+    private TextView tvHomeEmptyBody;
+    private View homeEmptyStateCard;
     private String currentFilterType = "All"; // Default filter
     private String currentSearchQuery = ""; // Default search query
     private LoadTenantCarsUseCase loadTenantCarsUseCase;
@@ -57,6 +63,11 @@ public class HomeFragment extends Fragment {
         carsRecyclerView = view.findViewById(R.id.carsRecyclerView);
         searchView = view.findViewById(R.id.searchView);
         filterContainer = view.findViewById(R.id.filterContainer);
+        tvHomeResultsCount = view.findViewById(R.id.tvHomeResultsCount);
+        tvHomeSelectedFilter = view.findViewById(R.id.tvHomeSelectedFilter);
+        tvHomeEmptyTitle = view.findViewById(R.id.tvHomeEmptyTitle);
+        tvHomeEmptyBody = view.findViewById(R.id.tvHomeEmptyBody);
+        homeEmptyStateCard = view.findViewById(R.id.homeEmptyStateCard);
 
         // Initialize car lists
         carList = new ArrayList<>();
@@ -109,9 +120,14 @@ public class HomeFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     carList.clear();
                     filteredCarList.clear();
-                    carAdapter.notifyDataSetChanged();
+                    applyFilters();
                     Log.e(TAG, "Error getting tenant-scoped cars", e);
-                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (!isAdded() || getContext() == null) return;
+                    String message = e.getMessage();
+                    if (message == null) {
+                        message = "Failed to load cars. Please try again.";
+                    }
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -185,8 +201,44 @@ public class HomeFragment extends Fragment {
             }
         }
         carAdapter.notifyDataSetChanged(); // Update the RecyclerView grid
+        updateHomeState();
         Log.d(TAG, "Applied filters. Type: " + currentFilterType + ", Query: '" + currentSearchQuery
                 + "'. Filtered list size: " + filteredCarList.size());
+    }
+
+    private void updateHomeState() {
+        if (!isAdded()) {
+            return;
+        }
+
+        int resultCount = filteredCarList.size();
+        tvHomeResultsCount.setText(getResources().getQuantityString(
+                R.plurals.home_vehicle_count,
+                resultCount,
+                resultCount));
+
+        if ("All".equalsIgnoreCase(currentFilterType)) {
+            tvHomeSelectedFilter.setText(R.string.home_filter_all_value);
+        } else {
+            tvHomeSelectedFilter.setText(currentFilterType);
+        }
+
+        boolean showEmptyState = resultCount == 0;
+        homeEmptyStateCard.setVisibility(showEmptyState ? View.VISIBLE : View.GONE);
+        carsRecyclerView.setVisibility(showEmptyState ? View.GONE : View.VISIBLE);
+
+        if (!showEmptyState) {
+            return;
+        }
+
+        if (carList.isEmpty()) {
+            tvHomeEmptyTitle.setText(R.string.home_empty_inventory_title);
+            tvHomeEmptyBody.setText(R.string.home_empty_inventory_body);
+            return;
+        }
+
+        tvHomeEmptyTitle.setText(R.string.home_empty_filtered_title);
+        tvHomeEmptyBody.setText(R.string.home_empty_filtered_body);
     }
 
     private void updateButtonStyles() {

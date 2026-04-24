@@ -85,6 +85,13 @@ public class SignInActivity extends AppCompatActivity {
                         if (user != null) {
                             userRepository.getById(user.getUid())
                                     .addOnSuccessListener(doc -> {
+                                        if (doc == null || !doc.exists()) {
+                                            mAuth.signOut();
+                                            Toast.makeText(SignInActivity.this,
+                                                    "No account found for this email. Please sign up first.",
+                                                    Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
                                         UserRole role = UserRole.from(doc.getString("role"));
                                         if (role == UserRole.ADMIN) {
                                             AdminAccessManager.verifyOperationalAccess(

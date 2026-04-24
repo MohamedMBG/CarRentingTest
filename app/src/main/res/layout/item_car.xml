@@ -10,67 +10,98 @@
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="@color/colorSurface"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="4dp"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="0dp"
     app:strokeColor="@color/homeCardStroke"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="15dp">
+        android:paddingStart="18dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="18dp">
 
-        <!-- Header Section -->
-        <TextView
-            android:id="@+id/carAvailability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_luxury"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.05"
-            android:text="@string/car_available"
-            android:textAllCaps="true"
-            android:textColor="@color/homeHighlightTitle"
-            android:textSize="10sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Car Image with Gradient Background -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/imageContainer"
+        <LinearLayout
+            android:id="@+id/topRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:layout_constraintTop_toBottomOf="@id/carAvailability"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/carAvailability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_luxury"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.05"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/car_available"
+                android:textAllCaps="true"
+                android:textColor="@color/homeHighlightTitle"
+                android:textSize="10sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/carType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_soft"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/suv"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/imageContainer"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/home_car_image_height"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_car_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topRow">
+
+            <View
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_car_image_accent" />
 
             <ImageView
                 android:id="@+id/carImage"
-                android:layout_width="wrap_content"
-                android:layout_height="220dp"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/car_placeholder"
-                android:contentDescription="@string/car_image_content_description" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/car_image_content_description"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/car_placeholder" />
+        </FrameLayout>
 
-        </androidx.cardview.widget.CardView>
-
-        <!-- Car Model Name -->
         <TextView
             android:id="@+id/carModel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="18dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
@@ -82,60 +113,64 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Info Row: Type, Transmission, Seats -->
         <LinearLayout
             android:id="@+id/infoRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:gravity="start"
             android:baselineAligned="false"
+            android:gravity="start"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/carModel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Car Type -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_badge_soft"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="16dp">
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp">
 
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_car"
-                    app:tint="@color/iconTint"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_transmission"
+                    app:tint="@color/iconTint" />
 
                 <TextView
-                    android:id="@+id/carType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="@string/suv"
+                    android:text="@string/label_transmission"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif" />
-
+                    android:textSize="12sp" />
             </LinearLayout>
 
-            <!-- Transmission -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_badge_soft"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="16dp">
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp">
 
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_transmission"
-                    app:tint="@color/iconTint"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_car"
+                    app:tint="@color/iconTint" />
 
                 <TextView
                     android:id="@+id/carTransmission"
@@ -144,24 +179,27 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/transmission_unknown"
                     android:textColor="@color/textColorSecondary"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif" />
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-            <!-- Seats -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_soft"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp">
 
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_seats"
-                    app:tint="@color/iconTint"
-                    android:contentDescription="@null" />
+                    app:tint="@color/iconTint" />
 
                 <TextView
                     android:id="@+id/carSeats"
@@ -177,25 +215,24 @@
 
         </LinearLayout>
 
-        <!-- Divider -->
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:background="@color/homeCardStroke"
             app:layout_constraintTop_toBottomOf="@id/infoRow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Bottom Row: Price and CTA -->
         <LinearLayout
             android:id="@+id/bottomRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/divider"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -270,6 +307,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/rentButton"
+                style="@style/Widget.CarRentingTest.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="16dp"
@@ -279,13 +317,8 @@
                 android:fontFamily="sans-serif-medium"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:textColor="@color/colorOnPrimary"
                 app:cornerRadius="12dp"
-                app:elevation="0dp"
-                app:backgroundTint="@color/colorPrimary"
-                style="@style/Widget.MaterialComponents.Button" />
-
-
+                app:elevation="0dp" />
 
         </LinearLayout>
 
@@ -293,7 +326,7 @@
             android:id="@+id/rentalCountGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="@+id/bottomRow"
             app:layout_constraintStart_toStartOf="@+id/bottomRow"
@@ -305,7 +338,8 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/times_rented_label"
                 android:textColor="@color/textColorSecondary"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="match_parent"

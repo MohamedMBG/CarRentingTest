@@ -35,6 +35,9 @@
     <string name="home_highlight_title" tools:ignore="MissingTranslation">Member concierge</string>
     <string name="home_highlight_subtitle" tools:ignore="MissingTranslation">Personalized car recommendations and priority pick-up</string>
     <string name="home_filter_label" tools:ignore="MissingTranslation">Browse by type</string>
+    <string name="home_live_inventory_label" tools:ignore="MissingTranslation">Live inventory</string>
+    <string name="home_active_filter_label" tools:ignore="MissingTranslation">Current filter</string>
+    <string name="home_filter_all_value" tools:ignore="MissingTranslation">All vehicles</string>
     <string name="home_quick_filters" tools:ignore="MissingTranslation">Quick filters</string>
     <string name="filter_suv_getaways" tools:ignore="MissingTranslation">SUV getaways</string>
     <string name="filter_under_price_daily" tools:ignore="MissingTranslation">Under $90/day</string>
@@ -51,6 +54,11 @@
     <string name="category_business_class" tools:ignore="MissingTranslation">Business class</string>
     <string name="category_business_class_meta" tools:ignore="MissingTranslation">Premium sedans</string>
     <string name="home_available_cars">Available vehicles</string>
+    <string name="home_available_cars_subtitle" tools:ignore="MissingTranslation">Choose a model and book in minutes.</string>
+    <string name="home_empty_inventory_title" tools:ignore="MissingTranslation">No vehicles available right now</string>
+    <string name="home_empty_inventory_body" tools:ignore="MissingTranslation">New arrivals will show up here as soon as your rental agency publishes them.</string>
+    <string name="home_empty_filtered_title" tools:ignore="MissingTranslation">No matches for this search</string>
+    <string name="home_empty_filtered_body" tools:ignore="MissingTranslation">Try another keyword or switch to a different vehicle type.</string>
     <string name="home_featured_rides" tools:ignore="MissingTranslation">Featured rides</string>
     <string name="home_featured_rides_subtitle" tools:ignore="MissingTranslation">Curated picks loved by our community</string>
     <string name="search_field_hint" tools:ignore="MissingTranslation">Search by model, brand or experience</string>
@@ -137,6 +145,22 @@
     <string name="approve">Approve</string>
     <string name="reject">Reject</string>
     <string name="my_profile">My Profile</string>
+    <string name="profile_header_eyebrow" tools:ignore="MissingTranslation">Account overview</string>
+    <string name="profile_contact_subtitle" tools:ignore="MissingTranslation">Your booking and contact details in one place.</string>
+    <string name="profile_verification_status_title" tools:ignore="MissingTranslation">Verification status</string>
+    <string name="profile_verification_status_ready" tools:ignore="MissingTranslation">Ready to book</string>
+    <string name="profile_verification_status_pending" tools:ignore="MissingTranslation">Verification required</string>
+    <string name="profile_verification_not_started" tools:ignore="MissingTranslation">Verification not started</string>
+    <string name="profile_verification_submitted" tools:ignore="MissingTranslation">Documents submitted</string>
+    <string name="profile_verification_under_review" tools:ignore="MissingTranslation">Under review</string>
+    <string name="profile_verification_approved" tools:ignore="MissingTranslation">Verified for bookings</string>
+    <string name="profile_verification_rejected" tools:ignore="MissingTranslation">Verification needs attention</string>
+    <string name="profile_verification_not_started_body" tools:ignore="MissingTranslation">Complete verification once to unlock seamless bookings.</string>
+    <string name="profile_verification_submitted_body" tools:ignore="MissingTranslation">Your documents were received and are waiting for review.</string>
+    <string name="profile_verification_under_review_body" tools:ignore="MissingTranslation">We are reviewing your details. Booking will open after approval.</string>
+    <string name="profile_verification_approved_body" tools:ignore="MissingTranslation">Your identity is confirmed and you can reserve vehicles instantly.</string>
+    <string name="profile_verification_rejected_body" tools:ignore="MissingTranslation">Please try verification again to continue booking vehicles.</string>
+    <string name="profile_edit_unavailable" tools:ignore="MissingTranslation">Profile editing is not available yet.</string>
     <string name="name_label">Name:</string>
     <string name="loading">Loading...</string>
     <string name="email_label">Email:</string>
@@ -186,6 +210,17 @@
     <string name="report_issue_success">Report sent to the admin.</string>
     <string name="report_issue_error">Couldn’t submit the report. Please try again.</string>
     <string name="report_issue_validation">Please describe the issue before submitting.</string>
+    <string name="requests_history_subtitle" tools:ignore="MissingTranslation">Track approvals, completed trips and support actions.</string>
+    <string name="requests_empty_title" tools:ignore="MissingTranslation">No rentals yet</string>
+    <string name="requests_empty_body" tools:ignore="MissingTranslation">Your bookings and past trips will appear here once you make a request.</string>
+    <string name="request_status_pending_short" tools:ignore="MissingTranslation">Pending</string>
+    <string name="request_status_approved_short" tools:ignore="MissingTranslation">Approved</string>
+    <string name="request_status_completed_short" tools:ignore="MissingTranslation">Completed</string>
+    <string name="request_status_rejected_short" tools:ignore="MissingTranslation">Rejected</string>
+    <string name="request_status_unknown_short" tools:ignore="MissingTranslation">Unknown</string>
+    <string name="request_dates_label" tools:ignore="MissingTranslation">Trip dates</string>
+    <string name="request_completion_label" tools:ignore="MissingTranslation">Returned</string>
+    <string name="request_special_request_label" tools:ignore="MissingTranslation">Special request</string>
 
     <string name="pickup_location_title">Pickup location</string>
     <string name="pickup_location_subtitle">See where to collect the vehicle.</string>
@@ -401,4 +436,13 @@
     <string name="booking_confirmed_message">Your car is reserved. Have a safe trip!</string>
     <string name="done">Done</string>
     <string name="btn_back">Back</string>
+
+    <plurals name="home_vehicle_count">
+        <item quantity="one">%d vehicle</item>
+        <item quantity="other">%d vehicles</item>
+    </plurals>
+    <plurals name="requests_count_summary">
+        <item quantity="one">%d rental request</item>
+        <item quantity="other">%d rental requests</item>
+    </plurals>
 </resources>

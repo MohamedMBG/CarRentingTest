@@ -52,15 +52,15 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
 
         h.tvCarModel.setText(r.getCarModel() != null ? r.getCarModel() : context.getString(R.string.active_rental_unknown_car));
         h.tvDates.setText(formatDates(r.getStartDate(), r.getEndDate()));
-        h.tvStatus.setText(context.getString(R.string.status_label, r.getStatus() != null ? r.getStatus() : context.getString(R.string.unknown_status)));
-        h.tvStatus.setTextColor(getStatusColor(r.getStatus()));
+        bindStatus(h.tvStatus, RentalRequestStatus.from(r.getStatus()));
 
         Date completedAt = r.getCompletedAt();
         boolean showCompletion = completedAt != null
                 && RentalRequestStatus.from(r.getStatus()) == RentalRequestStatus.COMPLETED;
         h.tvCompletedAt.setVisibility(showCompletion ? View.VISIBLE : View.GONE);
         if (showCompletion) {
-            h.tvCompletedAt.setText(context.getString(R.string.completed_on_format, completedFormat.format(completedAt)));
+            h.tvCompletedAt.setText(context.getString(R.string.request_completion_label) + ": "
+                    + completedFormat.format(completedAt));
         } else {
             h.tvCompletedAt.setText(null);
         }
@@ -68,7 +68,8 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         boolean hasRequests = r.getAdditionalRequests() != null && !r.getAdditionalRequests().isEmpty();
         h.tvRequests.setVisibility(hasRequests ? View.VISIBLE : View.GONE);
         if (hasRequests) {
-            h.tvRequests.setText(context.getString(R.string.additional_requests_format, r.getAdditionalRequests()));
+            h.tvRequests.setText(context.getString(R.string.request_special_request_label) + ": "
+                    + r.getAdditionalRequests());
         } else {
             h.tvRequests.setText(null);
         }
@@ -113,18 +114,41 @@ public class ClientRentalRequestAdapter extends RecyclerView.Adapter<ClientRenta
         return f.format(s != null ? s : new Date(0)) + " to " + f.format(e != null ? e : new Date(0));
     }
 
-    private int getStatusColor(String s) {
-        if (s == null) {
-            return ContextCompat.getColor(context, R.color.colorWarning);
-        }
-        switch (s.toLowerCase(Locale.getDefault())) {
-            case "approved":
-            case "completed":
-                return ContextCompat.getColor(context, R.color.colorSuccess);
-            case "rejected":
-                return ContextCompat.getColor(context, R.color.colorError);
+    private void bindStatus(TextView statusView, RentalRequestStatus status) {
+        int backgroundRes;
+        int textColor;
+        int textRes;
+
+        switch (status) {
+            case APPROVED:
+                backgroundRes = R.drawable.bg_status_approved;
+                textColor = R.color.colorSuccess;
+                textRes = R.string.request_status_approved_short;
+                break;
+            case COMPLETED:
+                backgroundRes = R.drawable.bg_status_approved;
+                textColor = R.color.colorSuccess;
+                textRes = R.string.request_status_completed_short;
+                break;
+            case REJECTED:
+                backgroundRes = R.drawable.bg_status_rejected;
+                textColor = R.color.colorError;
+                textRes = R.string.request_status_rejected_short;
+                break;
+            case PENDING:
+                backgroundRes = R.drawable.bg_status_pending;
+                textColor = R.color.colorWarning;
+                textRes = R.string.request_status_pending_short;
+                break;
             default:
-                return ContextCompat.getColor(context, R.color.colorWarning);
+                backgroundRes = R.drawable.bg_badge_soft;
+                textColor = R.color.colorPrimary;
+                textRes = R.string.request_status_unknown_short;
+                break;
         }
+
+        statusView.setBackgroundResource(backgroundRes);
+        statusView.setText(textRes);
+        statusView.setTextColor(ContextCompat.getColor(context, textColor));
     }
 }

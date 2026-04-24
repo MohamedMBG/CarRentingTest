@@ -36,6 +36,9 @@ public class RequestsHistoryFragment extends Fragment {
     private ClientRentalRequestAdapter adapter;
     private List<RentalRequest> requestList;
     private TextView tvNoRequests;
+    private TextView tvNoRequestsBody;
+    private TextView tvRequestCount;
+    private View requestsEmptyState;
     private FirebaseAuth mAuth;
     private ListenerRegistration historyRegistration;
     private RentalRequestRepository rentalRequestRepository;
@@ -60,6 +63,9 @@ public class RequestsHistoryFragment extends Fragment {
         // Initialize views
         requestsRecyclerView = view.findViewById(R.id.requestsRecyclerView);
         tvNoRequests = view.findViewById(R.id.tvNoRequests);
+        tvNoRequestsBody = view.findViewById(R.id.tvNoRequestsBody);
+        tvRequestCount = view.findViewById(R.id.tvRequestCount);
+        requestsEmptyState = view.findViewById(R.id.requestsEmptyState);
 
         // Setup RecyclerView
         requestsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -120,7 +126,11 @@ public class RequestsHistoryFragment extends Fragment {
 
                     boolean empty = requestList.isEmpty();
                     requestsRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
-                    tvNoRequests.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    requestsEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    tvRequestCount.setText(getResources().getQuantityString(
+                            R.plurals.requests_count_summary,
+                            requestList.size(),
+                            requestList.size()));
                     adapter.notifyDataSetChanged();
                 });
     }
