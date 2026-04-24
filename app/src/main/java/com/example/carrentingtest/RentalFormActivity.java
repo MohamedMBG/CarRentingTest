@@ -61,6 +61,12 @@ public class RentalFormActivity extends AppCompatActivity {
     private TextView tvAdminPhone;
     private TextView tvPickupCompanyName;
     private TextView tvPickupAddress;
+    private TextView tvCarType;
+    private TextView tvCarPrice;
+    private TextView tvCarSeats;
+    private TextView tvCarTransmission;
+    private TextView tvCarAvailability;
+    private TextView tvCarRentalCount;
     private MaterialButton btnCallAdmin;
     private MaterialButton btnOpenMaps;
     private CarImagePagerAdapter imagePagerAdapter;
@@ -137,6 +143,12 @@ public class RentalFormActivity extends AppCompatActivity {
         tvAdminPhone = findViewById(R.id.tvAdminPhone);
         tvPickupCompanyName = findViewById(R.id.tvPickupCompanyName);
         tvPickupAddress = findViewById(R.id.tvPickupAddress);
+        tvCarType = findViewById(R.id.tvCarType);
+        tvCarPrice = findViewById(R.id.tvCarPrice);
+        tvCarSeats = findViewById(R.id.tvCarSeats);
+        tvCarTransmission = findViewById(R.id.tvCarTransmission);
+        tvCarAvailability = findViewById(R.id.tvCarAvailability);
+        tvCarRentalCount = findViewById(R.id.tvCarRentalCount);
         btnCallAdmin = findViewById(R.id.btnCallAdmin);
         btnOpenMaps = findViewById(R.id.btnOpenInMaps);
 
@@ -155,6 +167,24 @@ public class RentalFormActivity extends AppCompatActivity {
     private void setupCarDetails() {
         // Set the car model text
         ((TextView) findViewById(R.id.tvSelectedCar)).setText(selectedCar.getModel());
+        tvCarType.setText(!TextUtils.isEmpty(selectedCar.getType())
+                ? selectedCar.getType()
+                : getString(R.string.stat_placeholder_dash));
+        tvCarPrice.setText(getString(R.string.price_per_day_format, selectedCar.getPricePerDay()));
+        tvCarSeats.setText(selectedCar.getSeats() > 0
+                ? getResources().getQuantityString(R.plurals.car_seats_count, selectedCar.getSeats(), selectedCar.getSeats())
+                : getString(R.string.seats_unknown));
+        tvCarTransmission.setText(!TextUtils.isEmpty(selectedCar.getTransmissionType())
+                ? selectedCar.getTransmissionType()
+                : getString(R.string.transmission_unknown));
+        tvCarAvailability.setText(selectedCar.isMaintenance()
+                ? getString(R.string.maintenance_status)
+                : getString(selectedCar.isAvailable() ? R.string.car_available : R.string.car_unavailable));
+        tvCarRentalCount.setText(selectedCar.getRentalCount() > 0
+                ? getResources().getQuantityString(R.plurals.times_rented_value,
+                        selectedCar.getRentalCount(),
+                        selectedCar.getRentalCount())
+                : getString(R.string.times_rented_never));
 
         List<String> imageUrls = selectedCar.getImageUrls();
         imagePagerAdapter = new CarImagePagerAdapter(this, imageUrls);

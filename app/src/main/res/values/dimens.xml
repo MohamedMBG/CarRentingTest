@@ -11,4 +11,11 @@
     <dimen name="home_hero_bottom_padding">72dp</dimen>
     <dimen name="home_search_card_translation">-48dp</dimen>
     <dimen name="home_featured_image_min_height">140dp</dimen>
+
+    <dimen name="verification_screen_padding">20dp</dimen>
+    <dimen name="verification_content_max_width">560dp</dimen>
+    <dimen name="verification_section_gap">20dp</dimen>
+    <dimen name="verification_preview_min_height">220dp</dimen>
+    <dimen name="verification_button_height">56dp</dimen>
+    <dimen name="verification_result_icon_size">72dp</dimen>
 </resources>

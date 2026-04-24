@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CarRentingTest</string>
+    <string name="vehicle_overview">Apercu du vehicule</string>
+    <string name="vehicle_type_label">Type</string>
+    <string name="daily_rate_label">Tarif journalier</string>
+    <string name="seats_label">Places</string>
+    <string name="transmission_label">Transmission</string>
+    <string name="availability_label">Disponibilite</string>
+    <string name="popularity_label">Historique</string>
+    <string name="maintenance_status">Maintenance</string>
     <string name="admin_login_title">Connexion Admin</string>
     <string name="login">Se connecter</string>
     <string name="register_company">Enregistrer l\'entreprise</string>
@@ -80,7 +88,7 @@
     <string name="total_rentals">Nombre total de locations : %1$d</string>
     <string name="edit_profile">Modifier profile</string>
     <string name="action_delete">Supprimer</string>
-    <string name="rental_additional_requests_hint">Demandes supplémentaires</string>
+    <string name="rental_additional_requests_hint">Siege enfant, heure de retrait, bagages ou autre demande</string>
     <string name="nav_home">Accueil</string>
     <string name="nav_history">Historique</string>
     <string name="nav_profile">Profil</string>
@@ -91,5 +99,13 @@
     <string name="license_upload_front_action">Télécharger la face avant</string>
     <string name="license_upload_back_title">Télécharger la face arrière du permis</string>
     <string name="license_upload_back_action">Télécharger la face arrière</string>
+    <string name="selfie_step_header">Etape 2 sur 2 : prendre un selfie</string>
+    <string name="license_step_header">Etape 1 sur 2 : telecharger votre permis</string>
+    <string name="license_upload_helper">Utilisez une image claire de la face avant ou le portrait et les details sont lisibles.</string>
+    <string name="license_upload_card_text">Le portrait du permis sera compare au selfie pris ensuite.</string>
+    <string name="selfie_capture_helper">Prenez une photo recente avec une bonne lumiere. Seul votre visage doit etre visible.</string>
+    <string name="selfie_capture_card_text">Nous comparons ce selfie avec le visage sur votre permis.</string>
+    <string name="verification_success_with_score">Verification reussie. Score de correspondance : %.0f%%</string>
+    <string name="verification_failed_with_reason">Verification echouee : %1$s</string>
 
 </resources>

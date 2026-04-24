@@ -29,21 +29,21 @@ public class VerificationFlowActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new SelfieCaptureFragment())
+                    .replace(R.id.container, new LicenseCaptureFragment())
                     .commit();
         }
     }
 
-    public void onSelfieCaptured(Uri uri) {
-        viewModel.setSelfieUri(uri);
+    public void onLicenseCaptured(Uri uri) {
+        viewModel.setLicenseUri(uri);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new LicenseCaptureFragment())
+                .replace(R.id.container, new SelfieCaptureFragment())
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void onLicenseCaptured(Uri uri) {
-        viewModel.setLicenseUri(uri);
+    public void onSelfieCaptured(Uri uri) {
+        viewModel.setSelfieUri(uri);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, new VerificationResultFragment())
                 .addToBackStack(null)

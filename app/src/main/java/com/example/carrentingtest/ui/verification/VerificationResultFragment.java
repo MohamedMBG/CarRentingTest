@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -38,14 +40,23 @@ public class VerificationResultFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(VerificationViewModel.class);
 
         TextView txt = view.findViewById(R.id.txtResult);
+        TextView detail = view.findViewById(R.id.txtResultDetail);
+        ImageView icon = view.findViewById(R.id.imgResultIcon);
 
-        verificationService = new FirebaseVerificationService();
+        verificationService = new FirebaseVerificationService(requireContext());
 
         Uri selfie = viewModel.getSelfieUri();
         Uri license = viewModel.getLicenseUri();
 
         if (selfie == null || license == null) {
-            txt.setText(getString(R.string.verification_failed));
+            bindResultState(
+                    new VerificationResult(
+                            VerificationResult.Status.REJECTED,
+                            0.0,
+                            getString(R.string.verification_failed)),
+                    txt,
+                    detail,
+                    icon);
             return;
         }
 
@@ -55,9 +66,10 @@ public class VerificationResultFragment extends Fragment {
             viewModel.setSubmitting(false);
             if (result == null) return;
 
-            txt.setText(mapStatusMessage(result.getStatus()));
+            bindResultState(result, txt, detail, icon);
             android.os.Bundle params = new android.os.Bundle();
             params.putString("status", result.getStatus().name());
+            params.putDouble("face_match_score", result.getFaceMatchScore());
             com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verification_result", params);
             updateUserVerificationStatus(result.getStatus());
             if (result.getStatus() == VerificationResult.Status.APPROVED) {
@@ -67,16 +79,64 @@ public class VerificationResultFragment extends Fragment {
         });
     }
 
-    private CharSequence mapStatusMessage(VerificationResult.Status status) {
-        switch (status) {
+    private void bindResultState(@NonNull VerificationResult result,
+                                 @NonNull TextView title,
+                                 @NonNull TextView detail,
+                                 @NonNull ImageView icon) {
+        title.setText(mapStatusMessage(result));
+
+        int iconDrawable;
+        int iconBackground;
+        int iconTint;
+        int titleColor;
+        int detailText;
+
+        switch (result.getStatus()) {
             case APPROVED:
-                return getString(R.string.verification_success);
+                iconDrawable = R.drawable.ic_check_circle;
+                iconBackground = R.drawable.bg_result_success;
+                iconTint = R.color.colorSuccess;
+                titleColor = R.color.colorSuccess;
+                detailText = R.string.profile_verification_approved_body;
+                break;
+            case SUBMITTED:
+            case UNDER_REVIEW:
+                iconDrawable = R.drawable.ic_clock_status;
+                iconBackground = R.drawable.bg_result_pending;
+                iconTint = R.color.colorWarning;
+                titleColor = R.color.textColorPrimary;
+                detailText = R.string.profile_verification_under_review_body;
+                break;
+            case REJECTED:
+            default:
+                iconDrawable = R.drawable.ic_alert_circle;
+                iconBackground = R.drawable.bg_result_error;
+                iconTint = R.color.colorError;
+                titleColor = R.color.colorError;
+                detailText = R.string.profile_verification_rejected_body;
+                break;
+        }
+
+        icon.setImageResource(iconDrawable);
+        icon.setBackgroundResource(iconBackground);
+        icon.setColorFilter(ContextCompat.getColor(requireContext(), iconTint));
+        title.setTextColor(ContextCompat.getColor(requireContext(), titleColor));
+        detail.setText(detailText);
+    }
+
+    private CharSequence mapStatusMessage(VerificationResult result) {
+        switch (result.getStatus()) {
+            case APPROVED:
+                return getString(R.string.verification_success_with_score, result.getFaceMatchScore() * 100.0);
             case SUBMITTED:
             case UNDER_REVIEW:
                 return getString(R.string.verification_pending);
             case REJECTED:
             default:
-                return getString(R.string.verification_failed);
+                String message = result.getMessage();
+                return message != null && !message.trim().isEmpty()
+                        ? getString(R.string.verification_failed_with_reason, message)
+                        : getString(R.string.verification_failed);
         }
     }
 

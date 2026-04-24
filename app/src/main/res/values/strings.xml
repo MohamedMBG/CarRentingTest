@@ -12,6 +12,14 @@
     <string name="rental_request">Rental Request</string>
     <string name="booking_details">Complete your booking details</string>
     <string name="selected_vehicle">Selected Vehicle</string>
+    <string name="vehicle_overview" tools:ignore="MissingTranslation">Vehicle overview</string>
+    <string name="vehicle_type_label" tools:ignore="MissingTranslation">Type</string>
+    <string name="daily_rate_label" tools:ignore="MissingTranslation">Daily rate</string>
+    <string name="seats_label" tools:ignore="MissingTranslation">Seats</string>
+    <string name="transmission_label" tools:ignore="MissingTranslation">Transmission</string>
+    <string name="availability_label" tools:ignore="MissingTranslation">Availability</string>
+    <string name="popularity_label" tools:ignore="MissingTranslation">Booking history</string>
+    <string name="maintenance_status" tools:ignore="MissingTranslation">Maintenance</string>
     <string name="rental_period">Rental Period</string>
     <string name="select_start_date">Select start date</string>
     <string name="select_end_date">Select end date</string>
@@ -206,7 +214,7 @@
     <string name="report_issue_title">Tell us what happened</string>
     <string name="report_issue_message">We’ll send this directly to the rental admin.</string>
     <string name="report_issue_hint">Describe the issue…</string>
-    <string name="rental_additional_requests_hint">Additional requests</string>
+    <string name="rental_additional_requests_hint">Child seat, pickup time, luggage space, or other requests</string>
     <string name="report_issue_success">Report sent to the admin.</string>
     <string name="report_issue_error">Couldn’t submit the report. Please try again.</string>
     <string name="report_issue_validation">Please describe the issue before submitting.</string>
@@ -308,11 +316,17 @@
     <string name="modal_body_verify_once" tools:ignore="MissingTranslation">Verify your driver’s license once to protect the community and prevent fraud.</string>
     <string name="modal_button_verify_now" tools:ignore="MissingTranslation">Verify now</string>
     <string name="modal_button_cancel" tools:ignore="MissingTranslation">Cancel</string>
-    <string name="selfie_step_header" tools:ignore="MissingTranslation">Step 1 of 2 — Take a quick selfie</string>
-    <string name="license_step_header" tools:ignore="MissingTranslation">Step 2 of 2 — Scan your driver’s license</string>
-    <string name="verification_success" tools:ignore="MissingTranslation">✅ Verification successful — you’re ready to drive!</string>
+    <string name="selfie_step_header" tools:ignore="MissingTranslation">Step 2 of 2: Take a quick selfie</string>
+    <string name="license_step_header" tools:ignore="MissingTranslation">Step 1 of 2: Upload your driver license</string>
+    <string name="license_upload_helper" tools:ignore="MissingTranslation">Use a clear front-side image where the portrait and license details are readable.</string>
+    <string name="license_upload_card_text" tools:ignore="MissingTranslation">Your license portrait will be compared with the selfie you take next.</string>
+    <string name="selfie_capture_helper" tools:ignore="MissingTranslation">Take a fresh photo in good light. Only your face should be visible.</string>
+    <string name="selfie_capture_card_text" tools:ignore="MissingTranslation">We compare this selfie with the face on your driver license.</string>
+    <string name="verification_success" tools:ignore="MissingTranslation">Verification successful. You are ready to drive.</string>
+    <string name="verification_success_with_score" tools:ignore="MissingTranslation">Verification successful. Face match score: %.0f%%</string>
     <string name="verification_pending" tools:ignore="MissingTranslation">We’re reviewing your info. You’ll get a notification shortly.</string>
     <string name="verification_failed" tools:ignore="MissingTranslation">We couldn’t verify your details. Please try again or contact support.</string>
+    <string name="verification_failed_with_reason" tools:ignore="MissingTranslation">Verification failed: %1$s</string>
 
     <!-- Legacy/onboarding and capture strings to satisfy existing layouts -->
     <string name="skip" tools:ignore="MissingTranslation">Skip</string>

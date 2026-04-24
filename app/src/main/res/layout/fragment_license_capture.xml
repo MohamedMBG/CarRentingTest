@@ -1,26 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/colorBackground">
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:padding="@dimen/verification_screen_padding">
 
-    <TextView
-        android:id="@+id/txtHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/textColorPrimary"
-        android:layout_marginBottom="12dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCapture"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/capture_front"/>
+        android:minHeight="0dp">
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/contentPanel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_verification_surface"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/verification_content_max_width">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_verification_step"
+                android:gravity="center"
+                android:minWidth="92dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:text="@string/verify_title"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/license_upload_helper"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/verification_section_gap"
+                android:background="@drawable/bg_verification_preview"
+                android:gravity="center"
+                android:minHeight="@dimen/verification_preview_min_height"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_card_membership"
+                    app:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="3dp"
+                    android:text="@string/license_upload_card_text"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpload"
+                style="@style/Widget.CarRentingTest.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/verification_button_height"
+                android:layout_marginTop="@dimen/verification_section_gap"
+                android:text="@string/license_upload_front_action"
+                app:icon="@drawable/ic_card_membership"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCapture"
+                style="@style/Widget.CarRentingTest.Button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/verification_button_height"
+                android:layout_marginTop="12dp"
+                android:text="@string/capture_front"
+                app:icon="@drawable/ic_camera"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
 
 

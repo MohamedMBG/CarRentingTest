@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="verification_screen_padding">18dp</dimen>
+    <dimen name="verification_content_max_width">720dp</dimen>
+    <dimen name="verification_section_gap">16dp</dimen>
+    <dimen name="verification_preview_min_height">160dp</dimen>
+    <dimen name="verification_button_height">52dp</dimen>
+    <dimen name="verification_result_icon_size">64dp</dimen>
+</resources>

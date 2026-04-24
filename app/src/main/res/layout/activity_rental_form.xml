@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:app2="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -295,280 +294,344 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/vehicle_overview"
+                    android:textColor="@color/palette_dark_blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_margin="10dp">
+                            android:padding="14dp">
 
                             <ImageView
-                                android:id="@+id/imageView"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/vehicle_type_label"
+                                android:src="@drawable/ic_type"
+                                app:tint="@color/palette_teal" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
                                 android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
+                                android:text="@string/vehicle_type_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvCarType"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"/>
+                                tools:text="SUV" />
 
                         </LinearLayout>
 
+                    </com.google.android.material.card.MaterialCardView>
 
-                    </androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_margin="10dp">
+                            android:padding="14dp">
 
                             <ImageView
-                                android:id="@+id/imageView2"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/daily_rate_label"
+                                android:src="@drawable/ic_price"
+                                app:tint="@color/palette_teal" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
                                 android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
+                                android:text="@string/daily_rate_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvCarPrice"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"/>
+                                tools:text="350 dhs / day" />
 
                         </LinearLayout>
 
-
-                    </androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:layout_margin="10dp">
-
-                            <ImageView
-                                android:id="@+id/imageView3"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
-                                android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"
-                                android:textSize="18sp"/>
-
-                        </LinearLayout>
-
-
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="12dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_margin="10dp">
+                            android:padding="14dp">
 
                             <ImageView
-                                android:id="@+id/imageView4"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/seats_label"
+                                android:src="@drawable/ic_seats"
+                                app:tint="@color/palette_teal" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
                                 android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
+                                android:text="@string/seats_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvCarSeats"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"/>
+                                tools:text="5 seats" />
 
                         </LinearLayout>
 
+                    </com.google.android.material.card.MaterialCardView>
 
-                    </androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_margin="10dp">
+                            android:padding="14dp">
 
                             <ImageView
-                                android:id="@+id/imageView5"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/transmission_label"
+                                android:src="@drawable/ic_transmission"
+                                app:tint="@color/palette_teal" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
                                 android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
+                                android:text="@string/transmission_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvCarTransmission"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"/>
+                                tools:text="Automatic" />
 
                         </LinearLayout>
 
+                    </com.google.android.material.card.MaterialCardView>
 
-                    </androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#F8F8F8"
-                        android:layout_margin="5dp"
-                        android:elevation="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_margin="10dp">
+                            android:padding="14dp">
 
                             <ImageView
-                                android:id="@+id/imageView6"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app2:srcCompat="@drawable/seat_icon" />
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/availability_label"
+                                android:src="@drawable/ic_car"
+                                app:tint="@color/palette_teal" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Capacity"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="20dp"
                                 android:layout_marginTop="10dp"
-                                android:textSize="18sp"/>
+                                android:text="@string/availability_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvCarAvailability"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="5 Seats"
-                                android:textColor="@color/black"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"/>
+                                tools:text="Available" />
 
                         </LinearLayout>
 
+                    </com.google.android.material.card.MaterialCardView>
 
-                    </androidx.cardview.widget.CardView>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/homeCardStroke"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="@string/popularity_label"
+                                android:src="@drawable/ic_requests"
+                                app:tint="@color/palette_teal" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="@string/popularity_label"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCarRentalCount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textColor="@color/palette_dark_blue"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="Rented 4 times" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
             </LinearLayout>
 
             <!-- Date Selection Section -->
             <TextView
-                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/rental_period"
