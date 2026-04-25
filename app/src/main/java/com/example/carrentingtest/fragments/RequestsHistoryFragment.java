@@ -150,7 +150,7 @@ public class RequestsHistoryFragment extends Fragment {
                 .setMessage(R.string.report_issue_message)
                 .setView(dialogView)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                .setPositiveButton(android.R.string.ok, (clickedDialog, which) -> {
                     String description = input.getText() != null ? input.getText().toString().trim() : "";
                     if (TextUtils.isEmpty(description)) {
                         Toast.makeText(requireContext(), R.string.report_issue_validation, Toast.LENGTH_SHORT).show();

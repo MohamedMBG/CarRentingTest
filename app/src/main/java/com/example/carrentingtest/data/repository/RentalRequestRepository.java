@@ -39,4 +39,18 @@ public class RentalRequestRepository {
                 .whereEqualTo("userId", userId)
                 .addSnapshotListener(listener);
     }
+
+    public Task<QuerySnapshot> getApprovedForCar(@Nullable String companyId, @Nullable String carId) {
+        if (companyId == null || companyId.trim().isEmpty()) {
+            return Tasks.forException(new IllegalArgumentException("Company id is required."));
+        }
+        if (carId == null || carId.trim().isEmpty()) {
+            return Tasks.forException(new IllegalArgumentException("Car id is required."));
+        }
+        return firestore.collection("rental_requests")
+                .whereEqualTo("companyId", companyId)
+                .whereEqualTo("carId", carId)
+                .whereEqualTo("status", com.example.carrentingtest.domain.RentalRequestStatus.APPROVED.getStorageValue())
+                .get();
+    }
 }

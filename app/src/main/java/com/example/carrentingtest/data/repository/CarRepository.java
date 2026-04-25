@@ -50,7 +50,6 @@ public class CarRepository {
         }
         return firestore.collection("cars")
                 .whereEqualTo("companyId", companyId)
-                .whereEqualTo("available", true)
                 .whereEqualTo("maintenance", false)
                 .get()
                 .continueWithTask(task -> {

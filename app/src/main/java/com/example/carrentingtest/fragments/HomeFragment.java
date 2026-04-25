@@ -73,21 +73,21 @@ public class HomeFragment extends Fragment {
         carList = new ArrayList<>();
         filteredCarList = new ArrayList<>();
         carAdapter = new CarGridAdapter(filteredCarList, (selectedCar, sharedImageView) -> {
-            if (selectedCar.isAvailable()) {
-                Intent intent = new Intent(getActivity(), RentalFormActivity.class);
-                intent.putExtra("selectedCar", selectedCar);
-
-                String transitionName = androidx.core.view.ViewCompat.getTransitionName(sharedImageView);
-                androidx.core.app.ActivityOptionsCompat options = androidx.core.app.ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(
-                                getActivity(),
-                                sharedImageView,
-                                transitionName);
-
-                startActivity(intent, options.toBundle());
-            } else {
-                Toast.makeText(getContext(), "This car is currently unavailable.", Toast.LENGTH_SHORT).show();
+            if (selectedCar.isMaintenance()) {
+                Toast.makeText(getContext(), R.string.request_car_maintenance, Toast.LENGTH_SHORT).show();
+                return;
             }
+            Intent intent = new Intent(getActivity(), RentalFormActivity.class);
+            intent.putExtra("selectedCar", selectedCar);
+
+            String transitionName = androidx.core.view.ViewCompat.getTransitionName(sharedImageView);
+            androidx.core.app.ActivityOptionsCompat options = androidx.core.app.ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(
+                            getActivity(),
+                            sharedImageView,
+                            transitionName);
+
+            startActivity(intent, options.toBundle());
         });
         carsRecyclerView.setAdapter(carAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);

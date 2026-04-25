@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.Date;
 
@@ -49,10 +50,6 @@ public class SubmitRentalRequestUseCase {
 
         if (PricingService.quote(selectedCar, startDate, endDate) == null) {
             return Tasks.forException(new IllegalStateException("Unable to calculate pricing for this rental period."));
-        }
-
-        if (!selectedCar.isAvailable()) {
-            return Tasks.forException(new IllegalStateException("This car is no longer available."));
         }
 
         if (selectedCar.isMaintenance()) {
@@ -97,6 +94,45 @@ public class SubmitRentalRequestUseCase {
             return Tasks.forException(new IllegalStateException(ERROR_VERIFICATION_REQUIRED));
         }
 
+        return rentalRequestRepository.getApprovedForCar(companyId, selectedCar.getDocumentId())
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        return Tasks.forException(
+                                task.getException() != null
+                                        ? task.getException()
+                                        : new IllegalStateException("Failed to check booking availability."));
+                    }
+                    if (task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            RentalRequest approvedRequest = document.toObject(RentalRequest.class);
+                            if (approvedRequest != null && datesOverlap(
+                                    startDate,
+                                    endDate,
+                                    approvedRequest.getStartDate(),
+                                    approvedRequest.getEndDate())) {
+                                return Tasks.forException(new IllegalStateException(
+                                        "This car already has an approved booking for those dates."));
+                            }
+                        }
+                    }
+                    return persistRequest(
+                            firebaseUser,
+                            userDocument,
+                            selectedCar,
+                            companyId,
+                            additionalRequests,
+                            startDate,
+                            endDate);
+                });
+    }
+
+    private Task<RentalRequest> persistRequest(@NonNull FirebaseUser firebaseUser,
+                                               @NonNull DocumentSnapshot userDocument,
+                                               @NonNull Car selectedCar,
+                                               @NonNull String companyId,
+                                               @NonNull String additionalRequests,
+                                               @NonNull Date startDate,
+                                               @NonNull Date endDate) {
         RentalRequest request = new RentalRequest();
         request.setCarId(selectedCar.getDocumentId());
         request.setCarModel(selectedCar.getModel());
@@ -121,6 +157,16 @@ public class SubmitRentalRequestUseCase {
                     }
                     return Tasks.forResult(request);
                 });
+    }
+
+    private boolean datesOverlap(@NonNull Date firstStart,
+                                 @NonNull Date firstEnd,
+                                 Date secondStart,
+                                 Date secondEnd) {
+        if (secondStart == null || secondEnd == null) {
+            return false;
+        }
+        return firstStart.before(secondEnd) && secondStart.before(firstEnd);
     }
 
     private String resolveUserName(@NonNull FirebaseUser firebaseUser, @NonNull DocumentSnapshot userDocument) {

@@ -94,7 +94,7 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
             carPrice.setText(String.format(itemView.getContext().getString(R.string.price_per_day_format),
                     car.getPricePerDay()));
 
-            if (car.isAvailable()) {
+            if (!car.isMaintenance()) {
                 carAvailability.setText(itemView.getContext().getString(R.string.car_available));
                 carAvailability.setVisibility(View.VISIBLE);
                 carAvailability.setBackgroundResource(R.drawable.bg_badge_luxury);
@@ -103,12 +103,12 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
                 rentButton.setEnabled(true);
                 rentButton.setAlpha(1f);
             } else {
-                carAvailability.setText(itemView.getContext().getString(R.string.car_unavailable));
+                carAvailability.setText(itemView.getContext().getString(R.string.maintenance_status));
                 carAvailability.setVisibility(View.VISIBLE);
                 carAvailability.setBackgroundResource(R.drawable.bg_badge_unavailable);
                 carAvailability.setTextColor(
                         ContextCompat.getColor(itemView.getContext(), R.color.colorOnPrimary));
-                rentButton.setEnabled(true);
+                rentButton.setEnabled(false);
                 rentButton.setAlpha(0.6f);
             }
 

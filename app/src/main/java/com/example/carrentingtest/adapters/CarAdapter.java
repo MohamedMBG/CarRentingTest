@@ -136,14 +136,14 @@ public class CarAdapter extends ArrayAdapter<Car> {
                     .into(holder.carImage);
 
             // Handle availability badge
-            if (car.isAvailable()) {
+            if (!car.isMaintenance()) {
                 holder.carAvailability.setText(getContext().getString(R.string.car_available));
                 holder.carAvailability.setVisibility(View.VISIBLE);
                 holder.carAvailability.setBackgroundResource(R.drawable.bg_badge_luxury);
                 holder.carAvailability.setTextColor(
                         ContextCompat.getColor(getContext(), R.color.homeHighlightTitle));
             } else {
-                holder.carAvailability.setText(getContext().getString(R.string.car_unavailable));
+                holder.carAvailability.setText(getContext().getString(R.string.maintenance_status));
                 holder.carAvailability.setVisibility(View.VISIBLE);
                 holder.carAvailability.setBackgroundResource(R.drawable.bg_badge_unavailable);
                 holder.carAvailability.setTextColor(

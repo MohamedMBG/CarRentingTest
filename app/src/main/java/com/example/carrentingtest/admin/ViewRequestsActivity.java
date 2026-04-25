@@ -21,7 +21,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,11 +126,6 @@ public class ViewRequestsActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (!car.isAvailable()) {
-                        Toast.makeText(this, R.string.request_car_unavailable, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
                     verifyNoConflictingApproval(request, car);
                 })
                 .addOnFailureListener(e -> Toast.makeText(
@@ -175,16 +169,13 @@ public class ViewRequestsActivity extends AppCompatActivity {
                 request,
                 PricingService.quote(car, request.getStartDate(), request.getEndDate()));
 
-        WriteBatch batch = FirebaseFirestore.getInstance().batch();
-        batch.update(
-                FirebaseFirestore.getInstance().collection("rental_requests").document(request.getRequestId()),
-                "status", RentalRequestStatus.APPROVED.getStorageValue(),
-                "totalPrice", request.getTotalPrice(),
-                "pricingBreakdown", request.getPricingBreakdown());
-        batch.update(
-                FirebaseFirestore.getInstance().collection("cars").document(request.getCarId()),
-                "available", false);
-        batch.commit()
+        FirebaseFirestore.getInstance()
+                .collection("rental_requests")
+                .document(request.getRequestId())
+                .update(
+                        "status", RentalRequestStatus.APPROVED.getStorageValue(),
+                        "totalPrice", request.getTotalPrice(),
+                        "pricingBreakdown", request.getPricingBreakdown())
                 .addOnSuccessListener(unused -> sendEmailNotification(
                         request,
                         RentalRequestStatus.APPROVED.getStorageValue()))
