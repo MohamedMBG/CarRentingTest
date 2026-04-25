@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import com.example.carrentingtest.verification.VerificationStatus;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.mlkit.vision.common.InputImage;
@@ -27,7 +28,9 @@ import java.util.List;
  * selfie face, then using landmark geometry when ML Kit can read enough points.
  */
 public class OnDeviceFaceMatcher {
-    private static final double MATCH_THRESHOLD = 0.55;
+    private static final double MATCH_THRESHOLD = 0.88;
+    private static final float MIN_HEAD_TURN_DEGREES = 10f;
+    private static final float MIN_SMILE_PROBABILITY = 0.65f;
 
     private final Context appContext;
     private final FaceDetector detector;
@@ -43,7 +46,9 @@ public class OnDeviceFaceMatcher {
         this.detector = FaceDetection.getClient(options);
     }
 
-    public Task<FaceMatchResult> compare(@NonNull Uri licenseUri, @NonNull Uri selfieUri) {
+    public Task<FaceMatchResult> compare(@NonNull Uri licenseUri,
+                                         @NonNull Uri selfieUri,
+                                         @NonNull LivenessAction livenessAction) {
         Task<List<Face>> licenseTask;
         Task<List<Face>> selfieTask;
         try {
@@ -51,25 +56,31 @@ public class OnDeviceFaceMatcher {
             selfieTask = detectFaces(selfieUri);
         } catch (IOException e) {
             return Tasks.forResult(new FaceMatchResult(
-                    true,
-                    0.50,
-                    "Images accepted. Automatic face comparison could not read one image locally."));
+                    false,
+                    0.0,
+                    "Automatic face comparison could not read one image. Your documents need manual review.",
+                    VerificationStatus.UNDER_REVIEW,
+                    livenessAction,
+                    false));
         }
 
         return Tasks.whenAllSuccess(licenseTask, selfieTask)
                 .continueWith(task -> {
                     if (!task.isSuccessful() || task.getResult() == null || task.getResult().size() < 2) {
                         return new FaceMatchResult(
-                                true,
-                                0.50,
-                                "Images accepted. Automatic face comparison was unavailable on this device.");
+                                false,
+                                0.0,
+                                "Automatic face comparison was unavailable. Your documents need manual review.",
+                                VerificationStatus.UNDER_REVIEW,
+                                livenessAction,
+                                false);
                     }
 
                     @SuppressWarnings("unchecked")
                     List<Face> licenseFaces = (List<Face>) task.getResult().get(0);
                     @SuppressWarnings("unchecked")
                     List<Face> selfieFaces = (List<Face>) task.getResult().get(1);
-                    return compareFaces(licenseFaces, selfieFaces);
+                    return compareFaces(licenseFaces, selfieFaces, livenessAction);
                 });
     }
 
@@ -79,34 +90,61 @@ public class OnDeviceFaceMatcher {
     }
 
     private FaceMatchResult compareFaces(@NonNull List<Face> licenseFaces,
-                                         @NonNull List<Face> selfieFaces) {
+                                         @NonNull List<Face> selfieFaces,
+                                         @NonNull LivenessAction livenessAction) {
         if (licenseFaces.isEmpty()) {
             if (selfieFaces.isEmpty()) {
-                return new FaceMatchResult(false, 0.0, "No face detected in the selfie.");
+                return rejected("No face detected in the selfie.", livenessAction, false);
             }
             if (selfieFaces.size() > 1) {
-                return new FaceMatchResult(false, 0.0, "Only one person should appear in the selfie.");
+                return rejected("Only one person should appear in the selfie.", livenessAction, false);
             }
             return new FaceMatchResult(
-                    true,
-                    0.60,
-                    "License image and selfie accepted. The license portrait could not be detected automatically.");
+                    false,
+                    0.0,
+                    "The driver license portrait could not be detected. Your documents need manual review.",
+                    VerificationStatus.UNDER_REVIEW,
+                    livenessAction,
+                    false);
         }
         if (selfieFaces.isEmpty()) {
-            return new FaceMatchResult(false, 0.0, "No face detected in the selfie.");
+            return rejected("No face detected in the selfie.", livenessAction, false);
         }
         if (selfieFaces.size() > 1) {
-            return new FaceMatchResult(false, 0.0, "Only one person should appear in the selfie.");
+            return rejected("Only one person should appear in the selfie.", livenessAction, false);
+        }
+        if (licenseFaces.size() > 1) {
+            return new FaceMatchResult(
+                    false,
+                    0.0,
+                    "More than one face was detected in the license image. Your documents need manual review.",
+                    VerificationStatus.UNDER_REVIEW,
+                    livenessAction,
+                    false);
         }
 
         Face licenseFace = largestFace(licenseFaces);
         Face selfieFace = selfieFaces.get(0);
 
+        LivenessCheck livenessCheck = checkLiveness(selfieFace, livenessAction);
+        if (!livenessCheck.passed) {
+            return new FaceMatchResult(
+                    false,
+                    0.0,
+                    livenessCheck.message,
+                    VerificationStatus.REJECTED,
+                    livenessAction,
+                    false);
+        }
+
         if (!hasRequiredLandmarks(licenseFace) || !hasRequiredLandmarks(selfieFace)) {
             return new FaceMatchResult(
-                    true,
-                    0.70,
-                    "Face detected on the license and selfie. Landmark comparison was limited by image quality.");
+                    false,
+                    0.0,
+                    "Face detected, but image quality was not enough for automatic approval. Your documents need manual review.",
+                    VerificationStatus.UNDER_REVIEW,
+                    livenessAction,
+                    true);
         }
 
         double score = computeSimilarity(licenseFace, selfieFace);
@@ -114,7 +152,66 @@ public class OnDeviceFaceMatcher {
         String message = matched
                 ? "Face match passed."
                 : "The selfie does not match the driver license photo.";
-        return new FaceMatchResult(matched, score, message);
+        return new FaceMatchResult(
+                matched,
+                score,
+                message,
+                matched ? VerificationStatus.APPROVED : VerificationStatus.REJECTED,
+                livenessAction,
+                true);
+    }
+
+    private FaceMatchResult rejected(@NonNull String message,
+                                     @NonNull LivenessAction livenessAction,
+                                     boolean livenessPassed) {
+        return new FaceMatchResult(
+                false,
+                0.0,
+                message,
+                VerificationStatus.REJECTED,
+                livenessAction,
+                livenessPassed);
+    }
+
+    private LivenessCheck checkLiveness(@NonNull Face face,
+                                        @NonNull LivenessAction livenessAction) {
+        switch (livenessAction) {
+            case TURN_LEFT:
+                if (face.getHeadEulerAngleY() <= -MIN_HEAD_TURN_DEGREES) {
+                    return LivenessCheck.passed();
+                }
+                return LivenessCheck.failed("Liveness check failed. Please turn your face left and retake the selfie.");
+            case TURN_RIGHT:
+                if (face.getHeadEulerAngleY() >= MIN_HEAD_TURN_DEGREES) {
+                    return LivenessCheck.passed();
+                }
+                return LivenessCheck.failed("Liveness check failed. Please turn your face right and retake the selfie.");
+            case SMILE:
+            default:
+                Float smilingProbability = face.getSmilingProbability();
+                if (smilingProbability != null && smilingProbability >= MIN_SMILE_PROBABILITY) {
+                    return LivenessCheck.passed();
+                }
+                return LivenessCheck.failed("Liveness check failed. Please smile clearly and retake the selfie.");
+        }
+    }
+
+    private static final class LivenessCheck {
+        private final boolean passed;
+        private final String message;
+
+        private LivenessCheck(boolean passed, @NonNull String message) {
+            this.passed = passed;
+            this.message = message;
+        }
+
+        private static LivenessCheck passed() {
+            return new LivenessCheck(true, "");
+        }
+
+        private static LivenessCheck failed(@NonNull String message) {
+            return new LivenessCheck(false, message);
+        }
     }
 
     private Face largestFace(@NonNull List<Face> faces) {

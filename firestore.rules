@@ -1,0 +1,187 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function currentUserExists() {
+      return isSignedIn() && exists(userPath(request.auth.uid));
+    }
+
+    function currentUser() {
+      return get(userPath(request.auth.uid));
+    }
+
+    function sameCompany(companyId) {
+      return currentUserExists()
+        && companyId is string
+        && currentUser().data.companyId == companyId;
+    }
+
+    function isAdminForCompany(companyId) {
+      return sameCompany(companyId)
+        && currentUser().data.role == "admin";
+    }
+
+    function isCurrentAdmin() {
+      return currentUserExists()
+        && currentUser().data.role == "admin";
+    }
+
+    function clientVerificationStatusIsSafe() {
+      return !request.resource.data.diff(resource.data).changedKeys().hasAny(["verification_status"])
+        || request.resource.data.verification_status in ["not_started", "submitted", "under_review", "rejected"];
+    }
+
+    function isVerifiedClientForCompany(companyId) {
+      return sameCompany(companyId)
+        && currentUser().data.role == "client"
+        && currentUser().data.verification_status == "approved";
+    }
+
+    function carPath(carId) {
+      return /databases/$(database)/documents/cars/$(carId);
+    }
+
+    function rentalPath(requestId) {
+      return /databases/$(database)/documents/rental_requests/$(requestId);
+    }
+
+    function validRentalDates(data) {
+      return data.startDate is timestamp
+        && data.endDate is timestamp
+        && data.startDate < data.endDate;
+    }
+
+    match /users/{uid} {
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow get: if isSignedIn()
+        && (request.auth.uid == uid || isAdminForCompany(resource.data.companyId));
+      allow list: if false;
+      allow update: if isSignedIn()
+        && (
+          (
+            request.auth.uid == uid
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.companyId == resource.data.companyId
+            && clientVerificationStatusIsSafe()
+          )
+          || isAdminForCompany(resource.data.companyId)
+        );
+      allow delete: if false;
+    }
+
+    match /companies/{companyId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.status == "pending_review";
+      allow update: if isAdminForCompany(companyId);
+      allow delete: if false;
+    }
+
+    match /cars/{carId} {
+      allow read: if sameCompany(resource.data.companyId);
+      allow create: if isAdminForCompany(request.resource.data.companyId);
+      allow update: if isAdminForCompany(resource.data.companyId)
+        && request.resource.data.companyId == resource.data.companyId;
+      allow delete: if isAdminForCompany(resource.data.companyId);
+    }
+
+    match /rental_requests/{requestId} {
+      allow read: if isSignedIn()
+        && (resource.data.userId == request.auth.uid || isAdminForCompany(resource.data.companyId));
+
+      allow create: if isSignedIn()
+        && request.resource.data.requestId == requestId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == "pending"
+        && validRentalDates(request.resource.data)
+        && exists(carPath(request.resource.data.carId))
+        && get(carPath(request.resource.data.carId)).data.companyId == request.resource.data.companyId
+        && get(carPath(request.resource.data.carId)).data.maintenance != true
+        && isVerifiedClientForCompany(request.resource.data.companyId);
+
+      allow update: if isSignedIn()
+        && validRentalDates(request.resource.data)
+        && (
+          isAdminForCompany(resource.data.companyId)
+          || (
+            resource.data.userId == request.auth.uid
+            && request.resource.data.diff(resource.data).changedKeys()
+              .hasOnly(["paymentProofProvided", "paymentProofUrl", "paymentProofStoragePath",
+                        "paymentProofUploadedAt", "paymentProofUploadedBy"])
+          )
+        );
+
+      allow delete: if isAdminForCompany(resource.data.companyId);
+    }
+
+    match /rental_reports/{reportId} {
+      allow read: if isSignedIn()
+        && (resource.data.userId == request.auth.uid || isAdminForCompany(resource.data.companyId));
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.requestId is string
+        && exists(rentalPath(request.resource.data.requestId))
+        && get(rentalPath(request.resource.data.requestId)).data.userId == request.auth.uid
+        && request.resource.data.companyId == get(rentalPath(request.resource.data.requestId)).data.companyId;
+      allow update, delete: if isAdminForCompany(resource.data.companyId);
+    }
+
+    match /verification_requests/{uid} {
+      allow get: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || (isCurrentAdmin() && resource.data.companyId == currentUser().data.companyId)
+        );
+      allow list: if isCurrentAdmin()
+        && resource.data.companyId == currentUser().data.companyId;
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.userId == uid
+        && request.resource.data.companyId == currentUser().data.companyId
+        && request.resource.data.status in ["under_review", "rejected"];
+      allow update: if isSignedIn()
+        && (
+          (
+            request.auth.uid == uid
+            && request.resource.data.userId == resource.data.userId
+            && request.resource.data.companyId == resource.data.companyId
+            && request.resource.data.status in ["under_review", "rejected"]
+          )
+          || (
+            isCurrentAdmin()
+            && resource.data.companyId == currentUser().data.companyId
+            && request.resource.data.companyId == resource.data.companyId
+            && request.resource.data.status in ["approved", "rejected", "under_review"]
+          )
+        );
+      allow delete: if false;
+
+      match /evidence/{chunkId} {
+        allow get, list: if isSignedIn()
+          && (
+            request.auth.uid == uid
+            || (
+              isCurrentAdmin()
+              && get(/databases/$(database)/documents/verification_requests/$(uid)).data.companyId
+                == currentUser().data.companyId
+            )
+          );
+        allow create, update: if isSignedIn()
+          && request.auth.uid == uid
+          && getAfter(/databases/$(database)/documents/verification_requests/$(uid)).data.userId == uid
+          && getAfter(/databases/$(database)/documents/verification_requests/$(uid)).data.companyId
+            == currentUser().data.companyId;
+        allow delete: if false;
+      }
+    }
+  }
+}

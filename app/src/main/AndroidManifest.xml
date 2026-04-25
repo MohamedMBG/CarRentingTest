@@ -32,6 +32,9 @@
             android:exported="false"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
+            android:name=".admin.AdminVerificationReviewsActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.PastRentalsActivity"
             android:exported="false" />
         <activity

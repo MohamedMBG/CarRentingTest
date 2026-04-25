@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorBackground"
     android:clipToPadding="false"
     android:fillViewport="true">
 
@@ -9,14 +12,98 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="18dp">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.CarRentingTest.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            app:cardCornerRadius="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:layout_marginBottom="14dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivCarPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_car_card"
+                        android:contentDescription="@string/car_image_content_description"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/car_placeholder"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.CarRentingTest.PickerSurface" />
+
+                    <TextView
+                        android:id="@+id/tvImageCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/bg_image_indicator"
+                        android:paddingStart="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="6dp"
+                        android:text="@string/car_form_no_images"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="3 images" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvPreviewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/car_form_preview_model_placeholder"
+                    android:textColor="@color/palette_dark_blue"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPreviewMeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/car_form_preview_meta_placeholder"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/car_form_section_basics"
+            android:textColor="@color/palette_dark_blue"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilModel"
             style="@style/Widget.CarRentingTest.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/hint_car_model">
+            android:layout_marginBottom="10dp"
+            android:hint="@string/hint_car_model"
+            app:startIconDrawable="@drawable/ic_car"
+            app:startIconTint="@color/palette_teal">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etModel"
@@ -24,15 +111,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilType"
             style="@style/Widget.CarRentingTest.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/hint_car_type">
+            android:layout_marginBottom="14dp"
+            android:hint="@string/hint_car_type"
+            app:helperText="@string/car_form_type_helper"
+            app:startIconDrawable="@drawable/ic_type"
+            app:startIconTint="@color/palette_teal">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etType"
@@ -40,78 +132,132 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.CarRentingTest.TextInputLayout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/hint_seats">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSeats"
-                style="@style/Widget.CarRentingTest.EditText"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSeats"
+                style="@style/Widget.CarRentingTest.TextInputLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginEnd="6dp"
+                android:layout_marginBottom="14dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_seats"
+                app:startIconDrawable="@drawable/ic_seats"
+                app:startIconTint="@color/palette_teal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSeats"
+                    style="@style/Widget.CarRentingTest.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPrice"
+                style="@style/Widget.CarRentingTest.TextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginBottom="14dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_car_price_per_day"
+                app:prefixText="MAD "
+                app:startIconDrawable="@drawable/ic_price"
+                app:startIconTint="@color/palette_teal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrice"
+                    style="@style/Widget.CarRentingTest.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="@string/label_transmission"
-            android:textColor="@color/textColorPrimary"
+            android:layout_marginBottom="10dp"
+            android:text="@string/transmission_label"
+            android:textColor="@color/palette_dark_blue"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <RadioGroup
             android:id="@+id/rgTransmission"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_input_field"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp">
 
             <RadioButton
                 android:id="@+id/rbAutomatic"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
                 android:checked="true"
-                android:text="@string/transmission_automatic" />
+                android:text="@string/transmission_automatic"
+                android:textColor="@color/textColorPrimary" />
 
             <RadioButton
                 android:id="@+id/rbManual"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/transmission_manual" />
+                android:layout_weight="1"
+                android:text="@string/transmission_manual"
+                android:textColor="@color/textColorPrimary" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/car_form_section_images"
+            android:textColor="@color/palette_dark_blue"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUploadCarImages"
+            style="@style/Widget.CarRentingTest.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/car_form_upload_photos"
+            app:icon="@drawable/ic_camera"
+            app:iconGravity="textStart"
+            app:iconTint="@color/palette_teal" />
+
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilImageUrl"
             style="@style/Widget.CarRentingTest.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/hint_car_price_per_day">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPrice"
-                style="@style/Widget.CarRentingTest.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.CarRentingTest.TextInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/hint_image_urls">
+            android:layout_marginBottom="14dp"
+            android:hint="@string/hint_image_urls"
+            app:helperText="@string/car_form_image_helper"
+            app:startIconDrawable="@drawable/ic_camera"
+            app:startIconTint="@color/palette_teal">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etImageUrl"
@@ -121,25 +267,33 @@
                 android:gravity="top|start"
                 android:imeOptions="actionDone"
                 android:inputType="textUri|textMultiLine"
-                android:maxLines="4"
-                android:minLines="2" />
+                android:maxLines="5"
+                android:minLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swAvailable"
+        <LinearLayout
+            android:id="@+id/statusControls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/available_for_rent"
-            android:visibility="gone" />
+            android:background="@drawable/bg_verification_surface"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swMaintenance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="In Maintenance"
-            android:visibility="gone" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swAvailable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/available_for_rent"
+                android:textColor="@color/textColorPrimary" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swMaintenance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/maintenance_status"
+                android:textColor="@color/textColorPrimary" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,27 +1,39 @@
 package com.example.carrentingtest.admin;
 
 import android.app.AlertDialog;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.adapters.CarAdapter;
 import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.Car;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 import java.util.*;
 
 public class ManageCarsActivity extends AppCompatActivity {
@@ -35,6 +47,8 @@ public class ManageCarsActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String companyId;
+    private ActivityResultLauncher<String> carImagePicker;
+    private EditText activeCarImageUrlInput;
 
     /**
      * Initial setup when activity is created
@@ -47,6 +61,9 @@ public class ManageCarsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_cars); // Set the layout for this activity
         FullscreenUiHelper.apply(this, R.id.manage_cars_root);
+        carImagePicker = registerForActivityResult(
+                new ActivityResultContracts.GetMultipleContents(),
+                this::uploadCarImages);
 
         // Initialize ListView and its adapter
         carsListView = findViewById(R.id.carsListView);
@@ -160,14 +177,17 @@ public class ManageCarsActivity extends AppCompatActivity {
                 etPrice = view.findViewById(R.id.etPrice),
                 etImageUrl = view.findViewById(R.id.etImageUrl);
         RadioGroup rgTransmission = view.findViewById(R.id.rgTransmission);
-        RadioButton rbAutomatic = view.findViewById(R.id.rbAutomatic);
-        RadioButton rbManual = view.findViewById(R.id.rbManual);
         SwitchCompat swAvailable = view.findViewById(R.id.swAvailable);
         SwitchCompat swMaintenance = view.findViewById(R.id.swMaintenance);
+        MaterialButton btnUploadCarImages = view.findViewById(R.id.btnUploadCarImages);
+        View statusControls = view.findViewById(R.id.statusControls);
 
         boolean isEdit = car != null; // Determine if we're editing or adding
-        swAvailable.setVisibility(isEdit ? View.VISIBLE : View.GONE); // Only show availability switch when editing
-        swMaintenance.setVisibility(isEdit ? View.VISIBLE : View.GONE);
+        statusControls.setVisibility(isEdit ? View.VISIBLE : View.GONE);
+        btnUploadCarImages.setOnClickListener(v -> {
+            activeCarImageUrlInput = etImageUrl;
+            carImagePicker.launch("image/*");
+        });
 
         // If editing, pre-fill the form with existing values
         if (isEdit) {
@@ -193,24 +213,38 @@ public class ManageCarsActivity extends AppCompatActivity {
                 }
             }
         }
+        setupCarFormPreview(view, etModel, etType, etSeats, etPrice, etImageUrl, rgTransmission);
 
         // Configure dialog buttons and behavior
         AlertDialog dialog = builder.setView(view)
                 .setTitle(isEdit ? "Edit Car" : "Add New Car") // Dynamic title
-                .setPositiveButton(isEdit ? "Update" : "Save", (d, w) -> {
+                .setPositiveButton(isEdit ? "Update" : "Save", null)
+                .setNegativeButton("Cancel", null) // Cancel button does nothing
+                .create();
+        dialog.setOnShowListener(d -> {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+                params.copyFrom(window.getAttributes());
+                params.width = WindowManager.LayoutParams.MATCH_PARENT;
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(params);
+            }
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (!validateCarForm(view, etModel, etType, etSeats, etPrice)) {
+                    return;
+                }
+
                     // Create or get the car object to save
                     Car c = isEdit ? car : new Car();
                     // Set all properties from form fields
                     c.setModel(etModel.getText().toString().trim());
                     c.setType(etType.getText().toString().trim());
 
-                    String seatsText = etSeats.getText().toString().trim();
-                    int seats = TextUtils.isEmpty(seatsText) ? 0 : Integer.parseInt(seatsText);
-                    c.setSeats(seats);
+                    c.setSeats(Integer.parseInt(etSeats.getText().toString().trim()));
 
-                    String priceText = etPrice.getText().toString().trim();
-                    double price = TextUtils.isEmpty(priceText) ? 0 : Double.parseDouble(priceText);
-                    c.setPricePerDay(price);
+                    c.setPricePerDay(Double.parseDouble(etPrice.getText().toString().trim()));
                     c.setImageUrls(parseImageUrls(etImageUrl.getText().toString()));
 
                     int selectedTransmissionId = rgTransmission.getCheckedRadioButtonId();
@@ -233,16 +267,275 @@ public class ManageCarsActivity extends AppCompatActivity {
                         updateCar(c);
                     else
                         addCar(c);
-                })
-                .setNegativeButton("Cancel", null) // Cancel button does nothing
-                .create();
-        dialog.setOnShowListener(d -> {
-            Window window = dialog.getWindow();
-            if (window != null) {
-                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    dialog.dismiss();
+            });
+        });
+        dialog.setOnDismissListener(d -> {
+            if (activeCarImageUrlInput == etImageUrl) {
+                activeCarImageUrlInput = null;
             }
         });
         dialog.show();
+    }
+
+    private void uploadCarImages(List<Uri> imageUris) {
+        if (imageUris == null || imageUris.isEmpty()) {
+            return;
+        }
+        if (TextUtils.isEmpty(companyId) || activeCarImageUrlInput == null) {
+            Toast.makeText(this, R.string.car_form_upload_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, getString(R.string.car_form_uploading_photos, imageUris.size()), Toast.LENGTH_SHORT).show();
+        for (Uri imageUri : imageUris) {
+            uploadCarImage(imageUri);
+        }
+    }
+
+    private void uploadCarImage(Uri imageUri) {
+        String contentType = getContentResolver().getType(imageUri);
+        if (TextUtils.isEmpty(contentType)) {
+            contentType = "image/jpeg";
+        }
+
+        String extension = contentType.endsWith("png") ? ".png" : ".jpg";
+        String fileName = System.currentTimeMillis() + "_" + UUID.randomUUID() + extension;
+        StorageReference imageReference = FirebaseStorage.getInstance()
+                .getReference()
+                .child("car_images")
+                .child(companyId)
+                .child(fileName);
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType(contentType)
+                .build();
+
+        imageReference.putFile(imageUri, metadata)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        Exception exception = task.getException();
+                        if (exception != null) {
+                            throw exception;
+                        }
+                    }
+                    return imageReference.getDownloadUrl();
+                })
+                .addOnSuccessListener(downloadUri -> {
+                    appendImageUrl(downloadUri.toString());
+                    Toast.makeText(this, R.string.car_form_uploaded_photo, Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, R.string.car_form_upload_failed, Toast.LENGTH_SHORT).show());
+    }
+
+    private void appendImageUrl(String imageUrl) {
+        if (activeCarImageUrlInput == null || TextUtils.isEmpty(imageUrl)) {
+            return;
+        }
+
+        String existing = activeCarImageUrlInput.getText().toString().trim();
+        String updated = TextUtils.isEmpty(existing)
+                ? imageUrl
+                : existing + "\n" + imageUrl;
+        activeCarImageUrlInput.setText(updated);
+        activeCarImageUrlInput.setSelection(updated.length());
+    }
+
+    private void setupCarFormPreview(View view,
+                                     EditText etModel,
+                                     EditText etType,
+                                     EditText etSeats,
+                                     EditText etPrice,
+                                     EditText etImageUrl,
+                                     RadioGroup rgTransmission) {
+        ImageView ivCarPreview = view.findViewById(R.id.ivCarPreview);
+        TextView tvImageCount = view.findViewById(R.id.tvImageCount);
+        TextView tvPreviewTitle = view.findViewById(R.id.tvPreviewTitle);
+        TextView tvPreviewMeta = view.findViewById(R.id.tvPreviewMeta);
+
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateCarFormPreview(
+                        ivCarPreview,
+                        tvImageCount,
+                        tvPreviewTitle,
+                        tvPreviewMeta,
+                        etModel,
+                        etType,
+                        etSeats,
+                        etPrice,
+                        etImageUrl,
+                        rgTransmission);
+            }
+        };
+
+        etModel.addTextChangedListener(watcher);
+        etType.addTextChangedListener(watcher);
+        etSeats.addTextChangedListener(watcher);
+        etPrice.addTextChangedListener(watcher);
+        etImageUrl.addTextChangedListener(watcher);
+        rgTransmission.setOnCheckedChangeListener((group, checkedId) -> updateCarFormPreview(
+                ivCarPreview,
+                tvImageCount,
+                tvPreviewTitle,
+                tvPreviewMeta,
+                etModel,
+                etType,
+                etSeats,
+                etPrice,
+                etImageUrl,
+                rgTransmission));
+
+        updateCarFormPreview(
+                ivCarPreview,
+                tvImageCount,
+                tvPreviewTitle,
+                tvPreviewMeta,
+                etModel,
+                etType,
+                etSeats,
+                etPrice,
+                etImageUrl,
+                rgTransmission);
+    }
+
+    private void updateCarFormPreview(ImageView ivCarPreview,
+                                      TextView tvImageCount,
+                                      TextView tvPreviewTitle,
+                                      TextView tvPreviewMeta,
+                                      EditText etModel,
+                                      EditText etType,
+                                      EditText etSeats,
+                                      EditText etPrice,
+                                      EditText etImageUrl,
+                                      RadioGroup rgTransmission) {
+        List<String> urls = parseImageUrls(etImageUrl.getText().toString());
+        if (urls.isEmpty()) {
+            ivCarPreview.setImageResource(R.drawable.car_placeholder);
+            tvImageCount.setText(R.string.car_form_no_images);
+        } else {
+            Glide.with(this)
+                    .load(urls.get(0))
+                    .placeholder(R.drawable.car_placeholder)
+                    .error(R.drawable.car_placeholder)
+                    .centerCrop()
+                    .into(ivCarPreview);
+            tvImageCount.setText(getString(R.string.car_form_image_count, urls.size()));
+        }
+
+        String model = etModel.getText().toString().trim();
+        tvPreviewTitle.setText(TextUtils.isEmpty(model)
+                ? getString(R.string.car_form_preview_model_placeholder)
+                : model);
+
+        String type = etType.getText().toString().trim();
+        if (TextUtils.isEmpty(type)) {
+            type = getString(R.string.vehicle_type_label);
+        }
+
+        String seats = etSeats.getText().toString().trim();
+        if (TextUtils.isEmpty(seats)) {
+            seats = getString(R.string.seats_label);
+        } else {
+            try {
+                int seatCount = Integer.parseInt(seats);
+                seats = getResources().getQuantityString(R.plurals.car_seats_count, seatCount, seatCount);
+            } catch (NumberFormatException ignored) {
+                seats = getString(R.string.seats_label);
+            }
+        }
+
+        String transmission = rgTransmission.getCheckedRadioButtonId() == R.id.rbManual
+                ? getString(R.string.transmission_manual)
+                : getString(R.string.transmission_automatic);
+
+        String price = etPrice.getText().toString().trim();
+        if (TextUtils.isEmpty(price)) {
+            price = getString(R.string.daily_rate_label);
+        } else {
+            try {
+                price = String.format(Locale.US, getString(R.string.price_per_day_format), Double.parseDouble(price));
+            } catch (NumberFormatException ignored) {
+                price = getString(R.string.daily_rate_label);
+            }
+        }
+
+        tvPreviewMeta.setText(type + " | " + seats + " | " + transmission + " | " + price);
+    }
+
+    private boolean validateCarForm(View view,
+                                    EditText etModel,
+                                    EditText etType,
+                                    EditText etSeats,
+                                    EditText etPrice) {
+        TextInputLayout tilModel = view.findViewById(R.id.tilModel);
+        TextInputLayout tilType = view.findViewById(R.id.tilType);
+        TextInputLayout tilSeats = view.findViewById(R.id.tilSeats);
+        TextInputLayout tilPrice = view.findViewById(R.id.tilPrice);
+
+        tilModel.setError(null);
+        tilType.setError(null);
+        tilSeats.setError(null);
+        tilPrice.setError(null);
+
+        if (TextUtils.isEmpty(etModel.getText().toString().trim())) {
+            tilModel.setError(getString(R.string.error_car_model_required));
+            etModel.requestFocus();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(etType.getText().toString().trim())) {
+            tilType.setError(getString(R.string.error_car_type_required));
+            etType.requestFocus();
+            return false;
+        }
+
+        String seatsText = etSeats.getText().toString().trim();
+        if (TextUtils.isEmpty(seatsText)) {
+            tilSeats.setError(getString(R.string.error_car_seats_required));
+            etSeats.requestFocus();
+            return false;
+        }
+        try {
+            int seats = Integer.parseInt(seatsText);
+            if (seats < 1 || seats > 20) {
+                tilSeats.setError(getString(R.string.error_car_seats_invalid));
+                etSeats.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            tilSeats.setError(getString(R.string.error_car_seats_invalid));
+            etSeats.requestFocus();
+            return false;
+        }
+
+        String priceText = etPrice.getText().toString().trim();
+        if (TextUtils.isEmpty(priceText)) {
+            tilPrice.setError(getString(R.string.error_car_price_required));
+            etPrice.requestFocus();
+            return false;
+        }
+        try {
+            double price = Double.parseDouble(priceText);
+            if (price <= 0) {
+                tilPrice.setError(getString(R.string.error_car_price_invalid));
+                etPrice.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            tilPrice.setError(getString(R.string.error_car_price_invalid));
+            etPrice.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 
     private List<String> parseImageUrls(String rawInput) {

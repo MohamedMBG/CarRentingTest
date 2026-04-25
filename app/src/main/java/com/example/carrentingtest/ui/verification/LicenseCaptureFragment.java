@@ -21,7 +21,6 @@ import com.example.carrentingtest.R;
 
 public class LicenseCaptureFragment extends Fragment {
     private ActivityResultLauncher<String> permissionLauncher;
-    private ActivityResultLauncher<String> imagePickerLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
     private Uri pendingCameraUri;
 
@@ -44,18 +43,13 @@ public class LicenseCaptureFragment extends Fragment {
                 Toast.makeText(requireContext(), R.string.camera_permission_denied, Toast.LENGTH_SHORT).show();
             }
         });
-        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), imageUri -> {
-            if (imageUri != null) {
-                onLicenseReady(imageUri);
-            }
-        });
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
             if (Boolean.TRUE.equals(success) && pendingCameraUri != null) {
                 onLicenseReady(pendingCameraUri);
             }
         });
 
-        view.findViewById(R.id.btnUpload).setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
+        view.findViewById(R.id.btnUpload).setVisibility(View.GONE);
         view.findViewById(R.id.btnCapture).setOnClickListener(v -> ensurePermissionAndLaunch());
     }
 

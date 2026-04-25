@@ -54,8 +54,10 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
 
         private final ImageView carImage;
         private final TextView carModel;
+        private final TextView carSubtitle;
         private final TextView carType;
-        private final TextView carTransmission;
+        private final TextView carTypeChip;
+        private final TextView carPhotoCount;
         private final TextView carSeats;
         private final TextView carPrice;
         private final TextView carAvailability;
@@ -66,8 +68,10 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
             super(itemView);
             carImage = itemView.findViewById(R.id.carImage);
             carModel = itemView.findViewById(R.id.carModel);
+            carSubtitle = itemView.findViewById(R.id.carSubtitle);
             carType = itemView.findViewById(R.id.carType);
-            carTransmission = itemView.findViewById(R.id.carTransmission);
+            carTypeChip = itemView.findViewById(R.id.carTypeChip);
+            carPhotoCount = itemView.findViewById(R.id.carPhotoCount);
             carSeats = itemView.findViewById(R.id.carSeats);
             carPrice = itemView.findViewById(R.id.carPrice);
             carAvailability = itemView.findViewById(R.id.carAvailability);
@@ -78,12 +82,22 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
         void bind(Car car, OnCarClickListener listener) {
             carModel.setText(car.getModel());
             carType.setText(car.getType());
-
-            String transmission = car.getTransmissionType();
-            if (transmission == null || transmission.trim().isEmpty()) {
-                transmission = itemView.getContext().getString(R.string.transmission_unknown);
+            if (carTypeChip != null) {
+                carTypeChip.setText(car.getType());
             }
-            carTransmission.setText(transmission);
+
+            int photoCount = car.getImageUrls().size();
+            String photoText = photoCount > 0
+                    ? itemView.getResources().getQuantityString(R.plurals.car_photo_count, photoCount, photoCount)
+                    : itemView.getContext().getString(R.string.car_photo_count_fallback);
+            carPhotoCount.setText(photoText);
+            if (carSubtitle != null) {
+                String type = car.getType();
+                String subtitle = android.text.TextUtils.isEmpty(type)
+                        ? photoText
+                        : type + " | " + photoText;
+                carSubtitle.setText(subtitle);
+            }
 
             int seats = car.getSeats();
             String seatsText = seats > 0
@@ -117,8 +131,8 @@ public class CarGridAdapter extends RecyclerView.Adapter<CarGridAdapter.CarViewH
 
             Glide.with(itemView.getContext())
                     .load(car.getImageUrl())
-                    .placeholder(R.drawable.ic_app_logo)
-                    .error(R.drawable.ic_app_logo)
+                    .placeholder(R.drawable.car_placeholder)
+                    .error(R.drawable.car_placeholder)
                     .centerCrop()
                     .into(carImage);
 

@@ -27,6 +27,7 @@ public enum UserLifecycleStatus {
         String normalized = rawValue.trim().toLowerCase(Locale.US);
         switch (normalized) {
             case "active":
+            case "approved":
                 return ACTIVE;
             case "pending_company_approval":
             case "pending_review":

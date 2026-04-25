@@ -156,6 +156,18 @@
     <string name="special_requests_none">Special Requests: None</string>
     <string name="approve">Approve</string>
     <string name="reject">Reject</string>
+    <string name="admin_verification_reviews_title" tools:ignore="MissingTranslation">Identity reviews</string>
+    <string name="admin_verification_reviews_description" tools:ignore="MissingTranslation">Review submitted selfie and license evidence before enabling bookings.</string>
+    <string name="admin_verification_reviews_empty" tools:ignore="MissingTranslation">No identity reviews are waiting.</string>
+    <string name="admin_verification_reviews_load_failed" tools:ignore="MissingTranslation">Unable to load identity reviews.</string>
+    <string name="admin_verification_review_saved" tools:ignore="MissingTranslation">Verification decision saved.</string>
+    <string name="admin_verification_review_save_failed" tools:ignore="MissingTranslation">Unable to save verification decision.</string>
+    <string name="admin_verification_unknown_user" tools:ignore="MissingTranslation">Client account</string>
+    <string name="admin_verification_review_meta" tools:ignore="MissingTranslation">%1$s • License %2$s</string>
+    <string name="admin_verification_liveness_meta" tools:ignore="MissingTranslation">Liveness: %1$s - %2$s</string>
+    <string name="admin_verification_liveness_passed" tools:ignore="MissingTranslation">passed</string>
+    <string name="admin_verification_liveness_failed" tools:ignore="MissingTranslation">failed</string>
+    <string name="admin_verification_review_message_fallback" tools:ignore="MissingTranslation">Manual review required.</string>
     <string name="my_profile">My Profile</string>
     <string name="profile_header_eyebrow" tools:ignore="MissingTranslation">Account overview</string>
     <string name="profile_contact_subtitle" tools:ignore="MissingTranslation">Your booking and contact details in one place.</string>
@@ -183,19 +195,39 @@
     <string name="profile_identity_description">Keep your account verified for seamless bookings.</string>
     <string name="car_available">Available</string>
     <string name="car_unavailable">Not available</string>
-    <string name="price_per_day_format">%.0f dhs / day</string>
+    <string name="price_per_day_format">%.0f DHS / day</string>
     <string name="hint_car_model">Model</string>
     <string name="hint_car_type">Type</string>
     <string name="hint_car_price_per_day">Price per day</string>
     <string name="car_image_content_description" tools:ignore="MissingTranslation">Car preview</string>
+    <string name="car_photo_count_fallback" tools:ignore="MissingTranslation">Photos</string>
     <string name="times_rented_label">Times rented</string>
     <string name="times_rented_never">Never rented yet</string>
+    <string name="car_new_listing" tools:ignore="MissingTranslation">New listing</string>
     <plurals name="times_rented_value">
         <item quantity="one">Rented %d time</item>
         <item quantity="other">Rented %d times</item>
     </plurals>
     <string name="hint_seats" tools:ignore="MissingTranslation">Number of seats</string>
     <string name="hint_image_urls" tools:ignore="MissingTranslation">Image URLs (one per line)</string>
+    <string name="car_form_section_basics" tools:ignore="MissingTranslation">Vehicle basics</string>
+    <string name="car_form_section_images" tools:ignore="MissingTranslation">Photos</string>
+    <string name="car_form_upload_photos" tools:ignore="MissingTranslation">Upload photos from device</string>
+    <string name="car_form_type_helper" tools:ignore="MissingTranslation">Example: SUV, Sedan, Van, Coupe</string>
+    <string name="car_form_image_helper" tools:ignore="MissingTranslation">Paste direct image links. Use one line per photo; the first photo is the cover.</string>
+    <string name="car_form_no_images" tools:ignore="MissingTranslation">No photos</string>
+    <string name="car_form_image_count" tools:ignore="MissingTranslation">%1$d photos</string>
+    <string name="car_form_preview_model_placeholder" tools:ignore="MissingTranslation">Vehicle model</string>
+    <string name="car_form_preview_meta_placeholder" tools:ignore="MissingTranslation">Type | seats | transmission | daily rate</string>
+    <string name="error_car_model_required" tools:ignore="MissingTranslation">Enter the car model.</string>
+    <string name="error_car_type_required" tools:ignore="MissingTranslation">Enter the vehicle type.</string>
+    <string name="error_car_seats_required" tools:ignore="MissingTranslation">Enter the number of seats.</string>
+    <string name="error_car_seats_invalid" tools:ignore="MissingTranslation">Seats must be between 1 and 20.</string>
+    <string name="error_car_price_required" tools:ignore="MissingTranslation">Enter the daily price.</string>
+    <string name="error_car_price_invalid" tools:ignore="MissingTranslation">Price must be greater than 0.</string>
+    <string name="car_form_uploading_photos" tools:ignore="MissingTranslation">Uploading %1$d photos...</string>
+    <string name="car_form_uploaded_photo" tools:ignore="MissingTranslation">Photo added.</string>
+    <string name="car_form_upload_failed" tools:ignore="MissingTranslation">Could not upload photo.</string>
     <string name="label_transmission" tools:ignore="MissingTranslation">Transmission</string>
     <string name="transmission_automatic" tools:ignore="MissingTranslation">Automatic</string>
     <string name="transmission_manual" tools:ignore="MissingTranslation">Manual</string>
@@ -204,6 +236,10 @@
     <plurals name="car_seats_count" tools:ignore="MissingTranslation">
         <item quantity="one">%d seat</item>
         <item quantity="other">%d seats</item>
+    </plurals>
+    <plurals name="car_photo_count" tools:ignore="MissingTranslation">
+        <item quantity="one">%d photo</item>
+        <item quantity="other">%d photos</item>
     </plurals>
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
@@ -325,6 +361,9 @@
     <string name="license_upload_helper" tools:ignore="MissingTranslation">Use a clear front-side image where the portrait and license details are readable.</string>
     <string name="license_upload_card_text" tools:ignore="MissingTranslation">Your license portrait will be compared with the selfie you take next.</string>
     <string name="selfie_capture_helper" tools:ignore="MissingTranslation">Take a fresh photo in good light. Only your face should be visible.</string>
+    <string name="liveness_turn_left" tools:ignore="MissingTranslation">Liveness check: turn your face slightly left, then take the selfie.</string>
+    <string name="liveness_turn_right" tools:ignore="MissingTranslation">Liveness check: turn your face slightly right, then take the selfie.</string>
+    <string name="liveness_smile" tools:ignore="MissingTranslation">Liveness check: smile clearly, then take the selfie.</string>
     <string name="selfie_capture_card_text" tools:ignore="MissingTranslation">We compare this selfie with the face on your driver license.</string>
     <string name="verification_success" tools:ignore="MissingTranslation">Verification successful. You are ready to drive.</string>
     <string name="verification_success_with_score" tools:ignore="MissingTranslation">Verification successful. Face match score: %.0f%%</string>
@@ -354,10 +393,24 @@
     <string name="total_rentals">Total Rentals: %1$d</string>
     <string name="admin_top_rented_car">Top model: %1$s (%2$d rentals)</string>
     <string name="admin_reports_empty_chart">No completed or approved rentals yet.</string>
-    <string name="admin_reports_subtitle">Track approved and completed rentals at a glance.</string>
+    <string name="admin_reports_subtitle">Owner metrics for utilization, revenue, payments and fleet risk.</string>
     <string name="admin_reports_models_label">Models booked</string>
-    <string name="admin_reports_chart_title">Most rented models</string>
+    <string name="admin_reports_chart_title">Revenue per car</string>
     <string name="admin_reports_chart_subtitle">Approved and completed rentals only</string>
+    <string name="admin_reports_utilization_label" tools:ignore="MissingTranslation">Utilization</string>
+    <string name="admin_reports_revenue_label" tools:ignore="MissingTranslation">Revenue</string>
+    <string name="admin_reports_revenue_per_car_label" tools:ignore="MissingTranslation">Revenue / car</string>
+    <string name="admin_reports_pending_payments_label" tools:ignore="MissingTranslation">Pending payments</string>
+    <string name="admin_reports_late_returns_label" tools:ignore="MissingTranslation">Late returns</string>
+    <string name="admin_reports_maintenance_label" tools:ignore="MissingTranslation">Maintenance downtime</string>
+    <string name="admin_reports_active_utilization" tools:ignore="MissingTranslation">%1$d of %2$d rentable cars active</string>
+    <string name="admin_reports_pending_payments_detail" tools:ignore="MissingTranslation">%1$s waiting for proof</string>
+    <string name="admin_reports_late_returns_detail" tools:ignore="MissingTranslation">Approved rentals past return date</string>
+    <string name="admin_reports_maintenance_detail" tools:ignore="MissingTranslation">%1$d cars offline • %2$s/day offline</string>
+    <string name="admin_reports_revenue_per_car_detail" tools:ignore="MissingTranslation">Average across %1$d fleet cars</string>
+    <string name="admin_reports_revenue_detail" tools:ignore="MissingTranslation">Approved + completed rentals</string>
+    <string name="admin_reports_total_label_detail" tools:ignore="MissingTranslation">Approved + completed count</string>
+    <string name="admin_reports_models_label_detail" tools:ignore="MissingTranslation">Distinct booked models</string>
     <string name="admin_contact_title">Need assistance?</string>
     <string name="admin_contact_subtitle">Contact the rental admin directly.</string>
     <string name="admin_contact_email_label">Email:</string>

@@ -16,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.carrentingtest.R;
+import com.example.carrentingtest.verification.data.LivenessAction;
 
 public class SelfieCaptureFragment extends Fragment {
     private ActivityResultLauncher<String> permissionLauncher;
@@ -35,6 +37,10 @@ public class SelfieCaptureFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ((TextView) view.findViewById(R.id.txtHeader)).setText(getString(R.string.selfie_step_header));
+        VerificationViewModel viewModel = new ViewModelProvider(requireActivity()).get(VerificationViewModel.class);
+        LivenessAction action = viewModel.getLivenessAction();
+        TextView livenessPrompt = view.findViewById(R.id.txtLivenessPrompt);
+        livenessPrompt.setText(getLivenessPrompt(action));
 
         permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
             if (granted) {
@@ -56,6 +62,18 @@ public class SelfieCaptureFragment extends Fragment {
             com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verification_flow_started", new android.os.Bundle());
             ensurePermissionAndLaunch();
         });
+    }
+
+    private String getLivenessPrompt(@NonNull LivenessAction action) {
+        switch (action) {
+            case TURN_LEFT:
+                return getString(R.string.liveness_turn_left);
+            case TURN_RIGHT:
+                return getString(R.string.liveness_turn_right);
+            case SMILE:
+            default:
+                return getString(R.string.liveness_smile);
+        }
     }
 
     private void ensurePermissionAndLaunch() {

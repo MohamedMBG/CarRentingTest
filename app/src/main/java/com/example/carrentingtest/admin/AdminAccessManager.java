@@ -103,12 +103,6 @@ public final class AdminAccessManager {
             return;
         }
 
-        UserLifecycleStatus userStatus = context.getUserStatus();
-        if (userStatus != UserLifecycleStatus.ACTIVE) {
-            callback.onDenied("Your company account is still waiting for approval.");
-            return;
-        }
-
         String companyId = context.getCompanyId();
         if (companyId == null || companyId.trim().isEmpty()) {
             callback.onDenied("No company is linked to this admin account.");
@@ -120,7 +114,30 @@ public final class AdminAccessManager {
             callback.onDenied("Your company account is not approved for operations yet.");
             return;
         }
-        callback.onGranted(new AdminAccess(companyId, userStatus, companyStatus));
+
+        UserLifecycleStatus userStatus = context.getUserStatus();
+        if (!isOperationalUserStatus(userStatus, companyStatus)) {
+            callback.onDenied("Your company account is still waiting for approval.");
+            return;
+        }
+        callback.onGranted(new AdminAccess(companyId, effectiveUserStatus(userStatus, companyStatus), companyStatus));
+    }
+
+    static boolean isOperationalUserStatus(@NonNull UserLifecycleStatus userStatus,
+                                           @NonNull CompanyLifecycleStatus companyStatus) {
+        return userStatus == UserLifecycleStatus.ACTIVE
+                || (userStatus == UserLifecycleStatus.PENDING_COMPANY_APPROVAL
+                && companyStatus == CompanyLifecycleStatus.APPROVED);
+    }
+
+    @NonNull
+    static UserLifecycleStatus effectiveUserStatus(@NonNull UserLifecycleStatus userStatus,
+                                                   @NonNull CompanyLifecycleStatus companyStatus) {
+        if (userStatus == UserLifecycleStatus.PENDING_COMPANY_APPROVAL
+                && companyStatus == CompanyLifecycleStatus.APPROVED) {
+            return UserLifecycleStatus.ACTIVE;
+        }
+        return userStatus;
     }
 
     public interface GrantedAction {

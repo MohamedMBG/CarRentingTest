@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 public interface VerificationService {
-    LiveData<VerificationResult> submit(@NonNull Uri selfie, @NonNull Uri licenseFront);
+    LiveData<VerificationResult> submit(@NonNull Uri selfie,
+                                         @NonNull Uri licenseFront,
+                                         @NonNull LivenessAction livenessAction);
 }
 
 

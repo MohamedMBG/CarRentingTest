@@ -1,6 +1,7 @@
 package com.example.carrentingtest.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +47,10 @@ public class CarAdapter extends ArrayAdapter<Car> {
     static class ViewHolder {
         ImageView carImage;
         TextView carModel;
+        TextView carSubtitle;
         TextView carType;
-        TextView carTransmission;
+        TextView carTypeChip;
+        TextView carPhotoCount;
         TextView carSeats;
         TextView carPrice;
         TextView carAvailability;
@@ -73,8 +76,10 @@ public class CarAdapter extends ArrayAdapter<Car> {
 
             holder.carImage = convertView.findViewById(R.id.carImage);
             holder.carModel = convertView.findViewById(R.id.carModel);
+            holder.carSubtitle = convertView.findViewById(R.id.carSubtitle);
             holder.carType = convertView.findViewById(R.id.carType);
-            holder.carTransmission = convertView.findViewById(R.id.carTransmission);
+            holder.carTypeChip = convertView.findViewById(R.id.carTypeChip);
+            holder.carPhotoCount = convertView.findViewById(R.id.carPhotoCount);
             holder.carSeats = convertView.findViewById(R.id.carSeats);
             holder.carPrice = convertView.findViewById(R.id.carPrice);
             holder.carAvailability = convertView.findViewById(R.id.carAvailability);
@@ -103,12 +108,22 @@ public class CarAdapter extends ArrayAdapter<Car> {
             // Set texts
             holder.carModel.setText(car.getModel());
             holder.carType.setText(car.getType());
-
-            String transmission = car.getTransmissionType();
-            if (transmission == null || transmission.trim().isEmpty()) {
-                transmission = getContext().getString(R.string.transmission_unknown);
+            if (holder.carTypeChip != null) {
+                holder.carTypeChip.setText(car.getType());
             }
-            holder.carTransmission.setText(transmission);
+
+            int photoCount = car.getImageUrls().size();
+            String photoText = photoCount > 0
+                    ? getContext().getResources().getQuantityString(R.plurals.car_photo_count, photoCount, photoCount)
+                    : getContext().getString(R.string.car_photo_count_fallback);
+            holder.carPhotoCount.setText(photoText);
+            if (holder.carSubtitle != null) {
+                String type = car.getType();
+                String subtitle = TextUtils.isEmpty(type)
+                        ? photoText
+                        : type + " | " + photoText;
+                holder.carSubtitle.setText(subtitle);
+            }
 
             int seats = car.getSeats();
             String seatsText = seats > 0
@@ -122,7 +137,7 @@ public class CarAdapter extends ArrayAdapter<Car> {
             if (holder.carRentalCount != null) {
                 int count = Math.max(0, car.getRentalCount());
                 String text = count == 0
-                        ? getContext().getString(R.string.times_rented_never)
+                        ? getContext().getString(R.string.car_new_listing)
                         : getContext().getResources().getQuantityString(R.plurals.times_rented_value, count, count);
                 holder.carRentalCount.setText(text);
             }
@@ -130,8 +145,8 @@ public class CarAdapter extends ArrayAdapter<Car> {
             // Load image with Glide
             Glide.with(getContext())
                     .load(car.getImageUrl())
-                    .placeholder(R.drawable.ic_app_logo)
-                    .error(R.drawable.ic_app_logo)
+                    .placeholder(R.drawable.car_placeholder)
+                    .error(R.drawable.car_placeholder)
                     .centerCrop()
                     .into(holder.carImage);
 

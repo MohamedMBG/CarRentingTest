@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.verification.VerificationStatus;
 import com.example.carrentingtest.verification.data.FirebaseVerificationService;
+import com.example.carrentingtest.verification.data.LivenessAction;
 import com.example.carrentingtest.verification.data.VerificationResult;
 import com.example.carrentingtest.verification.data.VerificationService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,14 +62,19 @@ public class VerificationResultFragment extends Fragment {
         }
 
         viewModel.setSubmitting(true);
-        com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verification_submitted", new android.os.Bundle());
-        verificationService.submit(selfie, license).observe(getViewLifecycleOwner(), result -> {
+        LivenessAction livenessAction = viewModel.getLivenessAction();
+        android.os.Bundle submittedParams = new android.os.Bundle();
+        submittedParams.putString("liveness_action", livenessAction.getStorageValue());
+        com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext())
+                .logEvent("verification_submitted", submittedParams);
+        verificationService.submit(selfie, license, livenessAction).observe(getViewLifecycleOwner(), result -> {
             viewModel.setSubmitting(false);
             if (result == null) return;
 
             bindResultState(result, txt, detail, icon);
             android.os.Bundle params = new android.os.Bundle();
             params.putString("status", result.getStatus().name());
+            params.putString("liveness_action", livenessAction.getStorageValue());
             params.putDouble("face_match_score", result.getFaceMatchScore());
             com.google.firebase.analytics.FirebaseAnalytics.getInstance(requireContext()).logEvent("verification_result", params);
             updateUserVerificationStatus(result.getStatus());

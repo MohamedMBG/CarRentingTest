@@ -27,13 +27,21 @@ service firebase.storage {
     }
 
     match /verifications/{uid}/{fileName} {
-      allow read, write: if isSignedIn() && request.auth.uid == uid;
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if isSignedIn() && request.auth.uid == uid;
     }
 
     match /rental_payments/{requestId}/{fileName} {
       allow read: if isSignedIn() && sameCompanyRental(requestId);
       allow write, delete: if isSignedIn()
         && sameCompanyRental(requestId)
+        && userRole() == "admin";
+    }
+
+    match /car_images/{companyId}/{fileName} {
+      allow read: if isSignedIn() && userCompanyId() == companyId;
+      allow write, delete: if isSignedIn()
+        && userCompanyId() == companyId
         && userRole() == "admin";
     }
   }

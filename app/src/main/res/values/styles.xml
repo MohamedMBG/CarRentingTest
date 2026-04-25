@@ -51,6 +51,43 @@
         <item name="tint">@color/colorOnPrimary</item>
     </style>
 
+    <style name="Widget.CarRentingTest.ReportMetricCard" parent="@android:style/Widget">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:background">@drawable/bg_verification_surface</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:minHeight">124dp</item>
+    </style>
+
+    <style name="TextAppearance.CarRentingTest.ReportMetricLabel" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.CarRentingTest.ReportMetricValue" parent="@style/TextAppearance.Material3.TitleLarge">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textFontWeight">700</item>
+    </style>
+
+    <style name="TextAppearance.CarRentingTest.ReportMetricDetail" parent="@style/TextAppearance.Material3.BodySmall">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="ThemeOverlay.CarRentingTest.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.Material3.BodyMedium</item>
         <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Material3.TitleLarge</item>
