@@ -1,10 +1,7 @@
 package com.example.carrentingtest.admin;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.verification.VerificationStatus;
 import com.google.android.gms.tasks.Tasks;
@@ -25,9 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AdminVerificationReviewsActivity extends AppCompatActivity {
@@ -194,43 +190,17 @@ public class AdminVerificationReviewsActivity extends AppCompatActivity {
     private void loadEvidenceImage(@NonNull DocumentSnapshot requestDoc,
                                    @NonNull String key,
                                    @NonNull ImageView image) {
-        requestDoc.getReference()
-                .collection("evidence")
-                .whereEqualTo("key", key)
-                .get()
-                .addOnSuccessListener(snapshot -> decodeEvidenceChunks(snapshot.getDocuments(), image))
-                .addOnFailureListener(e -> image.setImageResource(R.drawable.ic_person_placeholder));
-    }
-
-    private void decodeEvidenceChunks(@NonNull List<DocumentSnapshot> chunks,
-                                      @NonNull ImageView image) {
-        if (chunks.isEmpty()) {
+        String fieldName = "selfie".equals(key) ? "selfieUrl" : "licenseFrontUrl";
+        String url = requestDoc.getString(fieldName);
+        if (TextUtils.isEmpty(url)) {
             image.setImageResource(R.drawable.ic_person_placeholder);
             return;
         }
-
-        StringBuilder builder = new StringBuilder();
-        Collections.sort(chunks, (first, second) -> Long.compare(
-                safeLong(first.getLong("index")),
-                safeLong(second.getLong("index"))));
-        for (DocumentSnapshot chunk : chunks) {
-            String data = chunk.getString("data");
-            if (!TextUtils.isEmpty(data)) {
-                builder.append(data);
-            }
-        }
-
-        try {
-            byte[] bytes = Base64.decode(builder.toString(), Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            if (bitmap != null) {
-                image.setImageBitmap(bitmap);
-            } else {
-                image.setImageResource(R.drawable.ic_person_placeholder);
-            }
-        } catch (IllegalArgumentException ignored) {
-            image.setImageResource(R.drawable.ic_person_placeholder);
-        }
+        Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.ic_person_placeholder)
+                .error(R.drawable.ic_person_placeholder)
+                .into(image);
     }
 
     private String formatLivenessAction(String value) {

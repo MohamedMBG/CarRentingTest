@@ -12,7 +12,9 @@ import com.example.carrentingtest.SignInActivity;
 import com.example.carrentingtest.domain.RentalRequestStatus;
 import com.example.carrentingtest.models.RentalRequest;
 import com.example.carrentingtest.pricing.PricingService;
+import com.example.carrentingtest.services.NotificationScheduler;
 import com.example.carrentingtest.utils.FullscreenUiHelper;
+import com.example.carrentingtest.utils.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -85,6 +87,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
                 // 4. Logout button - triggers logout process
                 findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
+
+                NotificationHelper.createChannels(this);
+                NotificationScheduler.schedule(this);
 
                 AdminAccessManager.guardOperationalAccess(this, db, access -> {
                         companyId = access.getCompanyId();

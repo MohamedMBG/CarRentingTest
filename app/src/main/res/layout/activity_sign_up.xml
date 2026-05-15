@@ -4,32 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/bg_home_header"
     android:clipToPadding="false"
     android:fillViewport="true"
-    android:padding="@dimen/auth_screen_padding"
     tools:context=".SignUpActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <!-- Hero Branding Section -->
         <LinearLayout
-            android:id="@+id/authPanel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_auth_panel"
-            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="180dp"
             android:orientation="vertical"
-            android:padding="@dimen/auth_panel_padding"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="@dimen/auth_content_max_width">
+            android:padding="24dp">
 
             <ImageView
-                android:layout_width="@dimen/auth_logo_size"
-                android:layout_height="@dimen/auth_logo_size"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:background="@drawable/bg_auth_logo"
                 android:contentDescription="@null"
                 android:padding="14dp"
@@ -37,30 +34,51 @@
                 android:src="@drawable/ic_app_logo" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="18dp"
                 android:gravity="center"
                 android:text="@string/sign_up_title"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="26sp"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="24sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/home_tagline"
+                android:textColor="@color/homeHighlightTitle"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Auth Form Panel -->
+        <LinearLayout
+            android:id="@+id/authPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_sign_in_panel"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/auth_panel_padding"
+            android:paddingTop="28dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:lineSpacingExtra="3dp"
                 android:text="@string/sign_up_subtitle"
                 android:textColor="@color/textColorSecondary"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.CarRentingTest.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="22dp"
                 android:hint="@string/full_name"
                 app:startIconDrawable="@drawable/ic_person"
                 app:startIconTint="@color/iconTint">
@@ -209,6 +227,6 @@
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

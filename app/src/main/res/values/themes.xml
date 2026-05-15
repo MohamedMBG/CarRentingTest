@@ -23,4 +23,9 @@
     </style>
 
     <style name="Theme.CarRentingTest" parent="Base.Theme.CarRentingTest" />
+
+    <style name="Theme.CarRentingTest.Auth" parent="Theme.CarRentingTest">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

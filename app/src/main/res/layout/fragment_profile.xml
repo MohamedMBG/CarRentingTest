@@ -347,7 +347,12 @@
                 android:text="@string/logout"
                 android:textAllCaps="false"
                 android:textColor="@color/colorError"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                app:icon="@drawable/ic_logout"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/colorError"
+                app:strokeColor="@color/colorError" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

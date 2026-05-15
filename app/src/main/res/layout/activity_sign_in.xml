@@ -4,44 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/bg_home_header"
     android:clipToPadding="false"
     android:fillViewport="true"
-    android:padding="@dimen/auth_screen_padding"
     tools:context=".SignInActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="0dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <!-- Hero Branding Section -->
         <LinearLayout
-            android:id="@+id/authPanel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_auth_panel"
-            android:gravity="center_horizontal"
+            android:id="@+id/heroBrandingSection"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="200dp"
             android:orientation="vertical"
-            android:padding="@dimen/auth_panel_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="@dimen/auth_content_max_width">
+            android:padding="24dp">
 
             <ImageView
-                android:layout_width="@dimen/auth_logo_size"
-                android:layout_height="@dimen/auth_logo_size"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:background="@drawable/bg_auth_logo"
                 android:contentDescription="@null"
-                android:padding="14dp"
+                android:padding="16dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_app_logo" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/find_perfect_car"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/home_tagline"
+                android:textColor="@color/homeHighlightTitle"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <!-- Auth Form Panel -->
+        <LinearLayout
+            android:id="@+id/authPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_sign_in_panel"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/auth_panel_padding"
+            android:paddingTop="32dp">
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
                 android:gravity="center"
                 android:text="@string/welcome_back"
                 android:textColor="@color/textColorPrimary"
@@ -156,6 +183,6 @@
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

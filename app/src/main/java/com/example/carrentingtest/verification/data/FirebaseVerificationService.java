@@ -4,22 +4,24 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.carrentingtest.verification.VerificationStatus;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,34 +30,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Implementation of {@link VerificationService} that stores compressed review
- * evidence as chunked Firestore documents for projects without Firebase Storage.
- */
 public class FirebaseVerificationService implements VerificationService {
 
     private final FirebaseAuth auth;
     private final FirebaseFirestore firestore;
+    private final FirebaseStorage storage;
     private final OnDeviceFaceMatcher faceMatcher;
     private final Context appContext;
     private static final int MAX_EVIDENCE_EDGE_PX = 900;
     private static final int EVIDENCE_JPEG_QUALITY = 72;
-    private static final int EVIDENCE_CHUNK_SIZE = 240_000;
 
     public FirebaseVerificationService(@NonNull Context context) {
         this(context.getApplicationContext(),
                 FirebaseAuth.getInstance(),
                 FirebaseFirestore.getInstance(),
+                FirebaseStorage.getInstance(),
                 new OnDeviceFaceMatcher(context));
     }
 
     FirebaseVerificationService(@NonNull Context appContext,
                                  @NonNull FirebaseAuth auth,
                                  @NonNull FirebaseFirestore firestore,
+                                 @NonNull FirebaseStorage storage,
                                  @NonNull OnDeviceFaceMatcher faceMatcher) {
         this.appContext = appContext;
         this.auth = auth;
         this.firestore = firestore;
+        this.storage = storage;
         this.faceMatcher = faceMatcher;
     }
 
@@ -93,15 +94,14 @@ public class FirebaseVerificationService implements VerificationService {
                                 @NonNull Uri selfie,
                                 @NonNull Uri licenseFront,
                                 @NonNull FaceMatchResult matchResult) {
-        String selfieEvidence;
-        String licenseEvidence;
+        byte[] selfieBytes;
+        byte[] licenseBytes;
         try {
-            selfieEvidence = encodeEvidenceImage(selfie);
-            licenseEvidence = encodeEvidenceImage(licenseFront);
+            selfieBytes = compressImage(selfie);
+            licenseBytes = compressImage(licenseFront);
         } catch (IOException e) {
             saveVerificationResult(
-                    uid,
-                    liveData,
+                    uid, liveData,
                     new FaceMatchResult(
                             false,
                             matchResult.getScore(),
@@ -109,14 +109,47 @@ public class FirebaseVerificationService implements VerificationService {
                             VerificationStatus.REJECTED,
                             matchResult.getLivenessAction(),
                             matchResult.isLivenessPassed()),
-                    false,
-                    "Unable to prepare verification images for review.",
-                    null,
-                    null);
+                    false, "Unable to prepare verification images for review.", null, null);
             return;
         }
 
-        saveVerificationResult(uid, liveData, matchResult, true, null, selfieEvidence, licenseEvidence);
+        StorageReference selfieRef = storage.getReference()
+                .child("verification_evidence").child(uid).child("selfie.jpg");
+        StorageReference licenseRef = storage.getReference()
+                .child("verification_evidence").child(uid).child("license_front.jpg");
+
+        Task<Uri> selfieUrlTask = selfieRef.putBytes(selfieBytes)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful() && task.getException() != null) {
+                        throw task.getException();
+                    }
+                    return selfieRef.getDownloadUrl();
+                });
+
+        Task<Uri> licenseUrlTask = licenseRef.putBytes(licenseBytes)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful() && task.getException() != null) {
+                        throw task.getException();
+                    }
+                    return licenseRef.getDownloadUrl();
+                });
+
+        Tasks.whenAll(selfieUrlTask, licenseUrlTask)
+                .addOnSuccessListener(unused -> {
+                    String selfieUrl = selfieUrlTask.getResult().toString();
+                    String licenseUrl = licenseUrlTask.getResult().toString();
+                    saveVerificationResult(uid, liveData, matchResult, true, null, selfieUrl, licenseUrl);
+                })
+                .addOnFailureListener(e -> saveVerificationResult(
+                        uid, liveData,
+                        new FaceMatchResult(
+                                false,
+                                matchResult.getScore(),
+                                "Unable to upload verification images.",
+                                VerificationStatus.REJECTED,
+                                matchResult.getLivenessAction(),
+                                matchResult.isLivenessPassed()),
+                        false, "Unable to upload verification images.", null, null));
     }
 
     private void saveVerificationResult(@NonNull String uid,
@@ -124,8 +157,8 @@ public class FirebaseVerificationService implements VerificationService {
                                         @NonNull FaceMatchResult matchResult,
                                         boolean evidencePrepared,
                                         String evidenceError,
-                                        String selfieEvidence,
-                                        String licenseEvidence) {
+                                        String selfieUrl,
+                                        String licenseUrl) {
         VerificationStatus resolvedStatus = matchResult.getRecommendedStatus();
         if (resolvedStatus == VerificationStatus.APPROVED) {
             resolvedStatus = VerificationStatus.UNDER_REVIEW;
@@ -139,16 +172,8 @@ public class FirebaseVerificationService implements VerificationService {
         firestore.collection("users").document(uid)
                 .get()
                 .addOnSuccessListener(userSnapshot -> saveVerificationResultWithUser(
-                        uid,
-                        liveData,
-                        matchResult,
-                        evidencePrepared,
-                        evidenceError,
-                        selfieEvidence,
-                        licenseEvidence,
-                        finalStatus,
-                        requestRef,
-                        userSnapshot))
+                        uid, liveData, matchResult, evidencePrepared, evidenceError,
+                        selfieUrl, licenseUrl, finalStatus, requestRef, userSnapshot))
                 .addOnFailureListener(e -> liveData.setValue(new VerificationResult(
                         VerificationResult.Status.REJECTED,
                         matchResult.getScore(),
@@ -160,8 +185,8 @@ public class FirebaseVerificationService implements VerificationService {
                                                 @NonNull FaceMatchResult matchResult,
                                                 boolean evidencePrepared,
                                                 String evidenceError,
-                                                String selfieEvidence,
-                                                String licenseEvidence,
+                                                String selfieUrl,
+                                                String licenseUrl,
                                                 @NonNull VerificationStatus finalStatus,
                                                 @NonNull DocumentReference requestRef,
                                                 @NonNull DocumentSnapshot userSnapshot) {
@@ -191,11 +216,11 @@ public class FirebaseVerificationService implements VerificationService {
         payload.put("livenessPassed", matchResult.isLivenessPassed());
         payload.put("faceMatchScore", matchResult.getScore());
         payload.put("verificationMessage", matchResult.getMessage());
-        payload.put("evidenceStorage", "firestore_chunked_base64_jpeg");
+        payload.put("evidenceStorage", "firebase_storage_jpeg");
         payload.put("evidencePrepared", evidencePrepared);
         if (evidencePrepared) {
-            payload.put("selfieEvidenceKey", "selfie");
-            payload.put("licenseFrontEvidenceKey", "license_front");
+            payload.put("selfieUrl", selfieUrl);
+            payload.put("licenseFrontUrl", licenseUrl);
         } else {
             payload.put("evidenceError", evidenceError);
         }
@@ -209,10 +234,6 @@ public class FirebaseVerificationService implements VerificationService {
         WriteBatch batch = firestore.batch();
         batch.set(requestRef, payload, SetOptions.merge());
         batch.set(firestore.collection("users").document(uid), userUpdate, SetOptions.merge());
-        if (evidencePrepared) {
-            putEvidenceChunks(batch, requestRef, "selfie", selfieEvidence);
-            putEvidenceChunks(batch, requestRef, "license_front", licenseEvidence);
-        }
 
         batch.commit()
                 .addOnSuccessListener(unused -> liveData.setValue(new VerificationResult(
@@ -223,26 +244,6 @@ public class FirebaseVerificationService implements VerificationService {
                         VerificationResult.Status.REJECTED,
                         matchResult.getScore(),
                         "Unable to save verification result.")));
-    }
-
-    private void putEvidenceChunks(@NonNull WriteBatch batch,
-                                   @NonNull DocumentReference requestRef,
-                                   @NonNull String key,
-                                   @NonNull String base64) {
-        int totalChunks = Math.max(1, (int) Math.ceil(base64.length() / (double) EVIDENCE_CHUNK_SIZE));
-        for (int index = 0; index < totalChunks; index++) {
-            int start = index * EVIDENCE_CHUNK_SIZE;
-            int end = Math.min(base64.length(), start + EVIDENCE_CHUNK_SIZE);
-            Map<String, Object> chunk = new HashMap<>();
-            chunk.put("key", key);
-            chunk.put("index", index);
-            chunk.put("totalChunks", totalChunks);
-            chunk.put("contentType", "image/jpeg");
-            chunk.put("data", base64.substring(start, end));
-            batch.set(requestRef
-                    .collection("evidence")
-                    .document(key + "_" + String.format(java.util.Locale.US, "%03d", index)), chunk);
-        }
     }
 
     private VerificationResult.Status toResultStatus(@NonNull VerificationStatus status) {
@@ -260,7 +261,7 @@ public class FirebaseVerificationService implements VerificationService {
         }
     }
 
-    private String encodeEvidenceImage(@NonNull Uri uri) throws IOException {
+    private byte[] compressImage(@NonNull Uri uri) throws IOException {
         Bitmap original;
         try (InputStream inputStream = appContext.getContentResolver().openInputStream(uri)) {
             if (inputStream == null) {
@@ -279,7 +280,7 @@ public class FirebaseVerificationService implements VerificationService {
             scaled.recycle();
         }
         original.recycle();
-        return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP);
+        return outputStream.toByteArray();
     }
 
     private Bitmap scaleDown(@NonNull Bitmap source, int maxEdgePx) {
@@ -340,4 +341,3 @@ public class FirebaseVerificationService implements VerificationService {
         }
     }
 }
-

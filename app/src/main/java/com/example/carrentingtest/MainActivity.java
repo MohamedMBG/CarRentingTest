@@ -1,14 +1,20 @@
 package com.example.carrentingtest;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,6 +24,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
+import com.example.carrentingtest.services.NotificationScheduler;
+import com.example.carrentingtest.utils.NotificationHelper;
 
 
 import com.example.carrentingtest.fragments.HomeFragment;
@@ -30,6 +39,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
+
+    private final ActivityResultLauncher<String> notifPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (granted) {
+                    NotificationScheduler.schedule(this);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnItemSelectedListener(this);
         enableFullscreenMode();
         applyEdgeToEdgeInsets();
+        initNotifications();
 
         // Load the default fragment (HomeFragment) or route to Profile for verification
         if (savedInstanceState == null) {
@@ -101,6 +118,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, SignInActivity.class));
         finishAffinity(); // Close all activities in the task
+    }
+
+    private void initNotifications() {
+        NotificationHelper.createChannels(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                NotificationScheduler.schedule(this);
+            } else {
+                notifPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        } else {
+            NotificationScheduler.schedule(this);
+        }
     }
 
     private void enableFullscreenMode() {

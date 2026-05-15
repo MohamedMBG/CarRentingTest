@@ -97,10 +97,12 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
+            android:theme="@style/Theme.CarRentingTest.Auth"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".SignInActivity"
             android:exported="true"
+            android:theme="@style/Theme.CarRentingTest.Auth"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
