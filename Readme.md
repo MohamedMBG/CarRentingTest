@@ -142,18 +142,23 @@ The platform caters to both everyday users seeking standard vehicles and luxury 
    - If not, select "Sync Project with Gradle Files" from the toolbar
 
 4. Configure Firebase:
-   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Add an Android app to your Firebase project:
-     - Use package name: `com.example.carrentingtest`
-     - Download the `google-services.json` file
-     - Place the file in the app directory
-   - Enable Authentication in Firebase console:
-     - Set up Email/Password sign-in method
-   - Create Realtime Database:
-     - Start in test mode for development
-     - Set up security rules for production
+   - The file `app/google-services.json` is **gitignored**. You must obtain it yourself —
+     never commit a real one. See [SECURITY.md](./SECURITY.md) for full rotation, local
+     setup, and CI injection instructions.
+   - Quick start:
+     - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+     - Add an Android app using the current `applicationId` (default
+       `com.example.carrentingtest`; override via `APPLICATION_ID` gradle property —
+       see SECURITY.md §2).
+     - Download `google-services.json` and place it at `app/google-services.json`.
+   - Enable Authentication → Email/Password sign-in.
+   - Create the Firestore / Storage / Realtime DB resources used by the app.
 
-5. Build and run the application:
+5. Configure the backend URL:
+   - Set `BACKEND_BASE_URL` in `local.properties`, as a gradle `-P` flag, or env var.
+   - Release builds require HTTPS — see SECURITY.md §3.
+
+6. Build and run the application:
    - Select a target device (emulator or physical device)
    - Click the "Run" button in Android Studio
 
