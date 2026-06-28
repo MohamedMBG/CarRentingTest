@@ -516,4 +516,81 @@
         <item quantity="one">%d rental request</item>
         <item quantity="other">%d rental requests</item>
     </plurals>
+
+    <!-- Privacy / consent / GDPR -->
+    <string name="consent_title">Your privacy</string>
+    <string name="consent_intro">Before continuing, please review how we use your data. You can change your choices any time from your profile.</string>
+    <string name="consent_required_section">Required</string>
+    <string name="consent_required_body">By continuing, you accept the Terms of Service and Privacy Policy. These cover account, rental and verification data needed to operate the service.</string>
+    <string name="consent_terms_link">View Terms of Service</string>
+    <string name="consent_privacy_link">View Privacy Policy</string>
+    <string name="consent_sdk_link">Which SDKs we use</string>
+    <string name="consent_age_label">I confirm I am at least 18 years old and legally able to rent a vehicle.</string>
+    <string name="consent_optional_section">Optional</string>
+    <string name="consent_analytics_label">Allow analytics</string>
+    <string name="consent_analytics_body">Anonymous usage and crash signals via Firebase Analytics. Off = no events collected.</string>
+    <string name="consent_marketing_label">Allow marketing</string>
+    <string name="consent_marketing_body">Promotional notifications and offers. You can unsubscribe any time.</string>
+    <string name="consent_continue">Continue</string>
+    <string name="consent_error_terms_required">You must accept the Terms and Privacy Policy to continue.</string>
+    <string name="consent_error_age_required">You must be 18 or older to use this app.</string>
+
+    <string name="policy_title_privacy">Privacy Policy</string>
+    <string name="policy_title_terms">Terms of Service</string>
+    <string name="policy_loading">Loading…</string>
+    <string name="policy_load_error">Could not load this page. Please check your connection.</string>
+
+    <string name="sdk_disclosure_title">Third-party SDKs</string>
+    <string name="sdk_disclosure_intro">The app uses the following third-party SDKs. Tap a row to learn more.</string>
+    <string name="sdk_firebase_auth_title">Firebase Authentication</string>
+    <string name="sdk_firebase_auth_purpose">Account sign-in (email + password) and ID-token generation for backend calls. Required.</string>
+    <string name="sdk_firestore_title">Cloud Firestore</string>
+    <string name="sdk_firestore_purpose">Stores user profile, rentals, companies, verification status. Required.</string>
+    <string name="sdk_storage_title">Firebase Storage</string>
+    <string name="sdk_storage_purpose">Hosts uploaded license photos, selfies and signatures. Required for verification.</string>
+    <string name="sdk_analytics_title">Firebase Analytics</string>
+    <string name="sdk_analytics_purpose">Anonymous usage events. Off by default — only sends data after you opt in.</string>
+    <string name="sdk_fcm_title">Firebase Cloud Messaging</string>
+    <string name="sdk_fcm_purpose">Push notifications for booking updates and admin alerts. Marketing pushes are gated by your marketing consent.</string>
+    <string name="sdk_config_title">Firebase Remote Config</string>
+    <string name="sdk_config_purpose">Runtime feature flags and configuration values. No personal data is sent.</string>
+    <string name="sdk_mlkit_title">ML Kit Face Detection</string>
+    <string name="sdk_mlkit_purpose">On-device face detection during selfie verification. Images stay on the device for matching.</string>
+
+    <string name="privacy_center_title">Privacy &amp; data</string>
+    <string name="privacy_center_consent_section">Your consents</string>
+    <string name="privacy_center_consent_analytics">Analytics</string>
+    <string name="privacy_center_consent_marketing">Marketing</string>
+    <string name="privacy_center_state_allowed">Allowed</string>
+    <string name="privacy_center_state_denied">Not allowed</string>
+    <string name="privacy_center_change_consent">Change my consents</string>
+    <string name="privacy_center_rights_section">Your data rights</string>
+    <string name="privacy_center_export">Request a copy of my data</string>
+    <string name="privacy_center_export_body">We will prepare an export of your account, rentals, verification and uploaded media. Delivered by email when ready.</string>
+    <string name="privacy_center_delete">Delete my account and data</string>
+    <string name="privacy_center_delete_body">Permanently removes your account, rentals and uploaded media. This cannot be undone.</string>
+    <string name="privacy_center_policies_section">Policies</string>
+    <string name="privacy_center_view_privacy">View Privacy Policy</string>
+    <string name="privacy_center_view_terms">View Terms of Service</string>
+    <string name="privacy_center_view_sdks">Third-party SDKs we use</string>
+    <string name="privacy_center_export_confirm_title">Request data export?</string>
+    <string name="privacy_center_export_confirm_body">We will start preparing your export and send it to your registered email when ready.</string>
+    <string name="privacy_center_delete_confirm_title">Delete account?</string>
+    <string name="privacy_center_delete_confirm_body">This permanently deletes your account, rentals, uploaded photos and signatures. You will be signed out. This cannot be undone.</string>
+    <string name="privacy_center_action_request">Request</string>
+    <string name="privacy_center_action_delete">Delete</string>
+    <string name="privacy_center_action_cancel">Cancel</string>
+    <string name="privacy_center_export_started">Export requested. We will email you when it is ready.</string>
+    <string name="privacy_center_delete_started">Deletion in progress…</string>
+    <string name="privacy_center_delete_done">Account deleted.</string>
+
+    <!-- Profile addition -->
+    <string name="profile_privacy_button">Privacy &amp; data</string>
+
+    <!-- Sign up additions -->
+    <string name="signup_dob_hint">Date of birth (yyyy-MM-dd)</string>
+    <string name="signup_error_dob_required">Enter your date of birth</string>
+    <string name="signup_error_dob_format">Use format yyyy-MM-dd</string>
+    <string name="signup_error_dob_age">You must be at least 18 years old</string>
+
 </resources>

@@ -26,6 +26,15 @@ fun escapeForBuildConfig(value: String): String {
 val backendBaseUrl = readStringConfig("BACKEND_BASE_URL").trim()
 val escapedBackendBaseUrl = escapeForBuildConfig(backendBaseUrl)
 
+// Legal URLs are remote so the policy text can change without an app update.
+// Defaults point at placeholder paths under the configured backend; override per env.
+val privacyPolicyUrl = readStringConfig("PRIVACY_POLICY_URL").trim()
+    .ifBlank { "https://example.com/legal/privacy" }
+val tosUrl = readStringConfig("TOS_URL").trim()
+    .ifBlank { "https://example.com/legal/terms" }
+val escapedPrivacyPolicyUrl = escapeForBuildConfig(privacyPolicyUrl)
+val escapedTosUrl = escapeForBuildConfig(tosUrl)
+
 // applicationId is overridable via gradle property / env / local.properties so the
 // Play Store id can be rotated to a real brand domain without editing build files.
 // Default kept for backwards compatibility until namespace rename lands.
@@ -62,6 +71,10 @@ android {
             buildConfigField("String", "BACKEND_BASE_URL", "\"$escapedBackendBaseUrl\"")
             buildConfigField("String", "CONCIERGE_ENDPOINT_PATH", "\"/v1/mobile/concierge\"")
             buildConfigField("String", "NOTIFICATION_ENDPOINT_PATH", "\"/v1/mobile/notifications/email\"")
+            buildConfigField("String", "EXPORT_ENDPOINT_PATH", "\"/v1/user/export\"")
+            buildConfigField("String", "DELETE_ENDPOINT_PATH", "\"/v1/user/delete\"")
+            buildConfigField("String", "PRIVACY_POLICY_URL", "\"$escapedPrivacyPolicyUrl\"")
+            buildConfigField("String", "TOS_URL", "\"$escapedTosUrl\"")
             buildConfigField("boolean", "REQUIRE_HTTPS_BACKEND", "false")
         }
         release {
@@ -73,6 +86,10 @@ android {
             buildConfigField("String", "BACKEND_BASE_URL", "\"$escapedBackendBaseUrl\"")
             buildConfigField("String", "CONCIERGE_ENDPOINT_PATH", "\"/v1/mobile/concierge\"")
             buildConfigField("String", "NOTIFICATION_ENDPOINT_PATH", "\"/v1/mobile/notifications/email\"")
+            buildConfigField("String", "EXPORT_ENDPOINT_PATH", "\"/v1/user/export\"")
+            buildConfigField("String", "DELETE_ENDPOINT_PATH", "\"/v1/user/delete\"")
+            buildConfigField("String", "PRIVACY_POLICY_URL", "\"$escapedPrivacyPolicyUrl\"")
+            buildConfigField("String", "TOS_URL", "\"$escapedTosUrl\"")
             buildConfigField("boolean", "REQUIRE_HTTPS_BACKEND", "true")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -122,6 +139,14 @@ afterEvaluate {
         // unowned and cannot be claimed later.
         check(effectiveApplicationId != defaultApplicationId) {
             "APPLICATION_ID must be overridden (not com.example.*) for release builds."
+        }
+        // Legal URLs must point at a real published policy in production.
+        // Why: shipping with example.com placeholder violates app-store policy and GDPR transparency.
+        check(!privacyPolicyUrl.contains("example.com")) {
+            "PRIVACY_POLICY_URL must be set to a real URL for release builds."
+        }
+        check(!tosUrl.contains("example.com")) {
+            "TOS_URL must be set to a real URL for release builds."
         }
     }
 }

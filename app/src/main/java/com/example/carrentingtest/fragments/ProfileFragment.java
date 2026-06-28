@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.carrentingtest.MainActivity;
 import com.example.carrentingtest.R;
 import com.example.carrentingtest.SignInActivity;
+import com.example.carrentingtest.privacy.PrivacyCenterActivity;
 import com.example.carrentingtest.verification.VerificationStatus;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -85,6 +86,12 @@ public class ProfileFragment extends Fragment {
 
         // Set logout button click listener
         btnLogout.setOnClickListener(v -> logout());
+
+        View btnPrivacyCenter = view.findViewById(R.id.btnPrivacyCenter);
+        if (btnPrivacyCenter != null) {
+            btnPrivacyCenter.setOnClickListener(v ->
+                    startActivity(new Intent(requireContext(), PrivacyCenterActivity.class)));
+        }
     }
 
     @Override

@@ -354,5 +354,16 @@
                 app:iconTint="@color/colorError"
                 app:strokeColor="@color/colorError" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrivacyCenter"
+            style="@style/Widget.CarRentingTest.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:paddingVertical="10dp"
+            android:text="@string/profile_privacy_button"
+            android:textAllCaps="false"
+            android:textSize="15sp" />
     </LinearLayout>
 </ScrollView>
