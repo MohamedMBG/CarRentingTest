@@ -13,3 +13,13 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Secrets — never commit
+# Why: contains Firebase API key + sender id; must be provisioned per-env via Firebase Console or CI secret.
+app/google-services.json
+google-services.json
+
+# Environment overrides — local-only
+.env
+.env.*
+!.env.example

@@ -26,12 +26,19 @@ fun escapeForBuildConfig(value: String): String {
 val backendBaseUrl = readStringConfig("BACKEND_BASE_URL").trim()
 val escapedBackendBaseUrl = escapeForBuildConfig(backendBaseUrl)
 
+// applicationId is overridable via gradle property / env / local.properties so the
+// Play Store id can be rotated to a real brand domain without editing build files.
+// Default kept for backwards compatibility until namespace rename lands.
+val defaultApplicationId = "com.example.carrentingtest"
+val configuredApplicationId = readStringConfig("APPLICATION_ID").trim()
+val effectiveApplicationId = configuredApplicationId.ifBlank { defaultApplicationId }
+
 android {
     namespace = "com.example.carrentingtest"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.carrentingtest"
+        applicationId = effectiveApplicationId
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -109,6 +116,12 @@ afterEvaluate {
         }
         check(backendBaseUrl.startsWith("https://")) {
             "BACKEND_BASE_URL must use HTTPS for release builds."
+        }
+        // Block release builds from shipping with the placeholder applicationId.
+        // Why: prevents accidental Play Store upload under com.example.* which is
+        // unowned and cannot be claimed later.
+        check(effectiveApplicationId != defaultApplicationId) {
+            "APPLICATION_ID must be overridden (not com.example.*) for release builds."
         }
     }
 }
