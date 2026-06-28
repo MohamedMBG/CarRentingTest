@@ -19,19 +19,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.carrentingtest.privacy.AgeGate;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     //declarations des elements de UI
-    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId;
+    private TextInputEditText etEmail, etPassword, etName, etPhone, etDriverLicense, etCompanyId, etDob;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private View progressBar, btnSignUp;
@@ -42,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
     private String phone;
     private String driverLicense;
     private String companyId;
+    private String dob;
 
     // Selfie/ID verification removed from signup. Registration proceeds directly.
 
@@ -60,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
         etDriverLicense = findViewById(R.id.etDriverLicense);
+        etDob = findViewById(R.id.etDob);
         etCompanyId = findViewById(R.id.etCompanyId);
         progressBar = findViewById(R.id.progressBar);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView tvSignIn = findViewById(R.id.tvSignIn);
@@ -86,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
         phone = Objects.requireNonNull(etPhone.getText()).toString().trim();
         driverLicense = Objects.requireNonNull(etDriverLicense.getText()).toString().trim();
         companyId = Objects.requireNonNull(etCompanyId.getText()).toString().trim();
+        dob = Objects.requireNonNull(etDob.getText()).toString().trim();
 
         // Validate inputs
         if (TextUtils.isEmpty(name)) {
@@ -102,6 +107,20 @@ public class SignUpActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(driverLicense)) {
             etDriverLicense.setError("Enter your driver license number");
+            return;
+        }
+        if (TextUtils.isEmpty(dob)) {
+            etDob.setError(getString(R.string.signup_error_dob_required));
+            return;
+        }
+        LocalDate parsedDob = AgeGate.parseIsoDob(dob);
+        if (parsedDob == null) {
+            etDob.setError(getString(R.string.signup_error_dob_format));
+            return;
+        }
+        if (!AgeGate.isAtLeastMinimumAge(parsedDob)) {
+            // Hard block — rental contracts require legal-adult status.
+            etDob.setError(getString(R.string.signup_error_dob_age));
             return;
         }
         if (TextUtils.isEmpty(companyId)) {
@@ -156,6 +175,8 @@ public class SignUpActivity extends AppCompatActivity {
         client.put("email", email);
         client.put("phone", phone);
         client.put("driverLicense", driverLicense);
+        // Store DOB ISO-8601 — backend uses this as the legal age-gate record of truth.
+        client.put("dob", dob);
         if (companyId != null && !companyId.isEmpty()) {
             client.put("companyId", companyId);
         }
@@ -186,6 +207,7 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail.setEnabled(!loading);
         etPhone.setEnabled(!loading);
         etDriverLicense.setEnabled(!loading);
+        etDob.setEnabled(!loading);
         etCompanyId.setEnabled(!loading);
         etPassword.setEnabled(!loading);
     }

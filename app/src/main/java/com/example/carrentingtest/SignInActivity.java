@@ -15,6 +15,8 @@ import com.example.carrentingtest.admin.AdminDashboardActivity;
 import com.example.carrentingtest.admin.AdminLoginActivity;
 import com.example.carrentingtest.data.repository.UserRepository;
 import com.example.carrentingtest.domain.UserRole;
+import com.example.carrentingtest.privacy.ConsentActivity;
+import com.example.carrentingtest.privacy.ConsentManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,6 +33,22 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // GDPR gate: on first launch (or after a policy bump) divert to the consent
+        // screen. Done before any UI inflation so analytics never fires for an
+        // un-consented user.
+        if (!ConsentManager.isCurrentPolicyAccepted(this)) {
+            Intent consent = new Intent(this, ConsentActivity.class);
+            consent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(consent);
+            finish();
+            return;
+        }
+
+        // Apply persisted analytics consent every cold start so the SDK matches the
+        // user's choice from session to session.
+        ConsentManager.applyPersistedAnalyticsConsent(this);
+
         setContentView(R.layout.activity_sign_in);
 
         // Initialize Firebase Auth

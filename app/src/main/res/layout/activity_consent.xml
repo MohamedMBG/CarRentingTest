@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/consent_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:fillViewport="true"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_title"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_intro"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody2"/>
+
+        <!-- Required section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_required_section"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:textAppearance="?attr/textAppearanceOverline"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_required_body"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody2"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewTerms"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_terms_link"
+            android:layout_marginTop="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewPrivacy"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_privacy_link"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewSdks"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_sdk_link"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_age_label"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Optional section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_optional_section"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:textAppearance="?attr/textAppearanceOverline"/>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swAnalytics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_analytics_label"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_analytics_body"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:layout_marginStart="56dp"/>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swMarketing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_marketing_label"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_marketing_body"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:layout_marginStart="56dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConsentContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/consent_continue"
+            android:layout_marginTop="32dp"
+            app:cornerRadius="12dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

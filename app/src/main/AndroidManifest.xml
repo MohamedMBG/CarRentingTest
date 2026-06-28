@@ -110,6 +110,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Privacy / GDPR screens -->
+        <activity
+            android:name=".privacy.ConsentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarRentingTest.Auth" />
+        <activity
+            android:name=".privacy.PolicyWebViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".privacy.SdkDisclosureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".privacy.PrivacyCenterActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
