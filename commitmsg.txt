@@ -1,0 +1,11 @@
+feat(verification): implement liveness detection and admin manual review flow
+
+Introduce randomized liveness checks and admin manual review for identity verification.
+
+What changed
+- Added liveness actions during selfie capture.
+- Stored verification evidence as chunked Base64 in Firestore.
+- Added admin review activity for approving/rejecting users.
+- Updated admin access, reports, car management, and premium car UI.
+- Hardened Firestore rules.
+- Added unit tests.
