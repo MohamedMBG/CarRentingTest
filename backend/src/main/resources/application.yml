@@ -1,0 +1,13 @@
+server:
+  port: ${PORT:8080}
+
+# Path to the Firebase service account JSON. Unset by default so the app
+# still boots without it (see FirebaseAdminConfig) — required for /v1/me.
+firebase:
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
