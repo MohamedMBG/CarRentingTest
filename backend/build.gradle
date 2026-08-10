@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.bbluxurycars'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Postgres + Spring Data JPA land in Phase 1 alongside the first real
+    // entities (companies/users/subscriptions) — see docs/SAAS_ROADMAP.md.
+    // Adding the datasource dependency now with nothing to persist would just
+    // make the service fail to boot without a database for no benefit.
+
+    // Verifies Firebase ID tokens issued to the Android app and manages
+    // custom claims (role, companyId) — see docs/decisions/0001-*.md.
+    implementation 'com.google.firebase:firebase-admin:9.4.1'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
