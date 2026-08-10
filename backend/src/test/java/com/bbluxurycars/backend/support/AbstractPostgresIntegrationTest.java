@@ -1,29 +1,47 @@
 package com.bbluxurycars.backend.support;
 
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Base for tests that need the real schema.
  *
- * <p>The container is static, so one Postgres is started for the whole test JVM
- * and reused across every subclass rather than paid for per class. Flyway runs
- * against it on first context load, which means the migrations themselves are
- * exercised by every integration test -- a broken migration fails the build
- * here rather than on deploy.
+ * <p>Uses the singleton-container pattern: the container is started once from a
+ * static initializer and deliberately never stopped. The obvious alternative --
+ * {@code @Testcontainers} with a {@code @Container} static field -- looks
+ * equivalent but is not, because that extension stops the container when each
+ * test class finishes. With the field inherited from a shared base, the first
+ * class to run would shut down the very container every later class expects to
+ * still be listening, and those classes fail with connection refused.
  *
- * <p>{@code @ServiceConnection} wires the container's JDBC URL, username and
- * password into the context automatically, so no test needs to restate the
- * datasource properties.
+ * <p>Nothing leaks: Testcontainers' Ryuk sidecar removes the container when the
+ * test JVM exits. Starting once also means one Postgres for the whole suite
+ * rather than one per class.
+ *
+ * <p>Flyway runs against it on first context load, so the migrations themselves
+ * are exercised by every integration test -- a broken migration fails the build
+ * here rather than on deploy.
  */
 @SpringBootTest
-@Testcontainers
 public abstract class AbstractPostgresIntegrationTest {
 
-    @Container
-    @ServiceConnection
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
+    private static final PostgreSQLContainer<?> POSTGRES =
+            new PostgreSQLContainer<>("postgres:16-alpine");
+
+    static {
+        POSTGRES.start();
+    }
+
+    /**
+     * Registered dynamically because the mapped port is only known after the
+     * container starts, so it cannot be written into a properties file.
+     */
+    @DynamicPropertySource
+    static void datasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES::getUsername);
+        registry.add("spring.datasource.password", POSTGRES::getPassword);
+    }
 }

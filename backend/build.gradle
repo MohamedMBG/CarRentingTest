@@ -38,8 +38,9 @@ dependencies {
     // relies on Postgres-specific behaviour (TIMESTAMPTZ, CHECK constraints,
     // and the exclusion constraint that will enforce booking overlap), so a
     // substitute database would pass tests the real one fails.
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:junit-jupiter'
+    // Only the Postgres module: the container is managed by hand as a
+    // singleton (see AbstractPostgresIntegrationTest), so neither the
+    // JUnit 5 extension nor Boot's @ServiceConnection support is used.
     testImplementation 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
