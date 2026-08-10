@@ -1,0 +1,27 @@
+# Local Postgres for development. Integration tests do not use this -- they
+# start their own throwaway container via Testcontainers -- so running the two
+# side by side is safe and the test run never touches development data.
+#
+# Credentials match the defaults in application.yml so `./gradlew bootRun`
+# works with no environment set. They are local-only values and are not used in
+# any deployed environment, where DATABASE_* come from the secret store.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: carrenting-postgres
+    environment:
+      POSTGRES_DB: carrenting
+      POSTGRES_USER: carrenting
+      POSTGRES_PASSWORD: carrenting
+    ports:
+      - "5432:5432"
+    volumes:
+      - carrenting-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U carrenting -d carrenting"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  carrenting-postgres-data:

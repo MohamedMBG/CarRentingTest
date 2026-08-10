@@ -14,9 +14,10 @@ import java.io.IOException;
 /**
  * Verifies the Firebase ID token on the Authorization header and exposes the
  * caller's uid as a request attribute. This is the first piece of the
- * server-side authorization boundary described in docs/BACKEND_API_PLAN.md
- * (Phase 1) — full companyId/role enforcement lands once tenant data is
- * backed by this service instead of read client-side from Firestore.
+ * server-side authorization boundary described in docs/SAAS_ROADMAP.md
+ * (Phase 1). The uid it sets is the only identity downstream code may trust:
+ * TenantContextService resolves the tenant from it, and never from anything
+ * the client sends.
  *
  * Not a @Component: registered explicitly (and URL-scoped) by WebConfig so
  * Spring Boot doesn't also auto-register it as a global /* filter.

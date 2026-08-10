@@ -242,6 +242,11 @@ The face-matching pipeline runs on-device today, which is the right default. Any
 
 The Android app is live against Firestore. Phase 1 must not require a big-bang cutover. Route new writes through the backend first, keep reads on Firestore until each collection has a backend equivalent, and migrate collection by collection.
 
+Two constraints the mirror has to respect, both established by the V1 schema:
+
+- **Companies sync before their users.** `app_user.company_id` carries a foreign key to `company`, so a user referencing an unmirrored company is rejected outright. Ordering the backfill company-first satisfies this; the alternative — dropping the constraint — would trade a trivial ordering requirement for silent referential corruption.
+- **Unprovisioned callers are a normal state, not an error.** Until the backfill completes most users have no mirrored row. `GET /v1/me` reports `provisioned: false` with least-privilege defaults rather than failing, so the app keeps working on its existing Firestore path throughout the migration.
+
 ### 5.4 Testing
 
 Current coverage is 8 unit tests on the client and 1 on the backend. Backend work should arrive with tests from the start — integration tests over a real Postgres (Testcontainers) for tenant isolation, pricing, and booking overlap in particular.
