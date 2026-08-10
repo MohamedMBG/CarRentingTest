@@ -1,6 +1,29 @@
 server:
   port: ${PORT:8080}
 
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/carrenting}
+    username: ${DATABASE_USERNAME:carrenting}
+    password: ${DATABASE_PASSWORD:carrenting}
+  jpa:
+    # Flyway owns the schema. `validate` makes Hibernate check the mapping
+    # against the migrated tables and fail fast on drift, rather than silently
+    # altering production tables the way `update` would.
+    hibernate:
+      ddl-auto: validate
+    # Off by default: leaving a session open for the whole request hides lazy
+    # loads inside view rendering, where they surface as N+1 queries nobody
+    # attributes to the endpoint that caused them.
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
 # Path to the Firebase service account JSON. Unset by default so the app
 # still boots without it (see FirebaseAdminConfig) — required for /v1/me.
 firebase:
@@ -11,3 +34,8 @@ management:
     web:
       exposure:
         include: health
+  endpoint:
+    health:
+      # The database is now a hard dependency, so a service that cannot reach
+      # it must not report itself healthy to a load balancer.
+      show-details: never
