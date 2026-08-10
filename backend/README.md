@@ -1,7 +1,7 @@
 # Backend
 
 Spring Boot (Java 17) API backing the Android app. See
-[`../docs/BACKEND_API_PLAN.md`](../docs/BACKEND_API_PLAN.md) for the overall
+[`../docs/SAAS_ROADMAP.md`](../docs/SAAS_ROADMAP.md) for the overall
 plan and rollout phases, and
 [`../docs/decisions/0001-backend-language-and-framework.md`](../docs/decisions/0001-backend-language-and-framework.md)
 for why this stack was chosen.

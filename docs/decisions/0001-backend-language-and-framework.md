@@ -2,7 +2,7 @@
 
 ## Context
 
-`docs/BACKEND_API_PLAN.md` requires a real backend to enforce tenant
+`docs/SAAS_ROADMAP.md` requires a real backend to enforce tenant
 isolation server-side, own billing, and stop the Android app writing
 sensitive/billable data straight to Firestore. The plan left the
 language/framework as an open decision (Kotlin+Spring Boot, Kotlin+Ktor, and
