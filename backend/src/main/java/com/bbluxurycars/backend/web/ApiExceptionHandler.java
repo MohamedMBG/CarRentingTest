@@ -1,6 +1,6 @@
 package com.bbluxurycars.backend.web;
 
-import com.bbluxurycars.backend.booking.BookingException;
+import com.bbluxurycars.backend.error.ApiException;
 import com.bbluxurycars.backend.pricing.InvalidRentalPeriodException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,9 @@ public class ApiExceptionHandler {
     public record ApiError(String code, String message) {
     }
 
-    @ExceptionHandler(BookingException.class)
-    public ResponseEntity<ApiError> handleBooking(BookingException e) {
+    // Handles BookingException too, which is an ApiException.
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiError> handleApi(ApiException e) {
         return ResponseEntity.status(e.getStatus())
                 .body(new ApiError(e.getCode(), e.getMessage()));
     }

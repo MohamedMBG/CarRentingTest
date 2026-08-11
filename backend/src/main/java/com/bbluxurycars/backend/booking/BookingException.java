@@ -1,33 +1,20 @@
 package com.bbluxurycars.backend.booking;
 
+import com.bbluxurycars.backend.error.ApiException;
 import org.springframework.http.HttpStatus;
 
 /**
- * A booking that the server refuses, with the HTTP status the refusal maps to
- * and a stable machine-readable code.
+ * A booking the server refuses.
  *
- * <p>The code exists so the Android client can react to a specific refusal --
- * "these dates are taken" deserves a different screen from "your account is not
- * verified" -- without parsing the human-readable message, which is free to
- * change or be translated.
+ * <p>Carries the status and code machinery of {@link ApiException}; what lives
+ * here is the vocabulary of booking-specific refusals, so that every place a
+ * booking can be declined names one of a known set rather than inventing a
+ * message.
  */
-public class BookingException extends RuntimeException {
-
-    private final HttpStatus status;
-    private final String code;
+public class BookingException extends ApiException {
 
     public BookingException(HttpStatus status, String code, String message) {
-        super(message);
-        this.status = status;
-        this.code = code;
-    }
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public String getCode() {
-        return code;
+        super(status, code, message);
     }
 
     /**

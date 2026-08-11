@@ -27,11 +27,32 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @SpringBootTest
 public abstract class AbstractPostgresIntegrationTest {
 
-    private static final PostgreSQLContainer<?> POSTGRES =
-            new PostgreSQLContainer<>("postgres:16-alpine");
+    /**
+     * Escape hatch for a machine where Testcontainers cannot reach Docker --
+     * on Windows its named-pipe discovery does not always find Docker Desktop,
+     * and a contributor who cannot run the integration tests at all will simply
+     * push and let CI find the failure. Point these three at any throwaway
+     * Postgres 16 and the suite runs unchanged:
+     *
+     * <pre>
+     * TEST_DATABASE_URL=jdbc:postgresql://localhost:5432/carrenting_test \
+     * TEST_DATABASE_USERNAME=postgres TEST_DATABASE_PASSWORD=postgres ./gradlew test
+     * </pre>
+     *
+     * <p>The database must be empty on first use: Flyway refuses to baseline a
+     * populated schema it has no history for. CI leaves this unset and uses the
+     * container, so the default path stays the tested one.
+     */
+    private static final String EXTERNAL_URL = System.getenv("TEST_DATABASE_URL");
+
+    private static final PostgreSQLContainer<?> POSTGRES = EXTERNAL_URL == null
+            ? new PostgreSQLContainer<>("postgres:16-alpine")
+            : null;
 
     static {
-        POSTGRES.start();
+        if (POSTGRES != null) {
+            POSTGRES.start();
+        }
     }
 
     /**
@@ -40,6 +61,14 @@ public abstract class AbstractPostgresIntegrationTest {
      */
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
+        if (POSTGRES == null) {
+            registry.add("spring.datasource.url", () -> EXTERNAL_URL);
+            registry.add("spring.datasource.username",
+                    () -> System.getenv().getOrDefault("TEST_DATABASE_USERNAME", "postgres"));
+            registry.add("spring.datasource.password",
+                    () -> System.getenv().getOrDefault("TEST_DATABASE_PASSWORD", "postgres"));
+            return;
+        }
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);

@@ -21,7 +21,8 @@ public class WebConfig {
                 // from the verified uid, so neither is reachable without the
                 // filter having run.
                 "/v1/cars", "/v1/cars/*",
-                "/v1/bookings", "/v1/bookings/*");
+                "/v1/bookings", "/v1/bookings/*",
+                "/v1/tenant/*");
         return registration;
     }
 }
