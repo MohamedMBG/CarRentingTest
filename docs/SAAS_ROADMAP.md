@@ -45,9 +45,9 @@ Release builds are already gated on a configured HTTPS backend URL and on the `a
 | Item | State |
 | --- | --- |
 | Stack | Spring Boot 3.3.4, Java 17, Gradle (Groovy DSL) |
-| Endpoints | `GET /v1/health` (public), `GET /v1/me`, `GET /v1/cars`, `POST /v1/bookings/quote`, `POST /v1/bookings`, `GET /v1/bookings`, `POST /v1/bookings/{id}/{approve,reject,complete}` |
+| Endpoints | `GET /v1/health` (public), `GET /v1/me`, `POST /v1/tenant/sync`, `GET /v1/cars`, `POST /v1/bookings/quote`, `POST /v1/bookings`, `GET /v1/bookings`, `POST /v1/bookings/{id}/{approve,reject,complete}` |
 | Database | Postgres via Spring Data JPA, Flyway migrations. V1 `company` / `app_user`; V2 `car` / `rental_request` |
-| Domain logic | Server-authoritative pricing; booking state machine; vehicle double-booking blocked by a GiST exclusion constraint |
+| Domain logic | Server-authoritative pricing; booking state machine; vehicle double-booking blocked by a GiST exclusion constraint; Firestore-to-Postgres mirror (lazy per caller, bulk per tenant) |
 | Auth | `FirebaseAuthFilter` verifies Firebase ID tokens via Admin SDK; tenant resolved server-side from the verified uid |
 | Packaging | `Dockerfile` present; no deploy target configured |
 | CI | `.github/workflows/backend-ci.yml` — build and test on backend changes only |
@@ -244,6 +244,13 @@ The face-matching pipeline runs on-device today, which is the right default. Any
 ### 5.3 Migration strategy
 
 The Android app is live against Firestore. Phase 1 must not require a big-bang cutover. Route new writes through the backend first, keep reads on Firestore until each collection has a backend equivalent, and migrate collection by collection.
+
+The mirror itself now exists: `TenantMirrorService` reads `companies`, `users`
+and `cars` through a read-only `FirestoreGateway` and upserts them into
+Postgres. It runs two ways — lazily, provisioning a caller on their first
+authenticated request, and in bulk per tenant via `POST /v1/tenant/sync`. What
+remains is the other half of the cutover: moving the app's writes onto the API
+and closing the Firestore write path collection by collection.
 
 Two constraints the mirror has to respect, both established by the V1 schema:
 

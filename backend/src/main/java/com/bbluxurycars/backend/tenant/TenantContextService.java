@@ -5,6 +5,7 @@ import com.bbluxurycars.backend.domain.Company;
 import com.bbluxurycars.backend.domain.CompanyLifecycleStatus;
 import com.bbluxurycars.backend.repository.AppUserRepository;
 import com.bbluxurycars.backend.repository.CompanyRepository;
+import com.bbluxurycars.backend.sync.TenantMirrorService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,20 +25,28 @@ public class TenantContextService {
 
     private final AppUserRepository appUserRepository;
     private final CompanyRepository companyRepository;
+    private final TenantMirrorService tenantMirrorService;
 
     public TenantContextService(AppUserRepository appUserRepository,
-                                CompanyRepository companyRepository) {
+                                CompanyRepository companyRepository,
+                                TenantMirrorService tenantMirrorService) {
         this.appUserRepository = appUserRepository;
         this.companyRepository = companyRepository;
+        this.tenantMirrorService = tenantMirrorService;
     }
 
-    @Transactional(readOnly = true)
+    /**
+     * Read-write rather than read-only because a miss now provisions the caller
+     * from Firestore before answering (see {@link #provisionFromFirestore}).
+     */
+    @Transactional
     public TenantContext resolve(String uid) {
         if (uid == null || uid.isBlank()) {
             throw new IllegalArgumentException("uid is required");
         }
 
-        Optional<AppUser> found = appUserRepository.findByFirebaseUid(uid);
+        Optional<AppUser> found = appUserRepository.findByFirebaseUid(uid)
+                .or(() -> provisionFromFirestore(uid));
         if (found.isEmpty()) {
             return TenantContext.unprovisioned(uid);
         }
@@ -51,6 +60,23 @@ public class TenantContextService {
                 user.getStatus(),
                 resolveCompanyStatus(user),
                 user.getVerificationStatus());
+    }
+
+    /**
+     * Mirrors the caller from Firestore on their first authenticated request.
+     *
+     * <p>Provisioning lazily rather than waiting for a bulk backfill means a
+     * user reaches the API the moment they use it, and the tenant fields on
+     * {@code /v1/me} stop being empty for everyone until an operator runs
+     * something. The bulk path still exists for the initial migration.
+     *
+     * <p>A failure here is deliberately silent: the caller stays unprovisioned,
+     * which is a supported state the client already handles by staying on its
+     * Firestore path. Turning a Firestore outage into a 500 on every request
+     * would take a working app offline for a mirror it does not yet depend on.
+     */
+    private Optional<AppUser> provisionFromFirestore(String uid) {
+        return tenantMirrorService.mirrorUser(uid);
     }
 
     /**

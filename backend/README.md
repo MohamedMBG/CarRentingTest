@@ -36,6 +36,22 @@ they need a working Docker daemon but do not touch the compose database. Every
 integration test runs the migrations, so a broken migration fails the build
 rather than the deploy.
 
+If Testcontainers cannot reach your Docker daemon — its named-pipe discovery
+does not always find Docker Desktop on Windows — point the tests at any empty
+throwaway Postgres 16 instead:
+
+```bash
+docker run -d --name cr-test -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=carrenting_test -p 55433:5432 postgres:16-alpine
+
+TEST_DATABASE_URL=jdbc:postgresql://localhost:55433/carrenting_test \
+TEST_DATABASE_USERNAME=postgres TEST_DATABASE_PASSWORD=postgres ./gradlew test
+```
+
+The database must be empty the first time: Flyway will not baseline a
+populated schema it has no history for. CI leaves these unset and uses the
+container.
+
 ## Configuration
 
 | Variable | Default | Purpose |
@@ -95,7 +111,27 @@ Refusals carry a stable `code` alongside the message (`dates_already_held`,
 `invalid_rental_period`) so clients can branch on the reason without parsing
 prose.
 
-Still to come in Phase 1: the Firestore backfill and cutover of the app's
-booking writes, and the four endpoints the app already calls
+**Phase 1 — Firestore mirror (in progress)**
+
+- `FirestoreGateway` reads `companies`, `users` and `cars` from Firestore. It
+  is read-only by design: the app still owns those documents, and a second
+  writer without a shared transaction produces divergence nobody can
+  reconstruct.
+- `TenantMirrorService` upserts them into Postgres, companies first — a user
+  referencing an unmirrored company is rejected by the foreign key.
+- A verified caller with no mirrored row is provisioned from Firestore on
+  their first request, so `/v1/me` and the booking endpoints work without
+  waiting for a backfill. If Firestore is unreachable the caller simply stays
+  `provisioned: false`, as before.
+- `POST /v1/tenant/sync` mirrors the caller's whole tenant — company, users
+  and fleet — and reports the counts. Active agency admins only, and it takes
+  no tenant parameter: the company synced is always the caller's.
+
+Without Firebase credentials configured the gateway reports itself
+unavailable and every mirror is a no-op, which is why the service still boots
+and tests run with no Firebase at all.
+
+Still to come in Phase 1: cutover of the app's booking writes, and the four
+endpoints the app already calls
 (`/v1/mobile/concierge`, `/v1/mobile/notifications/email`, `/v1/user/export`,
 `/v1/user/delete`).
