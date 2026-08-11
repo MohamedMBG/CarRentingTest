@@ -1,7 +1,7 @@
 # SaaS Roadmap
 
 **Status:** draft — living document
-**Last updated:** 2026-08-10
+**Last updated:** 2026-08-11
 **Scope:** what B&B Luxury Cars needs in order to run as a commercial, multi-tenant SaaS product rather than a single-operator Android application.
 
 ---
@@ -40,17 +40,18 @@ The mobile client is the mature part of the system. It is a Java Android app (mi
 
 Release builds are already gated on a configured HTTPS backend URL and on the `applicationId` having been moved off the placeholder `com.example.*` namespace.
 
-### 1.2 Backend — Phase 0 scaffold only
+### 1.2 Backend — Phase 1 in progress
 
 | Item | State |
 | --- | --- |
 | Stack | Spring Boot 3.3.4, Java 17, Gradle (Groovy DSL) |
-| Endpoints | `GET /v1/health` (public), `GET /v1/me` (Firebase ID token → uid echo) |
-| Database | None. JPA and Postgres dependencies deliberately not yet added |
-| Auth | `FirebaseAuthFilter` verifies Firebase ID tokens via Admin SDK |
+| Endpoints | `GET /v1/health` (public), `GET /v1/me`, `GET /v1/cars`, `POST /v1/bookings/quote`, `POST /v1/bookings`, `GET /v1/bookings`, `POST /v1/bookings/{id}/{approve,reject,complete}` |
+| Database | Postgres via Spring Data JPA, Flyway migrations. V1 `company` / `app_user`; V2 `car` / `rental_request` |
+| Domain logic | Server-authoritative pricing; booking state machine; vehicle double-booking blocked by a GiST exclusion constraint |
+| Auth | `FirebaseAuthFilter` verifies Firebase ID tokens via Admin SDK; tenant resolved server-side from the verified uid |
 | Packaging | `Dockerfile` present; no deploy target configured |
 | CI | `.github/workflows/backend-ci.yml` — build and test on backend changes only |
-| Tests | 1 (`HealthControllerTest`) |
+| Tests | JVM unit tests for pricing plus Testcontainers integration tests for tenant isolation, overlap and the booking API |
 
 ### 1.3 The contract mismatch
 
@@ -108,6 +109,8 @@ Beyond the four missing endpoints above, there is no persistence layer, no domai
 ### 3.3 Business logic is client-side and therefore untrusted
 
 Pricing (`PricingService`) and availability both run on the device. `firestore.rules` validates tenancy, role, verification status, and that `startDate < endDate`, but it does **not** validate the booking amount and does **not** detect overlapping bookings for the same vehicle. A modified client can book any car at any price, and two renters can hold the same vehicle for the same dates.
+
+**Partly closed.** The backend now owns both rules on its own path: `POST /v1/bookings` prices from the `car` row and ignores any client figure, and `rental_request_no_overlapping_hold` (a Postgres exclusion constraint) makes two overlapping approved holds on one vehicle impossible regardless of concurrency. The gap remains open in practice until the Android app books through the API instead of writing to Firestore directly, and until the corresponding Firestore write path is closed off — the collection-by-collection migration described in [5.3](#53-migration-strategy).
 
 ### 3.4 No tenant self-service onboarding
 
