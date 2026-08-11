@@ -15,7 +15,13 @@ public class WebConfig {
     @Bean
     public FilterRegistrationBean<FirebaseAuthFilter> firebaseAuthFilter() {
         FilterRegistrationBean<FirebaseAuthFilter> registration = new FilterRegistrationBean<>(new FirebaseAuthFilter());
-        registration.addUrlPatterns("/v1/me", "/v1/me/*");
+        registration.addUrlPatterns(
+                "/v1/me", "/v1/me/*",
+                // Fleet and bookings are tenant data: the tenant is resolved
+                // from the verified uid, so neither is reachable without the
+                // filter having run.
+                "/v1/cars", "/v1/cars/*",
+                "/v1/bookings", "/v1/bookings/*");
         return registration;
     }
 }

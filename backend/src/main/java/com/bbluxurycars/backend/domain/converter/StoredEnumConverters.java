@@ -1,6 +1,7 @@
 package com.bbluxurycars.backend.domain.converter;
 
 import com.bbluxurycars.backend.domain.CompanyLifecycleStatus;
+import com.bbluxurycars.backend.domain.RentalRequestStatus;
 import com.bbluxurycars.backend.domain.UserLifecycleStatus;
 import com.bbluxurycars.backend.domain.UserRole;
 import com.bbluxurycars.backend.domain.VerificationStatus;
@@ -70,6 +71,23 @@ public final class StoredEnumConverters {
         @Override
         public VerificationStatus convertToEntityAttribute(String dbData) {
             return VerificationStatus.from(dbData);
+        }
+    }
+
+    @Converter(autoApply = true)
+    public static class RentalRequestStatusConverter
+            implements AttributeConverter<RentalRequestStatus, String> {
+
+        @Override
+        public String convertToDatabaseColumn(RentalRequestStatus attribute) {
+            return attribute == null
+                    ? RentalRequestStatus.PENDING.getStorageValue()
+                    : attribute.getStorageValue();
+        }
+
+        @Override
+        public RentalRequestStatus convertToEntityAttribute(String dbData) {
+            return RentalRequestStatus.from(dbData);
         }
     }
 

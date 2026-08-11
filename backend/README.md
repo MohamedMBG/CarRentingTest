@@ -70,7 +70,32 @@ backfill lands most users have no mirrored row, and an unprovisioned response
 reports the least-privileged value for every status rather than failing the
 request.
 
-Still to come in Phase 1: server-authoritative pricing, booking overlap
-enforcement, the Firestore backfill, and the four endpoints the app already
-calls (`/v1/mobile/concierge`, `/v1/mobile/notifications/email`,
-`/v1/user/export`, `/v1/user/delete`).
+**Phase 1 — fleet and server-authoritative booking (in progress)**
+
+- `car` and `rental_request` tables (migration V2).
+- `GET /v1/cars` — the caller's own fleet. Renters see bookable vehicles;
+  an active admin may pass `?includeUnavailable=true` to see the rest.
+- `POST /v1/bookings/quote` — price a car for a period.
+- `POST /v1/bookings` — create a pending booking. The total is computed from
+  the `car` row; there is no price field on the request, so a modified client
+  cannot choose what it pays.
+- `GET /v1/bookings` — the tenant's queue for an admin, the caller's own
+  bookings otherwise.
+- `POST /v1/bookings/{id}/approve|reject|complete` — admin-only transitions,
+  validated against the state machine in `RentalRequestStatus`.
+
+Approving is what takes a vehicle off the market. Two approved bookings cannot
+overlap on the same car: the rule is a Postgres exclusion constraint
+(`rental_request_no_overlapping_hold`), not an application check, so concurrent
+approvals cannot both succeed. Pending requests deliberately do not hold the
+vehicle — several renters may ask for the same dates and the agency chooses.
+
+Refusals carry a stable `code` alongside the message (`dates_already_held`,
+`booking_not_permitted`, `car_not_bookable`, `illegal_status_transition`,
+`invalid_rental_period`) so clients can branch on the reason without parsing
+prose.
+
+Still to come in Phase 1: the Firestore backfill and cutover of the app's
+booking writes, and the four endpoints the app already calls
+(`/v1/mobile/concierge`, `/v1/mobile/notifications/email`, `/v1/user/export`,
+`/v1/user/delete`).
