@@ -19,4 +19,10 @@ public class FirestoreTestConfig {
     public InMemoryFirestoreGateway inMemoryFirestoreGateway() {
         return new InMemoryFirestoreGateway();
     }
+
+    @Bean
+    @Primary
+    public InMemoryFirestoreEraser inMemoryFirestoreEraser() {
+        return new InMemoryFirestoreEraser();
+    }
 }

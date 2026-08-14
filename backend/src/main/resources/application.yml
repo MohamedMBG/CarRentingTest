@@ -29,6 +29,23 @@ spring:
 firebase:
   credentials-path: ${FIREBASE_CREDENTIALS_PATH:}
 
+# POST /v1/mobile/concierge proxies to Gemini so the API key stays server-side
+# rather than shipped in the Android APK. Unset by default; ConciergeService
+# reports 503 rather than failing the request in an odd way when it is.
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+  model: ${GEMINI_MODEL:gemini-2.0-flash}
+
+# POST /v1/mobile/notifications/email. mail.host unset is the normal local and
+# test configuration — see MailConfig, which only registers a JavaMailSender
+# when it is set, and NotificationService, which reports 503 without one.
+mail:
+  host: ${MAIL_HOST:}
+  port: ${MAIL_PORT:587}
+  username: ${MAIL_USERNAME:}
+  password: ${MAIL_PASSWORD:}
+  from: ${MAIL_FROM:no-reply@bbluxurycars.com}
+
 management:
   endpoints:
     web:
