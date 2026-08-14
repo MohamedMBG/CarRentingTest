@@ -22,7 +22,14 @@ public class WebConfig {
                 // filter having run.
                 "/v1/cars", "/v1/cars/*",
                 "/v1/bookings", "/v1/bookings/*",
-                "/v1/tenant/*");
+                "/v1/tenant/*",
+                // Concierge and notification proxies: authenticated so the
+                // Gemini key and the SMTP relay behind them cannot be driven by
+                // an anonymous caller.
+                "/v1/mobile/*",
+                // GDPR export/delete act on the caller's own verified uid, never
+                // one a client names, so they need the filter too.
+                "/v1/user/*");
         return registration;
     }
 }

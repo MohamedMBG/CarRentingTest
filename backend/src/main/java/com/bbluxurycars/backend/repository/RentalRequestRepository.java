@@ -2,6 +2,8 @@ package com.bbluxurycars.backend.repository;
 
 import com.bbluxurycars.backend.domain.RentalRequest;
 import com.bbluxurycars.backend.domain.RentalRequestStatus;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -45,6 +47,17 @@ public interface RentalRequestRepository extends TenantScopedRepository<RentalRe
             Collection<RentalRequestStatus> statuses,
             Instant end,
             Instant start);
+
+    /**
+     * Every booking a renter has ever made, across tenants.
+     *
+     * <p>Not tenant-scoped, unlike everything else here -- deliberately, and
+     * for the same reason as {@code AppUserRepository.findByFirebaseUid}: this
+     * backs the GDPR export endpoint, which answers "what do you hold about
+     * me" for the caller's own verified uid, not a tenant a caller supplies.
+     */
+    @Query("select r from RentalRequest r where r.userId = :userId order by r.createdAt desc")
+    List<RentalRequest> findAllByUserIdForExport(@Param("userId") String userId);
 
     RentalRequest save(RentalRequest request);
 }

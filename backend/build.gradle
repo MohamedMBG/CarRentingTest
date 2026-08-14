@@ -20,6 +20,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Outbound transactional email for POST /v1/mobile/notifications/email.
+    // Only a JavaMailSender factory; the bean itself is conditional on
+    // mail.host being set, so the service still boots without SMTP configured.
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // Tenant persistence (Phase 1, docs/SAAS_ROADMAP.md). Postgres is the
     // system of record for tenancy and billing; Firestore stays the
